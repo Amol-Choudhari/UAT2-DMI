@@ -167,7 +167,7 @@
 					</h1>
 					<span>Total Renewal Applications Granted</span>
 				</div>
-								
+										
 				<div class='col-md-2 squaretotalr square s41-color'>
 					<div class='circle-icon'>
 						<img src="/testdocs/home-slider/image/ca.png" alt="revenu">

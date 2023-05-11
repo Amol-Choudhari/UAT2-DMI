@@ -54,14 +54,27 @@
 					$payment_conirmation_status = $payment_confirmation_query['payment_confirmation'];
 					$payment_receipt_docs = $payment_confirmation_query['payment_receipt_docs'];
 				}
-				
+				//to get district id change chemist id from customer id to packer id who register the chemist
+				// added by laxmi B on 14-12-2022
+					//for chemist applicant payment  form appear with using customer id who register the chemist
+			          //added by laxmi B. on 14-12-2022
+						if($application_type == 4){
+							$customer_id = $this->Session->read('packer_id');
+			            }
+					
+			
 				$firm_details = $Dmi_firm->find('all',array('conditions'=>array('customer_id IS'=>$customer_id)))->toArray();
+				
 				$firm_details_fields = $firm_details[0];
-
 				$district_id = $firm_details_fields['district'];
 				$pao_id_details = $DmiDistricts->find('all',array('fields'=>'pao_id','conditions'=>array('id IS'=>$district_id)))->first();	
 				$pao_id = $pao_id_details['pao_id'];
-				
+				//revert above customer id to chemist id by laxmi B on 14-12-2022
+				if ($application_type == 4) {
+
+			         $customer_id = $this->Session->read('username');
+			          $form_type='CHM';
+		            }
 				if(empty($data['payment_amount']) && empty($data['payment_transaction_id']) && empty($data['bharatkosh_payment_done'])
 					&& empty($data['payment_trasaction_date'])){
 						return false;

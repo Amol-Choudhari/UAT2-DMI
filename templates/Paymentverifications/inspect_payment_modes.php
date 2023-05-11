@@ -26,7 +26,12 @@
 							<div class="form-horizontal">
 								<div class="card-body">
 									<div class="row">
+										<!-- in chemist payment verification , apply condition for firm name is not visible  added by laxmi on 15-12-2022 -->
+											<?php if($_SESSION['application_type'] != 4){ ?>
+
 										<div class="col-md-12"><label class="alert alert-dark offset-1">Applicant ID: <?php echo $customer_id; ?> - <?php echo $firm_name['firm_name']; ?></label></div>
+										<?php } ?>
+										
 										<div class="col-md-12 mt-2">
 											<div id="payment_details" class="row">
 												<div class="col-sm-6">

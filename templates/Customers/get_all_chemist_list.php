@@ -33,6 +33,10 @@
 							<th>Chemist ID</th>
 							<th>Email</th>
 							<th>Registered On</th>
+								<!-- to set heding of all pdf letter added by laxmi on 29-11-2022 -->
+							<th>View Letter</th>
+							<th>Certificate PDF</th>
+							<!--  End by Laxmi  -->
 						</tr>
 					</thead>
 					<tbody>
@@ -47,6 +51,31 @@
 							<td><?php echo $each['chemist_id']; ?></td>
 							<td><?php echo base64_decode($each['email']); ?></td>
 							<td><?php echo $each['created']; ?></td>
+							<!-- RO side schedule letter pdf added by laxmi on 29-11-2022 -->
+							<?php if(!empty($viewLetterFromRo[$i])){ ?>
+							<td><a href="<?php echo $viewLetterFromRo[$i];?>" target="_blank"><?php echo "Schedule Letter"; ?></a>
+						    <?php } ?>
+
+						    <!-- RO side training scheduled letter pdf added by laxmi on 027-01-2023 -->
+                               <?php if(!empty($ro_side_schedule_letter[$i])){ ?>
+							    | <a href="<?php echo $ro_side_schedule_letter[$i];?>" target="_blank"><?php echo "Ro Schedule Letter"; ?></a>
+							
+						      <?php } ?>
+
+                              <!-- RO side reliving letter pdf added by laxmi on 03-01-2023 -->
+                               <?php if(!empty($reliving_pdf[$i])){ ?>
+							    | <a href="<?php echo $reliving_pdf[$i];?>" target="_blank"><?php echo "Relieving Letter"; ?></a>
+							</td>
+						      <?php } ?>
+
+
+
+						      <!-- grant certificate pdf added by laxmi on 5-1-2022 -->
+						      <?php if(!empty($cetificatePdf[$i])){ ?>
+							   <td><a href="<?php echo '../../'.$cetificatePdf[$i];?>" target="_blank"><?php echo "Certificate PDF"; ?></a>
+							  </td>
+						       <?php } ?>
+
 						</tr>
 					<?php $sr_no++; $i=$i+1;	} } ?>
 				</tbody>

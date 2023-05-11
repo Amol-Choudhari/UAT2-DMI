@@ -11,6 +11,9 @@
 								<div class="row">
 									<table class="table table-striped table-hover table-bordered table-primary">
 										<thead class="tablehead">
+											<!--apply condition to hide comodity in chemist application form  -->
+											<!-- added by Laxmi B. on 13-12-2022 -->
+											<?php if($application_type !=4){ ?> 
 											<tr>
 												<th>Sr. No.</th>
 												<?php if (!empty($firm_details['sub_commodity'])) { ?>
@@ -20,8 +23,12 @@
 													<th>Selected Packaging Material</th>
 												<?php } ?>
 											</tr>
+											<?php }?>
 										</thead>
 										<tbody>
+										 <!--apply condition to hide comodity in chemist application form  -->
+											<!-- added by Laxmi B. on 13-12-2022 -->
+											<?php if($application_type !=4){ ?>
 											<?php if (!empty($firm_details['sub_commodity'])) {
 													$i=1;
 													foreach ($commodity_name_list as $commodity_name) { ?>
@@ -52,6 +59,10 @@
 												<?php if(!empty($firm_details['sub_commodity'])){ ?>
 													<td></td>
 												<?php } ?>
+												
+												<!-- End By Laxmi -->
+												<?php } ?>
+												
 												<td class="boldtext">Processing Fee</td>
 												<td class="boldtext">Rs.<?php echo $application_charge; ?></td>
 											</tr>

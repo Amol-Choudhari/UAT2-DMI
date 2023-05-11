@@ -10,10 +10,19 @@
 			// set new communication window for chemist flow, Done by Aakash Thakare, 30-09-2021
 			if($application_type == 4)
 			{
-				echo $this->element('communications_elements/ro_chemist_communication');
-			}
-			elseif ($section_details['comment_section'] == 'yes' && $fromHoLevel==null) {
+				   // added new if else conditon for chemist at level in ro side and all form section status is 2 and  chemist training is not done and training completed at ro side then element file ro_mo  include else other file ro to chemist only by laxmi on 17-01-2023
 
+			   
+				if($_SESSION['current_level'] == 'level_3' && $all_section_status == 2 && $is_training_completed == 'no'  && (!empty($_SESSION['trainingCompleteAtRo']) && $_SESSION['trainingCompleteAtRo'] == 1 ) ){
+                
+                   echo $this->element('communications_elements/ro_mo_applicant_communication');
+                }else{
+
+                	echo $this->element('communications_elements/ro_chemist_communication');
+                }
+			
+
+			}elseif ($section_details['comment_section'] == 'yes' && $fromHoLevel==null) {
 				echo $this->element('communications_elements/ro_mo_applicant_communication');
 
 			}

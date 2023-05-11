@@ -371,7 +371,7 @@ class ChemistController extends AppController {
 							$htmlEncoded_chemistLastname = htmlentities($this->request->getData('chemist_lname'), ENT_QUOTES);
 
 							$certificationType = explode('/',(string) $username); #For Deprecations
-
+                              
 							$DmiChemistRegistrationsEntity = $this->DmiChemistRegistrations->newEntity(array(
 
 								'chemist_fname'=>$htmlEncoded_chemistFirstname,
@@ -380,15 +380,18 @@ class ChemistController extends AppController {
 								'email'=>$htmlEncoded_email,
 								'password'=>'91c8559eb34ab5e1ab86f9e80d9753c59b7da0d0e025ec8e7785f19e7852ca428587cdb4f02b5c67d1220ca5bb440b5592cd76b1c13878d7f10a1e568014f4dc', //Agmark123@
 							//	'password'=>'3c9909afec25354d551dae21590bb26e38d53f2173b8d3dc3eee4c047e7ab1c1eb8b85103e3be7ba613b31bb5c9c36214dc9f14a42fd7a2fdb84856bca5c44c2', // 123
+								//chemist training alredy completed or not status added in db by laxmi bhadade on 12-12-22
+								'is_training_completed'=>$this->request->getData('is_training_completed'),
 								'mobile'=>base64_encode($htmlEncoded_mobile),
 								'dob'=>$htmlEncoded_dob,
 								'created_by'=>$username,
 								'usertype'=>$certificationType[1],
 								'created'=>date('Y-m-d H:i:s'),
-								'modified'=>date('Y-m-d H:i:s')
+								'modified'=>date('Y-m-d H:i:s'),
+								
 							));
-
-
+                              
+                           
 							if ($this->DmiChemistRegistrations->save($DmiChemistRegistrationsEntity)) {
 
 								//Save Chemist Logs
@@ -404,6 +407,8 @@ class ChemistController extends AppController {
 									'dob'=>$htmlEncoded_dob,
 									'created_by'=>$username,
 									'usertype'=>$certificationType[1],
+									//chemist training alredy completed or not status added in db by laxmi bhadade on 12-12-22
+									'is_training_completed'=>$this->request->getData('is_training_completed'),											   
 									'created'=>date('Y-m-d H:i:s'),
 									'modified'=>date('Y-m-d H:i:s')
 								));
@@ -630,6 +635,39 @@ class ChemistController extends AppController {
 
 		$this->viewBuilder()->setLayout('chemist_home_layout');
 		$this->Session->write('application_dashboard','chemist');
+	   //chemist application shedule letter display in dashboard added by laxmi b.on 30-12-22
+		$this->loadModel('DmiChemistRoToRalLogs');  
+		$scheduleLetter = $this->DmiChemistRoToRalLogs->find('list',array('valueField'=>'pdf_file', 'conditions'=>array('chemist_id'=>$_SESSION['username'])))->first();
+		if(!empty($scheduleLetter)){
+		$this->set('pdf_file', $scheduleLetter);
+		 }
+
+		 //chemist reliving  letter from RO display in dashboard added by laxmi b.on 03-01-2023
+		$this->loadModel('DmiChemistTrainingAtRo');  
+		$relivingLetter = $this->DmiChemistTrainingAtRo->find('list',array('valueField'=>'pdf_file', 'conditions'=>array('chemist_id'=>$_SESSION['username'])))->first();
+		if(!empty($relivingLetter)){
+		$this->set('relivingLetter', $relivingLetter);
+		 }
+
+		  //grant certificate PDF display in dashboard added by laxmi b.on 05-01-2023
+		$this->loadModel('DmiChemistGrantCertificatePdfs');  
+		$certificates = $this->DmiChemistGrantCertificatePdfs->find('all',array('fields'=>'pdf_file', 'conditions'=>array('customer_id'=>$_SESSION['username'])))->first();
+		if(!empty($certificates)){
+		$this->set('certificate', $certificates['pdf_file']);
+		 }
+
+		 //Ro side Training schedule letter added by laxmi on 6-01-2023
+		 $this->loadModel('DmiChemistRoToRalLogs');  
+		$ro_side_schedule_letter = $this->DmiChemistRoToRalLogs->find('all',array('fields'=>'ro_schedule_letter', 'conditions'=>array('chemist_id'=>$_SESSION['username'])))->first(); 
+		if(!empty($ro_side_schedule_letter)){
+		$this->set('ro_side_schedule_letter', $ro_side_schedule_letter['ro_schedule_letter']);
+		 }
+		 //Ral side Training letter added by laxmi on 6-01-2023
+		 $this->loadModel('DmiChemistRalToRoLogs');  
+		$ral_letter = $this->DmiChemistRalToRoLogs->find('all',array('fields'=>'pdf_file', 'conditions'=>array('chemist_id'=>$_SESSION['username'])))->first(); 
+		if(!empty($ral_letter)){
+		$this->set('ral_letter', $ral_letter['pdf_file']);
+		 }										 
 	}
 
 
@@ -752,8 +790,494 @@ class ChemistController extends AppController {
 
 
 	}
+	
+		// forward application from Ro to RAL added by laxmi B. on 21-12-2022
+		public function forwardApplicationtoRal(){
+		$message = "";
+		$message_theme = "";
+		$redirect_to = "";
+		$this->viewBuilder()->setLayout('admin_dashboard');
+		$ro_email = $this->Session->read('username');  
+		$ro_fname = $this->Session->read('f_name');
+		$ro_lname = $this->Session->read('l_name');
+		$ro_role  = $this->Session->read('role');
+		$chemist_id = $this->Session->read('customer_id');
+		//for information
+		$this->set('ro_fname', $ro_fname);
+		$this->set('ro_lname', $ro_lname);
+		$this->set('ro_role', $ro_role);
+		//for chemist information
+		$this->loadModel('DmiChemistRegistrations');
+		$this->loadComponent('Customfunctions');
+
+		$chemist_details = $this->DmiChemistRegistrations->find('all')->where(array('chemist_id'=>$chemist_id))->first();
+		$this->set('chemist_id', $chemist_id);
+
+		if(!empty($chemist_details['chemist_fname'] && !empty($chemist_details['chemist_lname']))){
+		$this->set('chemist_fname', $chemist_details['chemist_fname']);
+		$this->set('chemist_lname', $chemist_details['chemist_lname']);
+		}
+
+		// for Ral Office and RAL information
+		$this->loadModel('DmiRoOffices');
+
+		$ral_details =$this->DmiRoOffices->find('all')->select(['id','ro_office'])->where(['office_type IS'=>'RAL', 'delete_status IS '=>NULL])->toArray();
+
+		if(!empty($ral_details)){
+		$this->set('ral_details',$ral_details);
+		}
+
+		// for export unit  condition added by laxmi on 9-1-23
+		if(!empty($_SESSION['export_unit']) && $_SESSION['export_unit'] == 'yes'){
+		$ral_details = $this->DmiRoOffices->find('all')->select(['id','ro_office'])->where(array('office_type IS'=>'RAL', 'ro_office IS'=> 'Mumbai'))->toArray();
+		if(!empty($ral_details)){
+		$this->set('ral_details',$ral_details);
+		}
+		}
+
+		$ro_office_id= $this->DmiRoOffices->find('all')->where(array('office_type IS'=>'RO' ,'office_type IS' =>'SO', 'ro_email_id'=>$ro_email))->first();
+          
+		if($this->request->is('post') != '' ){
+		$document= $this->request->getData('document');
+		$shedule_from = $this->request->getData('shedule_from');
+		$from_date = date('Y-m-d H:i:s', strtotime($shedule_from));
+		$shedule_to = $this->request->getData('shedule_to');
+		$to_date = date('Y-m-d H:i:s', strtotime($shedule_to));
+ 
+		if (!empty($this->request->getData('document')->getClientFilename())) {
+
+		$attchment = $document; 
+		$file_name = $attchment->getClientFilename();
+		$file_size = $attchment->getSize();
+		$file_type = $attchment->getClientMediaType();
+		$file_local_path = $attchment->getStream()->getMetadata('uri');
+		// calling file uploading function
+
+		$document = $this->Customfunctions->fileUploadLib($file_name,$file_size,$file_type,$file_local_path);
+
+		}else{
+		$document = "";
+		}
+
+		$postdata = $this->request->getData();
+
+		if(!empty($postdata['ro_office']) && !empty($postdata['shedule_from'])  && !empty($postdata['shedule_to'])){
 
 
+		$this->loadModel('DmiChemistRoToRalLogs');
+		$chemistId = $postdata['chemist_id'];
+
+		$data = $this->DmiChemistRoToRalLogs->newEntity(array(
+		'chemist_id' =>$postdata['chemist_id'],
+		'ro_first_name' =>$postdata['ro_first_name'],
+		'ro_last_name' => $postdata['ro_last_name'],
+		'chemist_first_name' => $postdata['chemist_first_name'],
+		'chemist_last_name' => $postdata['chemist_last_name'],
+		'ral_office_id' => $postdata['ro_office'], 
+		'remark' => $postdata['remark'], 
+		'document' => $document,
+		'is_forwordedtoral' => 'yes',
+		'created' => date('Y-m-d H:i:s'),
+		'appliaction_type'=> 4,
+		'shedule_from' => $from_date,
+		'shedule_to' => $to_date,
+		'ro_office_id' =>$ro_office_id['id'],
+		));
+
+		if($this->DmiChemistRoToRalLogs->save($data)){
+
+		//to enter RAL Email id in allocation and current position table added by laxmi on 10-01-2023
+		$this->loadModel('DmiRoOffices');
+		$find_office_email_id = $this->DmiRoOffices->find('all',array('fields'=>'ro_email_id', 'conditions'=>array('id'=>$data['ral_office_id'])))->first();  
+		$office_incharge_id = $find_office_email_id['ro_email_id'];
+
+		//Entry in allocation table for level_3 Ro
+		$this->loadModel('DmiChemistAllocations');
+		$allocationEntity = $this->DmiChemistAllocations->newEntity(array(
+		'customer_id'=>$chemist_id,
+		'level_3'=>$office_incharge_id,
+		'current_level'=>$office_incharge_id,
+		'created'=>date('Y-m-d H:i:s'),
+		'modified'=>date('Y-m-d H:i:s')
+		));
+
+		if($this->DmiChemistAllocations->save($allocationEntity)){
+
+		$this->loadModel('DmiChemistAllCurrentPositions');
+		//Entry in all applications current position table
+		$customer_id =  $chemist_id;
+		$user_email_id = $office_incharge_id;
+		$current_level = 'level_3';
+		$this->DmiChemistAllCurrentPositions->currentUserUpdate($customer_id,$user_email_id,$current_level);//call to custom function from model
+		}
+
+		$message ="Chemist Application Forwarded to RAL";
+		$message_theme = "success";
+
+		// for rescheduling chemist training at RAL and generate letter pdf so comment this redirect url and redirect on  chemist module  by laxmi B. on 10-05-2023  for chemist modeule
+		//$redirect_to = '../applicationformspdfs/chemistAppPdfRoToRal/';
+
+		$redirect_to = '../chemist/listOfChemistApplRoToRal/';
+
+		}else{
+
+		$message ="Something went wrong, Please Try Again!";
+		$message_theme = "warning";
+		$redirect_to = '../scrutiny/form-scrutiny';
+		}
+
+		}else{
+		$message ="Please Enter all Field data";
+		$message_theme = "warning";
+		$redirect_to = '';
+		}  
+		}
+		// set variables to show popup messages from view file
+		$this->set('message',$message);
+		$this->set('message_theme',$message_theme);
+		$this->set('redirect_to',$redirect_to);
+
+		}
+
+			// List of chemist application  forwarded by ro to RAL added by laxmi on 26-12-2022
+			public function listOfChemistApplRoToRal(){
+			$this->loadModel('DmiChemistRoToRalLogs');
+			$this->loadModel('DmiRoOffices');
+			$this->loadModel('DmiChemistRegistrations');
+			$this->viewBuilder()->setLayout('admin_dashboard');
+
+			$ro_email = $_SESSION['username'];	
+			$ro_office_id = $this->DmiRoOffices->find('list',array('valueField'=>'id', 'conditions'=>array('ro_email_id IS'=>$ro_email)))->first(); 
+			$listofApp = $this->DmiChemistRoToRalLogs->find('all')->where(array('is_forwordedtoral IS NOT '=>NULL, 'ro_office_id IS'=>$ro_office_id))->order('created desc')->toArray();
+               
+			$i=0;
+			$ral_offices= array();
+			$chemistId= array(); 
+			$ro_offices = array();
+
+			if(!empty($listofApp)){
+			$this->set('listOfChemistApp',$listofApp);
+			foreach($listofApp as $list){
+			$ral_result = $this->DmiRoOffices->find('all',array('fields'=>'ro_office', 'conditions'=>array('id IS'=>$list['ral_office_id'])))->first();
+			$ral_offices[$i] = $ral_result['ro_office'];
+			$chemistId[$i] = $this->DmiChemistRegistrations->find('all',array('fields'=>'id', 'conditions'=>array('chemist_id'=>$list['chemist_id'])))->first();
+
+
+			$ro_officesId = $this->DmiRoOffices->find('all',array('fields'=>'ro_office', 'conditions'=>array('id IS'=>$list['ro_office_id'])))->first();
+			if(!empty($ro_officesId)){
+			$ro_offices[$i]= $ro_officesId['ro_office'];
+			}
+
+
+			$i= $i+1;
+			}
+			$this->set('ro_office', $ro_offices);
+			$this->set('ral_offices',$ral_offices);
+			$this->set('chemisttblId',$chemistId);
+
+			}
+
+			}
+			
+			//list of application forwarded back Ral to RO added by laxmi on 29/12/2022
+			public function  listOfChemistApplRalToRo(){
+			$this->viewBuilder()->setLayout('admin_dashboard');
+
+			$this->loadModel('DmiChemistRalToRoLogs');
+			$this->loadModel('DmiRoOffices');
+			$this->loadModel('DmiChemistTrainingAtRo');
+			$this->loadModel('DmiChemistRegistrations');
+			$this->loadModel('DmiChemistAllCurrentPositions');
+			$this->loadModel('DmiChemistRoToRalLogs');
+
+
+			$ro_email = $_SESSION['username'];
+			$chemist_allocation  = $this->DmiChemistAllCurrentPositions->find('all',array('fields'=>array('current_level', 'current_user_email_id')))->where(array('current_user_email_id IS'=>$ro_email))->first();
+			$this->set('current_level', $chemist_allocation['current_level']);
+			$this->Session->write('current_level', $chemist_allocation['current_level']);	
+
+			$ro_office_data = $this->DmiRoOffices->find('all',array('fields'=>array('id', 'office_type','ro_office'), 'conditions'=>array('ro_email_id IS'=>$ro_email, 'ro_email_id'=>$chemist_allocation['current_user_email_id'])))->first(); 
+
+			$this->set('level_3_for', $ro_office_data['office_type']);
+			$this->Session->write('level_3_for', $ro_office_data['office_type']);
+			$listofApp = $this->DmiChemistRalToRoLogs->find('all')->where(array('training_completed IS  '=>1, 'ro_office_id IS'=>$ro_office_data['id']))->order('created desc')->toArray();
+			$i=0;
+			$ral_offices = array();
+			$isTainingCompleted = array();
+			$pdf_file = array();
+			$chemistTblid = array();
+			$is_trainingScheduleRO = array();
+			$ro_schedule_letter = array();
+			$reschedule_status =  array();
+
+			if(!empty($listofApp)){
+			foreach($listofApp as $list){
+			$ral_offices[$i] = $this->DmiRoOffices->find('list',array('valueField'=>'ro_office', 'conditions'=>array('id IS'=>$list['ral_office_id'])))->first();
+
+			//training complete or not
+			$trainingComplete = $this->DmiChemistTrainingAtRo->find('all', array('fields'=>array('training_completed', 'pdf_file')))->where(array('chemist_id IS'=>$list['chemist_id']))->first();
+
+			if(!empty($trainingComplete)){
+			$isTainingCompleted[$i] = $trainingComplete['training_completed'];
+			$pdf_file[$i]  = $trainingComplete['pdf_file'];
+
+			}
+
+			$chemistTableid = $this->DmiChemistRegistrations->find('all',array('fields'=>['id', 'chemist_id'], 'conditions'=>array('chemist_id'=>$list['chemist_id'])))->first();
+			if(!empty($chemistTableid)){
+			$chemistTblid[$i] = $chemistTableid['id'];
+			}
+
+			//training schedule at ro side training
+			$ro_schedule_training = $this->DmiChemistRoToRalLogs->find('all', array('conditions'=>array('chemist_id'=>$list['chemist_id'])))->last();
+           
+			if(!empty($ro_schedule_training)){
+			$is_trainingScheduleRO[$i] = $ro_schedule_training['is_training_scheduled_ro'];
+			$ro_schedule_letter[$i] = $ro_schedule_training['ro_schedule_letter'];
+            $reschedule_status[$i] = $ro_schedule_training['reshedule_status'];
+			}
+               
+			$i= $i+1;	
+			}
+
+             //check application is final granted
+			$this->loadModel('DmiChemistFinalReports');
+			$status = $this->DmiChemistFinalReports->find('all',array('fields'=>array('status'), 'conditions'=>['customer_id IS'=>$chemistTableid['chemist_id']]))->last();
+            if(!empty($status)){
+             $this->set('grant_approval_status',$status['status']);
+            }
+			$this->set('ro_schedule_letter',$ro_schedule_letter);
+			$this->set('is_trainingScheduleRO',$is_trainingScheduleRO);
+			$this->set('chemistTblid',$chemistTblid);
+			$this->set('listOfChemistApp',$listofApp);
+			$this->set('ral_office', $ral_offices);
+			$this->set('isTrainingComplete',$isTainingCompleted);   
+			$this->set('pdf_file',$pdf_file);
+			$this->set('ro_offices',$ro_office_data['ro_office']);
+			$this->set('reschedule_status',$reschedule_status);
+			
+ 
+			}
+
+			}
+
+               //List of chemist training application where training completed at ro office added by laxmi on 3/1/2023
+				public function chemistTrainingCompleteAtRo ($id){
+				$this->viewBuilder()->setLayout('admin_dashboard');
+				$message="";
+				$message_theme ="";
+				$redirect_to   ="";
+
+
+				$ro_fname = $this->Session->read('f_name'); 
+				$ro_lname = $this->Session->read('l_name');
+				$this->set('ro_fname',$ro_fname);
+				$this->set('ro_last_name',$ro_lname);
+
+
+				$this->loadModel('DmiChemistRalToRoLogs');
+				$roToRalData = $this->DmiChemistRalToRoLogs->find('all')->where(array('id'=>$id))->first(); 
+				if(!empty($roToRalData)){
+				$this->set('chemist_fname',$roToRalData['chemist_first_name']);
+				$this->set('chemist_lname',$roToRalData['chemist_last_name']);
+				$this->set('chemist_id',$roToRalData['chemist_id']);
+				$ro_id = $roToRalData['ro_office_id'];
+				$customer_id =$roToRalData['chemist_id'];
+				}
+
+				if($this->request->is('post') != ''){
+				$postdata = $this->request->getData();
+                 
+				if (!empty($postdata['document']->getClientFilename()) && !empty($postdata['document'])) {
+                   
+				$attchment = $postdata['document']; 
+				$file_name = $attchment->getClientFilename();
+				$file_size = $attchment->getSize();
+				$file_type = $attchment->getClientMediaType();
+				$file_local_path = $attchment->getStream()->getMetadata('uri');
+				// calling file uploading function
+
+				$document = $this->Customfunctions->fileUploadLib($file_name,$file_size,$file_type,$file_local_path);print_r($document);exit;
+				}else{
+				$document = NULL;
+				}
+              
+
+				if(!empty($postdata['training_completed'] && !empty($postdata['chemist_id']))){
+                     
+				$this->loadModel('DmiChemistTrainingAtRo');
+
+                $chemist_id = htmlentities($postdata['chemist_id'], ENT_QUOTES);
+                $chemist_first_name = htmlentities($postdata['chemist_first_name'], ENT_QUOTES);
+                $chemist_last_name = htmlentities($postdata['chemist_last_name'], ENT_QUOTES);
+                $remark = htmlentities($postdata['remark'], ENT_QUOTES);
+                $training_completed = htmlentities($postdata['training_completed'], ENT_QUOTES);
+                $appl_type = 4;
+
+				$data = $this->DmiChemistTrainingAtRo->newEntity(array(
+				'chemist_id' =>$chemist_id,
+				'chemist_fname' => $chemist_first_name,
+				'chemist_lname' => $chemist_last_name,
+				'remark' => $remark, 
+				'document' => $document,
+				'training_completed' =>$training_completed,
+				'ro_office_id' =>$ro_id,
+				'appliaction_type'=> $appl_type,
+				'created' => date('Y-m-d H:i:s'),
+				));
+                 
+				$result = $this->DmiChemistTrainingAtRo->save($data);
+				if($result){
+				$lastInsertedId = $result['id'];	
+				$message ="Chemist Application Training done at Ro";
+				$message_theme = "success";
+				$redirect_to = '../../Applicationformspdfs/chemistTrainingCompPdfRo/'.$lastInsertedId;
+				}else{
+
+				$message ="Something went wrong, Please Try Again!";
+				$message_theme = "warning";
+				$redirect_to = '../scrutiny/form-scrutiny';
+				}
+
+				}else{
+				$message ="Please Enter all Field data";
+				$message_theme = "warning";
+				$redirect_to = '';
+				}  
+				}
+				// set variables to show popup messages from view file
+				$this->set('message',$message);
+				$this->set('message_theme',$message_theme);
+				$this->set('redirect_to',$redirect_to);
+				}
+				
+				
+				// Training scheduled at Ro added by laxmi on 27-01-2023
+				public function trainingScheduleAtRo($id=null){
+				$message = "";
+				$message_theme = "";
+				$redirect_to = "";
+				$this->viewBuilder()->setLayout('admin_dashboard');
+				$ro_email = $this->Session->read('username');  
+				$ro_fname = $this->Session->read('f_name');
+				$ro_lname = $this->Session->read('l_name');
+				$ro_role  = $this->Session->read('role');
+				//for information
+				$this->set('ro_fname', $ro_fname);
+				$this->set('ro_lname', $ro_lname);
+				$this->set('ro_role', $ro_role);
+				//for chemist information
+				$this->loadModel('DmiChemistRegistrations');
+				$this->loadModel('DmiChemistRalToRoLogs');
+
+				$ralToRoDatas = $this->DmiChemistRalToRoLogs->find('all')->where(['id'=>$id])->first();
+				$chemist_id =  $ralToRoDatas['chemist_id'];
+				$this->Session->write('customer_id',$ralToRoDatas['chemist_id']);
+
+				$chemist_details = $this->DmiChemistRegistrations->find('all')->where(array('chemist_id'=>$chemist_id))->first();
+				$this->set('chemist_id', $chemist_id);
+
+				if(!empty($chemist_details['chemist_fname'] && !empty($chemist_details['chemist_lname']))){
+				$this->set('chemist_fname', $chemist_details['chemist_fname']);
+				$this->set('chemist_lname', $chemist_details['chemist_lname']);
+				}
+
+				$this->loadModel('DmiChemistRoToRalLogs');
+                $check_reschedule = $this->DmiChemistRoToRalLogs->find('all', ['conditions'=>['chemist_id IS'=> $chemist_id]])->last();
+                  
+                $this->set('ro_schedule_from', date('Y-m-d',strtotime($check_reschedule['ro_schedule_from'])));
+                $this->set('ro_schedule_to', date('Y-m-d',strtotime($check_reschedule['ro_schedule_to'])));
+               $this->set('resedule_status', $check_reschedule['ro_reschedule_status']);
+
+
+				if($this->request->is('post') != '' ){
+                 
+				$shedule_from = $this->request->getData('shedule_from');
+				$from_date = date('Y-m-d H:i:s', strtotime($shedule_from));
+				$shedule_to = $this->request->getData('shedule_to');
+				$to_date = date('Y-m-d H:i:s', strtotime($shedule_to));
+
+				$postdata = $this->request->getData();
+
+				if(!empty($postdata['shedule_from'])  && !empty($postdata['shedule_to'])){
+
+
+				$this->loadModel('DmiChemistRoToRalLogs');
+				$chemistId = $postdata['chemist_id'];
+				if(empty($check_reschedule['ro_reschedule_status']) && empty($check_reschedule['is_training_scheduled_ro'])) {
+
+				$data = array(
+				'ro_schedule_from' => $from_date,
+				'ro_schedule_to'=>$to_date,
+				'is_training_scheduled_ro' => 1,
+				'modified' => date('Y-m-d'),
+				);
+
+				$result = $this->DmiChemistRoToRalLogs->updateAll($data,array('chemist_id'=>$chemistId));
+
+				if($result){
+				$message ="Chemist Training Schedule at Ro";
+				$message_theme = "success";
+
+				//for reschedule dates at ro side comment this pdf genration redirection  and redirect on list by laxmi B. on  10-05-2023 for chemist training module 
+				//$redirect_to = '../../applicationformspdfs/trainingScheduleLetterFromRo/';
+
+				$redirect_to = '../../chemist/listOfChemistApplRalToRo/';
+				}else{
+
+				$message ="Something went wrong, Please Try Again!";
+				$message_theme = "warning";
+				$redirect_to = '../../chemist/listOfChemistApplRalToRo/';
+				} 
+                }else{
+                	
+                	$reqData = $this->request->getData();
+                	$ro_office_id = $this->DmiRoOffices->find('all', ['conditions'=>['ro_email_id IS'=> $_SESSION['username'],'office_type IS'=>'RO', 'office_type IS'=>'SO', 'delete_status IS'=> NULL ]])->first();
+                	
+					$this->loadModel('DmiChemistRoToRalLogs');
+					$rescheduleDateData = $this->DmiChemistRoToRalLogs->newEntity( array('chemist_id' => $reqData['chemist_id'],
+					'chemist_first_name' => $reqData['chemist_first_name'],
+					'chemist_last_name' => $reqData['chemist_last_name'],
+					'ro_first_name' => $reqData['ro_first_name'],
+					'ro_last_name' => $reqData['ro_last_name'],
+					'ro_schedule_from'=> date('Y-m-d H:i:s',strtotime($reqData['shedule_from'])),
+					'ro_schedule_to'=> date('Y-m-d H:i:s',strtotime($reqData['shedule_to'])),
+					'is_training_scheduled_ro'=> 1,
+					'created' => date('Y-m-d H:i:s'),
+					'reshedule_remark' =>$reqData['reshedule_remark'],
+					'modified' => date('Y-m-d H:i:s'),
+					'appliaction_type' =>4,
+					'reshedule_status' =>'confirm',
+					'ro_office_id' =>$ro_office_id['id'],
+					));
+                
+                 $result = $this->DmiChemistRoToRalLogs->save($rescheduleDateData);
+                 if($result){
+				$message ="Chemist Training Schedule at Ro";
+				$message_theme = "success";
+				$redirect_to = '../../applicationformspdfs/trainingScheduleLetterFromRo/';
+                }else{
+
+				$message ="Something went wrong, Please Try Again!";
+				$message_theme = "warning";
+				$redirect_to = '../../chemist/listOfChemistApplRalToRo/';
+				} 
+                }
+
+				}else{
+				$message ="Please Enter all Field data";
+				$message_theme = "warning";
+				$redirect_to = '';
+				}
+				}  
+				
+			    
+				// set variables to show popup messages from view file
+				$this->set('message',$message);
+				$this->set('message_theme',$message_theme);
+				$this->set('redirect_to',$redirect_to);
+
+				}  
 
 
 }

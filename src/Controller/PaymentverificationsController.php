@@ -111,13 +111,28 @@ class PaymentverificationsController extends AppController{
 			$this->loadModel($allocation_table);
 			$this->loadModel($all_applications_current_position);
 			$this->loadModel('DmiFirms');
-
+			//model load by laxmi on 09-01-23																	
+            $this->loadModel('DmiChemistRegistrations');
 
 			$firm_name = $this->DmiFirms->find('all', array('fields'=>'firm_name', 'conditions' => array('customer_id IS'=>$customer_id)))->first();
 			$this->set('firm_name',$firm_name);
 			$this->set('customer_id',$customer_id);
 			$split_customer_id = explode('/',(string) $customer_id); #For Deprecations
 			$district_code = $split_customer_id[2];	//updated on 20-08-2018 by amol
+
+
+                //for export_unit yes then only application applying to RO And RAL mumbai added by laxmi B. ON 09-01-2023
+             if(!empty($appl_type) && $appl_type == 4){
+               
+               $packer_data_id = $this->DmiChemistRegistrations->find('all',array('fields'=>'created_by', 'conditions'=>array('chemist_id IS'=>$customer_id)))->first();
+                  //to set packer Id
+               $this->Session->write('packer_id', $packer_data_id['created_by']);
+
+                  // to set export unit
+               $export_unit = $this->Customfunctions->checkApplicantExportUnit($packer_data_id['created_by']);
+               $this->Session->write('export_unit',$export_unit);
+               }//End by laxmi.
+
 
 			//updated and added code to get Office table details from appl mapping Model
 			$this->loadModel('DmiApplWithRoMappings');

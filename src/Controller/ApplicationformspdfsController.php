@@ -98,9 +98,19 @@ class ApplicationformspdfsController extends AppController{
 			$pdfPrefix = 'MOD-';
 		}elseif ($application_type==9) { #For Surrender Application - Akash [14-04-2023]
 			$pdfPrefix = 'SOC-';
-		}
+		}//added condtion for chemist to name of pdf start like CHM by laxmi B. on 15-12-22
+        elseif($application_type==4){
+			   
+																				  
+			$pdfPrefix = 'CHM-';
+		}																		 
+		 //added if else for chemist application use rearranged id given format added by laxmi B. on 15-12-2022
+         if($_SESSION['application_type']==4){
+    	  $rearranged_id = $pdfPrefix.$split_customer_id[0].'-'.$split_customer_id[1].'-'.$split_customer_id[2];
+         }else{
 
-		$rearranged_id = $pdfPrefix.$split_customer_id[0].'-'.$split_customer_id[1].'-'.$split_customer_id[2].'-'.$split_customer_id[3];
+         	$rearranged_id = $pdfPrefix.$split_customer_id[0].'-'.$split_customer_id[1].'-'.$split_customer_id[2].'-'.$split_customer_id[3];	
+         }	
 	
 		//check applicant last record version to increment		
 		$list_id = $Dmi_app_pdf_record->find('list', array('valueField'=>'id', 'conditions'=>array('customer_id IS'=>$customer_id)))->toArray();
@@ -120,8 +130,8 @@ class ApplicationformspdfsController extends AppController{
 		$this->Session->write('pdf_file_name',$rearranged_id.'('.$current_pdf_version.')'.'.pdf');
 	
 		//condition to check if application is old or new
-		
-		if($this->Customfunctions->checkApplicationOldNew($customer_id)=='new' || $application_type !=1){
+		// chenged condtion and ANDing application type not 4 to not save chemist pdf in given way added by laxmi B. on 15-12-2022
+		if(($this->Customfunctions->checkApplicationOldNew($customer_id)=='new' || $application_type !=1) && ( $application_type !=4)){
 			
 			//creating filename and file path to save
 			$file_path = '/testdocs/DMI/temp/'.$rearranged_id.'('.$current_pdf_version.')'.'.pdf';
@@ -205,7 +215,11 @@ class ApplicationformspdfsController extends AppController{
 			$file_path = '/testdocs/DMI/applications/'.$folderName.'/'.$rearranged_id.'('.$current_pdf_version.')'.'.pdf';				
 			$filename = $_SERVER["DOCUMENT_ROOT"].$file_path;
 			$this->callTcpdf($all_data_pdf,'F',$customer_id,'old');//on 23-01-2020 with save mode
-			
+			//to preview in chemistApplication  pdf added by laxmi on 15-12-2022
+			  if($_SESSION['application_type'] == 4){
+               $this->callTcpdf($all_data_pdf,'I',$customer_id,'old');
+			   } 
+			   
 			$Dmi_app_pdf_record_entity = $Dmi_app_pdf_record->newEntity(array(
 					
 				'customer_id'=>$customer_id,
@@ -217,7 +231,11 @@ class ApplicationformspdfsController extends AppController{
 			
 			));
 			$Dmi_app_pdf_record->save($Dmi_app_pdf_record_entity);
-			
+			//to redirect in chemist dashbord added by laxmi on 15-12-2022
+			  if($_SESSION['application_type'] == 4){
+                $this->redirect('/chemist/home');
+			   } 
+
 			$this->redirect('/customers/secondary-home');
 		}
 	
@@ -371,8 +389,13 @@ class ApplicationformspdfsController extends AppController{
 		}
 
 		
+		//for chemist id  generate new id for grant pdf save added below condition by  laxmi on 03-01-2023
+		if($application_type == 4){
+         $rearranged_id = 'G-'.$pdfPrefix.$split_customer_id[0].'-'.$split_customer_id[1].'-'.$split_customer_id[2];
+		}else{
 		$rearranged_id = 'G-'.$pdfPrefix.$split_customer_id[0].'-'.$split_customer_id[1].'-'.$split_customer_id[2].'-'.$split_customer_id[3];
-				
+		}	
+		
 		//check applicant last record version to increment				
 		$list_id = $Dmi_grant_pdf_record->find('list', array('valueField'=>'id', 'conditions'=>array('customer_id IS'=>$customer_id)))->toArray();
 					
@@ -2412,7 +2435,8 @@ class ApplicationformspdfsController extends AppController{
 	//this function is created to generate pdf using tcpdf plugin
 	//This is called at place of Mpdf output function with required parameteres.
 	//on 23-01-2020 by Amol
-	public function callTcpdf($html,$mode,$customer_id,$pdf_for){
+	// for chemist ro To ral letter file_path added on 30-12-2022 by laxmi												 
+	public function callTcpdf($html,$mode,$customer_id,$pdf_for, $file_path=null){
 		
 		$with_esign = $this->Session->read('with_esign');
 		$current_level = $this->Session->read('current_level');
@@ -2432,6 +2456,11 @@ class ApplicationformspdfsController extends AppController{
 		
 			$file_path = $_SERVER["DOCUMENT_ROOT"].'/testdocs/DMI/applications/'.$folderName.'/'.$file_name;
 			
+		}elseif($pdf_for == 'chemist'){
+			//elseif section added by laxmi B. on 30-12-2022
+			//for this file path is sent from the pdf function
+			//it will take default file path from the argument, if pdf for is chemist
+		
 		}else{
 			$file_path = $_SERVER["DOCUMENT_ROOT"].'/testdocs/DMI/temp/'.$file_name;
 		}
@@ -2453,7 +2482,8 @@ class ApplicationformspdfsController extends AppController{
 		//added condition if renewal certificate and user is PAO/DDO
 		//then signature appearence not required
 		//on 16-09-2021 by Amol
-		if (!($appl_type==2 && $current_level=='pao')) {
+		// added pdf_for chemist condition by laxmi on 02-01-2023 without sign pdf for ro schedule letter								   
+		if (!($appl_type==2 && $current_level=='pao') && $pdf_for !='chemist') {
 
 			//only for save mode 'F' else no need in preview mode 'I'
 			if($mode == 'F' && $pdf_for != 'old' && $with_esign != 'no') {
@@ -2500,7 +2530,8 @@ class ApplicationformspdfsController extends AppController{
 		//added condition if renewal certificate and user is PAO/DDO
 		//then signature appearence not required
 		//on 16-09-2021 by Amol
-		if (!($appl_type==2 && $current_level=='pao')) {
+		// added pdf_for chemist condition by laxmi on 02-01-2023 without sign pdf for ro schedule letter															 
+		if (!($appl_type==2 && $current_level=='pao') && $pdf_for !='chemist') {
 
 			//only for save mode 'F' else no need in preview mode 'I'
 			//to show esigned by block on pdf
@@ -3510,9 +3541,574 @@ class ApplicationformspdfsController extends AppController{
 	}
 
 
-	
+					//Chemist application form pdf afetr chemist register and esign or without esign generate created by laxmi B on 13-12-2022
+					public function chemistApplPdf(){
+					$this->loadModel('DmiFirms');		
+					$this->loadModel('DmiUsers');
+					$this->loadModel('DmiStates');
+					$this->loadModel('DmiDistricts');
+					$this->loadModel('DmiChemistProfileDetails');
+					$this->loadModel('DmiChemistRegistrations');
+					$this->loadModel('MCommodity');
+					$this->loadModel('DmiRoOffices');
+					$this->loadModel('MCommodityCategory');
 
-	
-	
+
+					$customer_id = $this->Session->read('username');
+					$chemist_created_by = $this->Session->read('packer_id');
+					$this->set('customer_id',$customer_id);
+					// to fetch the ro office address using short code
+					if(!empty($chemist_created_by)){
+					$short_code =  trim($chemist_created_by,"/1234567890"); 
+					$ro_offices_data = $this->DmiRoOffices->find('all')->where(array('short_code IS'=>$short_code))->first();
+					$roAddress=  str_replace(',', '<br />', $ro_offices_data['ro_office']);
+					$ro_address=  str_replace('&amp;', '&', $roAddress);
+
+					$this->set('ro_office_address', $ro_address);
+					}
+
+					$firm_data = $this->DmiFirms->find('all',array('conditions'=>array('customer_id IS'=>$chemist_created_by)))->first();
+
+					if(!empty($firm_data)){
+					$district = $this->DmiDistricts->find('all')->where(array('id IS'=>$firm_data['district']))->first();
+					if(!empty($district)){
+
+					$this->set('district', $district['district_name']);
+					}
+					$state = $this->DmiStates->find('all')->where(array('id IS'=>$firm_data['state']))->first();
+					if(!empty($state)){
+					$this->set('state', $state['state_name']);
+					}
+					$this->set('pin_code', $firm_data['postal_code']);
+
+
+					$sub_commodity_array = explode(',',$firm_data['sub_commodity']);
+					$i=0;
+					foreach ($sub_commodity_array as $key => $sub_commodity) {
+
+					$fetch_commodity_id = $this->MCommodity->find('all',array('conditions'=>array('commodity_code IS'=>$sub_commodity)))->first(); 
+					$commodity_id[$i] = $fetch_commodity_id['category_code'];
+					$sub_commodity_data[$i] =  $fetch_commodity_id;		
+					$i=$i+1;
+					}
+					$unique_commodity_id = array_unique($commodity_id); 
+					$commodity_name_list = $this->MCommodityCategory->find('all',array('conditions'=>array('category_code IN'=>$unique_commodity_id, 'display'=>'Y')))->toArray();	
+					$this->set('commodity_name_list',$commodity_name_list);		
+					$this->set('sub_commodity_data',$sub_commodity_data);
+
+
+					$chemist_fname = $this->Session->read('f_name');
+					$chemist_lname = $this->Session->read('l_name');
+					$this->set('fname', $chemist_fname);
+					$this->set('lname', $chemist_lname);
+					$this->set('firm_name', $firm_data['firm_name']);
+					if(!empty($firm_data['street_address'])){
+					$this->set('firm_address', $firm_data['street_address']);
+					}
+					} 
+
+					$chemist_profile_details = $this->DmiChemistProfileDetails->find('all')->where(array('customer_id IS'=>$customer_id))->first();
+					if(!empty($chemist_profile_details) && !empty($chemist_profile_details['address'])){
+					$this->set('chemist_address', $chemist_profile_details['address']);
+					}
+
+					$this->generateApplicationPdf('/Applicationformspdfs/chemistApplPdf'); 
+
+
+					}
+
+
+	             // Chemist Application Forwarded From RO to RAL as chemist training at RAL with letter pdf 
+				//  added by laxmi B. on 23-12-2022
+				//  added by laxmi B. on 23-12-2022
+				public function chemistAppPdfRoToRal(){  
+				$this->loadModel('DmiFirms');
+				$this->loadModel('DmiCustomers');
+				$this->loadModel('DmiDistricts');
+				$this->loadModel('DmiStates');
+				$this->loadModel('MCommodity');
+				$this->loadModel('MCommodityCategory');
+				$this->loadModel('DmiRoOffices');
+				$this->loadModel('DmiChemistPaymentDetails');
+				$this->loadModel('DmiUserRoles');
+				$this->loadModel('DmiChemistRegistrations');
+				$this->loadModel('DmiChemistRoToRalLogs');
+
+				$customer_id = $this->Session->read('customer_id');  
+				$application_type = $this->Session->read('application_type');
+				$ro_fname = $this->Session->read('f_name');
+				$ro_lname = $this->Session->read('l_name');
+				$role = $this->Session->read('role');
+				$this->set('customer_id', $customer_id);
+				$this->set('ro_fname', $ro_fname);
+				$this->set('ro_lname', $ro_lname);
+				$this->set('role', $role);
+
+
+				$pdf_date = date('d-m-Y');	
+				$this->set('pdf_date',$pdf_date);
+
+				$chemistdetails = $this->DmiChemistRegistrations->find('all')->where(array('chemist_id IS'=>$customer_id))->first();
+				if($this->Session->read('paymentSection') == 'available'){
+				$charge = $this->DmiChemistPaymentDetails->find('list', array('valueField'=>'amount_paid'))->where(array('customer_id'=>$customer_id))->first();
+				if(!empty($charge)){
+				$this->set('charges',$charge);
+
+				}
+				}
+
+				if(!empty($chemistdetails)){
+
+
+				$this->set('chemist_fname', $chemistdetails['chemist_fname']);
+				$this->set('chemist_lname', $chemistdetails['chemist_lname']);
+
+
+				$firmDetails = $this->DmiFirms->find('all')->where(array('customer_id IS'=>$chemistdetails['created_by']))->first();
+				if(!empty($firmDetails)){
+				$this->set('firmName',$firmDetails['firm_name']);
+				$this->set('firm_address',$firmDetails['street_address']);
+				$this->set('pin_code', $firmDetails['postal_code']);
+
+				$district = $this->DmiDistricts->find('all')->where(array('id IS'=>$firmDetails['district']))->first();
+				if(!empty($district)){
+
+				$this->set('district', $district['district_name']);
+				}
+				$state = $this->DmiStates->find('all')->where(array('id IS'=>$firmDetails['state']))->first();
+				if(!empty($state)){
+				$this->set('state', $state['state_name']);
+				}
+				// for multiple commodities select at export added by laxmi On 10-1-23
+				$sub_commodity_array = explode(',',$firmDetails['sub_commodity']);
+				$i=0;
+				foreach ($sub_commodity_array as $key => $sub_commodity) {
+
+				$fetch_commodity_id = $this->MCommodity->find('all',array('conditions'=>array('commodity_code IS'=>$sub_commodity)))->first(); 
+				$commodity_id[$i] = $fetch_commodity_id['category_code'];
+				$sub_commodity_data[$i] =  $fetch_commodity_id;		
+				$i=$i+1;
+				}
+				$unique_commodity_id = array_unique($commodity_id); 
+				$commodity_name_list = $this->MCommodityCategory->find('all',array('conditions'=>array('category_code IN'=>$unique_commodity_id, 'display'=>'Y')))->toArray();
+
+				$this->set('commodity_name_list',$commodity_name_list);		
+				$this->set('sub_commodity_data',$sub_commodity_data);
+
+
+				}
+
+				$ral_officeData = $this->DmiChemistRoToRalLogs->find('all')->where(array('chemist_id IS'=>$customer_id))->first();
+
+				if(!empty($ral_officeData)){
+				$ral_id = $ral_officeData['ral_office_id'];
+				$ral_office = $this->DmiRoOffices->find('all')->where(array('id IS'=>$ral_id))->first();
+				$this->set('ral_office', $ral_office['ro_office']);
+				$this->set('ral_office_address', $ral_office['ro_office_address']);
+
+				$dateF = date('d-m-Y',strtotime(str_replace('/', '.',$ral_officeData['shedule_from'])));
+				$dateTo = date('d-m-Y',strtotime(str_replace('/', '.',$ral_officeData['shedule_to'])));
+				$this->set('schedule_from',$dateF);
+				$this->set('schedule_to',$dateTo);
+				}
+
+				$all_data_pdf = $this->render('/Applicationformspdfs/chemist_app_pdf_ro_to_ral');
+
+				$split_customer_id = explode('/',(string) $customer_id); #For Deprecations
+
+				$pdfPrefix = 'forward_letter_to_ral';
+				$rearranged_id = $pdfPrefix.'('.$split_customer_id[0].'-'.$split_customer_id[1].'-'.$split_customer_id[2].')';
+
+				$application_type = $this->Session->read('application_type');
+
+				//check applicant last record version to increment		
+				$list_id = $this->DmiChemistRoToRalLogs->find('list', array('valueField'=>'id', 'conditions'=>array('chemist_id IS'=>$customer_id)))->toArray();
+
+				if(!empty($list_id))
+				{
+				$max_id = $this->DmiChemistRoToRalLogs->find('all', array('fields'=>'pdf_version', 'conditions'=>array('id'=>max($list_id))))->first();																	
+				$last_pdf_version 	=	$max_id['pdf_version'];
+
+				}
+				else{	$last_pdf_version = 0;	}				
+
+				$current_pdf_version = $last_pdf_version+1; //increment last version by 1//taking complete file name in session, which will be use in esign controller to esign the file.
+				$this->Session->write('pdf_file_name',$rearranged_id.'('.$current_pdf_version.')'.'.pdf');
+				$folderName = $this->Customfunctions->getFolderName($customer_id);
+				//creating filename and file path to save				
+				$file_path = '/testdocs/DMI/chemist_training/ro_to_ral_letter/'.$rearranged_id.'('.$current_pdf_version.')'.'.pdf';
+
+				$filename = $_SERVER["DOCUMENT_ROOT"].$file_path;
+				//creating filename and file path to save				
+
+				$file_name = $rearranged_id.'('.$current_pdf_version.')'.'.pdf';
+
+				$this->DmiChemistRoToRalLogs->updateAll(
+				array('pdf_file' => $file_path, 'pdf_version'=>$current_pdf_version),
+				array('chemist_id'=>$customer_id));
+
+				$file_path = $_SERVER["DOCUMENT_ROOT"].$file_path;
+				//to preview application
+				$this->callTcpdf($all_data_pdf,'F',$customer_id,'chemist',$file_path);//with save mode
+				$this->callTcpdf($all_data_pdf,'I',$customer_id,'chemist',$file_path);//on with preview mode
+
+				$this->redirect('/dashboard/home');
+
+				}
+				}
+				
+				
+				//added new function to genrate training completed pdf at ro on 02-01-2023 by laxmi B.
+				public function chemistTrainingCompPdfRo($id = null){
+
+				$this->loadModel('DmiFirms');	
+				$this->loadModel('DmiStates');
+				$this->loadModel('DmiDistricts');
+				$this->loadModel('DmiChemistRoToRalLogs');
+				$this->loadModel('DmiChemistTrainingAtRo');
+				$this->loadModel('DmiChemistRegistrations');
+				$this->loadModel('MCommodityCategory');
+				$this->loadModel('MCommodity');
+				$this->loadModel('DmiRoOffices');
+
+				$ro_fname = $this->Session->read('f_name');
+				$ro_lname = $this->Session->read('l_name');
+				$ro_role = $this->Session->read('role');
+
+				$this->set('ro_fname', $ro_fname);
+				$this->set('ro_lname', $ro_lname);
+				$this->set('role', $ro_role);
+
+				$chemistData = $this->DmiChemistTrainingAtRo->find('all',array('fields'=>array('chemist_id','chemist_fname','chemist_lname','ro_office_id')))->where(array('id IS'=>$id, 'training_completed IS'=>'1'))->first();
+				if(!empty($chemistData)){
+				$customer_id = $chemistData['chemist_id'];
+				$this->set('customer_id',$chemistData['chemist_id']);
+				$this->set('chemist_fname',$chemistData['chemist_fname']);
+				$this->set('chemist_lname',$chemistData['chemist_lname']);
+
+
+
+				$packer_id = $this->DmiChemistRegistrations->find('list', array('valueField'=>'created_by'))->where(array('chemist_id IS'=>$customer_id))->first();
+				if(!empty($packer_id)){
+				$firmData = $this->DmiFirms->find()->where(array('customer_id IS'=>$packer_id))->first();
+				$this->set('firmName',$firmData['firm_name']);
+				$this->set('firm_address',$firmData['street_address']);
+				$this->set('pin_code',$firmData['postal_code']);
+
+				$district = $this->DmiDistricts->find('list',array('valueField'=>'district_name'))->where(array('id IS'=>$firmData['district']))->first();
+				$state = $this->DmiStates->find('list',array('valueField'=>'state_name'))->where(array('id IS'=>$firmData['state']))->first();
+				$this->set('district',$district);
+				$this->set('state',$state);
+
+
+				// for multiple commodities select at export added by laxmi On 10-1-23
+				$sub_commodity_array = explode(',',$firmData['sub_commodity']);
+				$i=0;
+				foreach ($sub_commodity_array as $key => $sub_commodity) {
+
+				$fetch_commodity_id = $this->MCommodity->find('all',array('conditions'=>array('commodity_code IS'=>$sub_commodity)))->first(); 
+				$commodity_id[$i] = $fetch_commodity_id['category_code'];
+				$sub_commodity_data[$i] =  $fetch_commodity_id;		
+				$i=$i+1;
+				}
+				$unique_commodity_id = array_unique($commodity_id); 
+				$commodity_name_list = $this->MCommodityCategory->find('all',array('conditions'=>array('category_code IN'=>$unique_commodity_id, 'display'=>'Y')))->toArray();
+
+				$this->set('commodity_name_list',$commodity_name_list);		
+				$this->set('sub_commodity_data',$sub_commodity_data);	
+
+				}
+
+				$scheduleDates = $this->DmiChemistRoToRalLogs->find('all', array('fields'=>array('ro_schedule_from','ro_schedule_to')))->where(array('chemist_id IS'=>$customer_id, 'is_forwordedtoral'=>'yes'))->first();
+				if(!empty($scheduleDates)){
+				$schedule_from = date('d-m-Y',strtotime(str_replace('/','.', $scheduleDates['ro_schedule_from'])));
+				$schedule_to = date('d-m-Y',strtotime(str_replace('/','.', $scheduleDates['ro_schedule_to'])));
+				$this->set('schedule_from',$schedule_from);
+				$this->set('schedule_to',$schedule_to);
+
+				}
+
+				$ro_office = $this->DmiRoOffices->find('list', array('valueField'=>'ro_office'))->where(array('id IS'=>$chemistData['ro_office_id']))->first();
+				$this->set('ro_office',$ro_office);
+
+				}
+
+
+				$all_data_pdf = $this->render('/Applicationformspdfs/chemist_training_comp_pdf_ro');
+
+				$split_customer_id = explode('/',(string) $customer_id); #For Deprecations
+
+				$pdfPrefix = 'reliving_letter_from_ro';
+				$rearranged_id = $pdfPrefix.'('.$split_customer_id[0].'-'.$split_customer_id[1].'-'.$split_customer_id[2].')';
+
+				//check applicant last record version to increment		
+				$list_id = $this->DmiChemistTrainingAtRo->find('list', array('valueField'=>'id', 'conditions'=>array('chemist_id IS'=>$customer_id)))->toArray();
+
+				if(!empty($list_id))
+				{
+				$max_id = $this->DmiChemistTrainingAtRo->find('all', array('fields'=>'pdf_version', 'conditions'=>array('id'=>max($list_id))))->first();																	
+				$last_pdf_version 	=	$max_id['pdf_version'];
+
+				}
+				else{	$last_pdf_version = 0;	}				
+
+				$current_pdf_version = $last_pdf_version+1; //increment last version by 1//taking complete file name in session, which will be use in esign controller to esign the file.
+				$this->Session->write('pdf_file_name',$rearranged_id.'('.$current_pdf_version.')'.'.pdf');
+
+				//creating filename and file path to save				
+				$file_path = '/testdocs/DMI/chemist_training/training_at_ro/'.$rearranged_id.'('.$current_pdf_version.')'.'.pdf';
+
+				$filename = $_SERVER["DOCUMENT_ROOT"].$file_path;
+				//creating filename and file path to save				
+
+				$file_name = $rearranged_id.'('.$current_pdf_version.')'.'.pdf';
+
+				$this->DmiChemistTrainingAtRo->updateAll(
+				array('pdf_file' => $file_path, 'pdf_version'=>$current_pdf_version),
+				array('chemist_id'=>$customer_id));
+
+				$file_path = $_SERVER["DOCUMENT_ROOT"].$file_path;
+				//to preview application
+				$this->callTcpdf($all_data_pdf,'F',$customer_id,'chemist',$file_path);//with save mode
+				$this->callTcpdf($all_data_pdf,'I',$customer_id,'chemist',$file_path);//on with preview mode
+
+				$this->redirect('/dashboard/home');
+
+
+				} 
+
+	          				//chemist training approval certificate added by laxmi B. on 03-01-2022
+				public function chemistTrainingApprovalCertificate()
+				{
+				$this->loadModel('DmiFirms');		
+				$this->loadModel('DmiUsers');
+				$this->loadModel('DmiStates');
+				$this->loadModel('MCommodityCategory');
+				$this->loadModel('MCommodity');
+				$this->loadModel('DmiChemistRegistrations');
+				$this->loadModel('DmiDistricts');
+				$this->loadModel('DmiChemistRoToRalLogs');
+				$this->loadModel('DmiChemistRalToRoLogs');
+				$this->loadModel('DmiRoOffices');
+				$this->loadModel('DmiChemistProfileDetails');
+
+
+				$customer_id = $this->Session->read('customer_id');
+				$ro_fname    = $this->Session->read('f_name');
+				$ro_lname    = $this->Session->read('l_name');
+				$role    = $this->Session->read('role');
+
+				$this->set('customer_id',$customer_id);
+				$this->set('ro_fname',$ro_fname);
+				$this->set('ro_lname',$ro_lname);
+				$this->set('role',$role);
+
+				$chemist_data = $this->DmiChemistRegistrations->find('all', array('fields'=>array('created_by','chemist_fname', 'chemist_lname') , 'conditions'=>array('chemist_id IS'=>$customer_id)))->first();
+
+				$chemist_address= $this->DmiChemistProfileDetails->find('all',array('fields'=>'address_1','conditions'=>array('customer_id IS'=>$customer_id)))->first();
+
+				$this->set('chemist_address',$chemist_address['address_1']);
+				$this->set('chemist_fname', $chemist_data['chemist_fname']);
+				$this->set('chemist_lname', $chemist_data['chemist_lname']);
+
+				//set packer id in session and level_3
+				$this->Session->write('packer_id',$chemist_data['created_by'] );
+				$this->Session->write('current_level',"level_3");
+
+				// data from DMI firm Table					
+				$fetch_customer_firm_data = $this->DmiFirms->find('all',array('conditions'=>array('customer_id IS'=>$chemist_data['created_by'])))->first();
+				$customer_firm_data = $fetch_customer_firm_data;
+				$this->set('customer_firm_data',$customer_firm_data);		
+
+
+				$fetch_state_name = $this->DmiStates->find('all',array('fields'=>'state_name','conditions'=>array('id IS'=>$customer_firm_data['state'], 'OR'=>array('delete_status IS NULL','delete_status ='=>'no'))))->first();
+				$firm_state_name = $fetch_state_name['state_name'];
+				$this->set('firm_state_name',$firm_state_name);	
+
+
+
+				$pdf_date = date('d-m-Y');
+				$this->set('pdf_date',$pdf_date);
+
+				// to show firm address name form id		
+				$firm_district_name = $this->DmiDistricts->find('all', array('fields'=>'district_name', 'conditions'=>array('id IS'=>$customer_firm_data['district'])))->first();
+				$this->set('firm_district_name',$firm_district_name['district_name']);
+
+				//to show commodity name
+
+				$sub_commodity_array = explode(',',$customer_firm_data['sub_commodity']);
+				$i=0;
+				foreach ($sub_commodity_array as $key => $sub_commodity) {
+
+				$fetch_commodity_id = $this->MCommodity->find('all',array('conditions'=>array('commodity_code IS'=>$sub_commodity)))->first(); 
+				$commodity_id[$i] = $fetch_commodity_id['category_code'];
+				$sub_commodity_data[$i] =  $fetch_commodity_id;		
+				$i=$i+1;
+				}
+				$unique_commodity_id = array_unique($commodity_id); 
+				$commodity_name_list = $this->MCommodityCategory->find('all',array('conditions'=>array('category_code IN'=>$unique_commodity_id, 'display'=>'Y')))->toArray();
+
+				$this->set('commodity_name_list',$commodity_name_list);		
+				$this->set('sub_commodity_data',$sub_commodity_data);
+				//to fetch ral name
+				$roToRalData = $this->DmiChemistRoToRalLogs->find('all', array('conditions'=>array('chemist_id IS'=>$customer_id)))->first();
+				if(!empty($roToRalData)){
+				$scheduleFrom = date('d-m-Y', strtotime(str_replace('/','.',$roToRalData['shedule_from'])));
+				$scheduleTo = date('d-m-Y', strtotime(str_replace('/','.',$roToRalData['shedule_to'])));
+
+
+				$roscheduleFrom = date('d-m-Y', strtotime(str_replace('/','.',$roToRalData['ro_schedule_from'])));
+				$roscheduleTo = date('d-m-Y', strtotime(str_replace('/','.',$roToRalData['ro_schedule_to'])));
+
+				$this->set('schedule_from',$scheduleFrom);
+				$this->set('shedule_to',$scheduleTo);
+				$this->set('ro_schedule_from',$roscheduleFrom);
+				$this->set('ro_shedule_to',$roscheduleTo);
+
+				//to fetch ro office name 
+				$office = $this->DmiRoOffices->find('all',array('fields'=>'ro_office', 'conditions'=>array('id IS'=>$roToRalData['ro_office_id'])))->first();
+				$this->set('ro_office',$office['ro_office']);
+				}
+
+				$ralToRoData = $this->DmiChemistRalToRoLogs->find('all', array('fields'=>array('ro_first_name', 'ro_last_name','ro_office_id'), 'conditions'=>array('chemist_id IS'=>$customer_id)))->first();
+				$this->set('ro_first_name',$ralToRoData['ro_first_name']);
+				$this->set('ro_last_name',$ralToRoData['ro_last_name']);
+
+				$this->generateGrantCerticatePdf('/Applicationformspdfs/chemist_training_approval_certificate'); 
+
+				$this->redirect(array('controller'=>'dashboard','action'=>'home')); 
+
+				}
+  
+  
+               			//chemist training schedule letter at RO side added by laxmi on 10-1-2023	 
+			public function trainingScheduleLetterFromRo(){
+
+			$this->loadModel('DmiFirms');		
+			$this->loadModel('DmiUsers');
+			$this->loadModel('DmiStates');
+			$this->loadModel('MCommodityCategory');
+			$this->loadModel('MCommodity');
+			$this->loadModel('DmiChemistRegistrations');
+			$this->loadModel('DmiDistricts');
+			$this->loadModel('DmiChemistRoToRalLogs');
+			$this->loadModel('DmiChemistRalToRoLogs');
+			$this->loadModel('DmiRoOffices');
+			$this->loadModel('DmiChemistProfileDetails');
+
+			$customer_id = $this->Session->read('customer_id');
+			$ro_fname    = $this->Session->read('f_name');
+			$ro_lname    = $this->Session->read('l_name');
+			$role    = $this->Session->read('role');
+
+			$this->set('customer_id',$customer_id);
+			$this->set('ro_fname',$ro_fname);
+			$this->set('ro_lname',$ro_lname);
+			$this->set('role',$role);
+
+			$chemist_data = $this->DmiChemistRegistrations->find('all', array('fields'=>array('created_by','chemist_fname', 'chemist_lname') , 'conditions'=>array('chemist_id IS'=>$customer_id)))->first();
+
+			$chemist_address= $this->DmiChemistProfileDetails->find('all',array('fields'=>'address_1','conditions'=>array('customer_id IS'=>$customer_id)))->first();
+
+			$this->set('chemist_address',$chemist_address['address_1']);
+			$this->set('chemist_fname', $chemist_data['chemist_fname']);
+			$this->set('chemist_lname', $chemist_data['chemist_lname']);
+
+			//set packer id in session and level_3
+			$this->Session->write('packer_id',$chemist_data['created_by'] );
+			$this->Session->write('current_level',"level_3");
+
+			// data from DMI firm Table					
+			$fetch_customer_firm_data = $this->DmiFirms->find('all',array('conditions'=>array('customer_id IS'=>$chemist_data['created_by'])))->first();
+			$customer_firm_data = $fetch_customer_firm_data;
+
+			$this->set('customer_firm_data',$customer_firm_data);		
+
+
+			$fetch_state_name = $this->DmiStates->find('all',array('fields'=>'state_name','conditions'=>array('id IS'=>$customer_firm_data['state'], 'OR'=>array('delete_status IS NULL','delete_status ='=>'no'))))->first();
+			$firm_state_name = $fetch_state_name['state_name'];
+			$this->set('firm_state_name',$firm_state_name);	
+
+
+
+			$pdf_date = date('d-m-Y');
+			$this->set('pdf_date',$pdf_date);
+
+			// to show firm address name form id		
+			$firm_district_name = $this->DmiDistricts->find('all', array('fields'=>'district_name', 'conditions'=>array('id IS'=>$customer_firm_data['district'])))->first();
+			$this->set('firm_district_name',$firm_district_name['district_name']);
+
+			//to show commodity name
+
+			$sub_commodity_array = explode(',',$customer_firm_data['sub_commodity']);
+			$i=0;
+			foreach ($sub_commodity_array as $key => $sub_commodity) {
+
+			$fetch_commodity_id = $this->MCommodity->find('all',array('conditions'=>array('commodity_code IS'=>$sub_commodity)))->first(); 
+			$commodity_id[$i] = $fetch_commodity_id['category_code'];
+			$sub_commodity_data[$i] =  $fetch_commodity_id;		
+			$i=$i+1;
+			}
+			$unique_commodity_id = array_unique($commodity_id); 
+			$commodity_name_list = $this->MCommodityCategory->find('all',array('conditions'=>array('category_code IN'=>$unique_commodity_id, 'display'=>'Y')))->toArray();
+
+			$this->set('commodity_name_list',$commodity_name_list);		
+			$this->set('sub_commodity_data',$sub_commodity_data);
+			//to fetch ral name
+			$roToRalData = $this->DmiChemistRoToRalLogs->find('all', array('conditions'=>array('chemist_id IS'=>$customer_id)))->first(); 
+			if(!empty($roToRalData)){
+			$scheduleFrom = date('d-m-Y', strtotime(str_replace('/','.',$roToRalData['ro_schedule_from'])));
+			$scheduleTo = date('d-m-Y', strtotime(str_replace('/','.',$roToRalData['ro_schedule_to'])));
+
+			$this->set('schedule_from',$scheduleFrom);
+			$this->set('shedule_to',$scheduleTo);
+
+			//to fetch ro office name 
+			$office = $this->DmiRoOffices->find('all',array('fields'=>'ro_office', 'conditions'=>array('id IS'=>$roToRalData['ro_office_id'])))->first();
+			$this->set('ro_office',$office['ro_office']);
+			}
+
+
+			$all_data_pdf = $this->render('/Applicationformspdfs/training_schedule_letter_from_ro');
+
+			$split_customer_id = explode('/',(string) $customer_id); #For Deprecations
+
+			$pdfPrefix = 'training_schedule_letter_at_ro';
+			$rearranged_id = $pdfPrefix.'('.$split_customer_id[0].'-'.$split_customer_id[1].'-'.$split_customer_id[2].')';
+
+			//check applicant last record version to increment		
+			$list_id = $this->DmiChemistRoToRalLogs->find('list', array('valueField'=>'id', 'conditions'=>array('chemist_id IS'=>$customer_id)))->toArray();
+
+			if(!empty($list_id))
+			{
+			$max_id = $this->DmiChemistRoToRalLogs->find('all', array('fields'=>'pdf_version', 'conditions'=>array('id'=>max($list_id))))->first();																	
+			$last_pdf_version 	=	$max_id['pdf_version'];
+
+			}
+			else{	$last_pdf_version = 0;	}				
+
+			$current_pdf_version = $last_pdf_version; //increment last version by 1//taking complete file name in session, which will be use in esign controller to esign the file.
+			$this->Session->write('pdf_file_name',$rearranged_id.'('.$current_pdf_version.')'.'.pdf');
+
+			//creating filename and file path to save				
+			$file_path = '/testdocs/DMI/chemist_training/training_schedule_letter_at_ro/'.$rearranged_id.'('.$current_pdf_version.')'.'.pdf';
+
+			$filename = $_SERVER["DOCUMENT_ROOT"].$file_path;
+			//creating filename and file path to save				
+
+			$file_name = $rearranged_id.'('.$current_pdf_version.')'.'.pdf';
+
+			$this->DmiChemistRoToRalLogs->updateAll(
+			array('ro_schedule_letter' => $file_path),
+			array('chemist_id'=>$customer_id));
+
+			$file_path = $_SERVER["DOCUMENT_ROOT"].$file_path;
+			//to preview application
+			$this->callTcpdf($all_data_pdf,'F',$customer_id,'chemist',$file_path);//with save mode
+			$this->callTcpdf($all_data_pdf,'I',$customer_id,'chemist',$file_path);//on with preview mode
+
+			$this->redirect('/dashboard/home');
+			}
+
 }	
 ?>

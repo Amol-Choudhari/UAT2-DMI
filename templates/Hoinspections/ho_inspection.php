@@ -110,23 +110,23 @@
 											</div>
 
 					<?php  
-				
-					if(
-						//added this condition to hide comment box & btns if comment_by current user & current allocated level is login user. 
-						//updated on 16-12-2017
-						//again cond. updated if current user is Ro and DyAMA both
-						(($last_comment_by != $_SESSION['username'] || ($check_user_role['dy_ama'] == 'yes' && $check_user_role['ro_inspection'] == 'yes')) && $current_allocated_to == $_SESSION['username']) || 
+					//added this condition to hide comment box & btns if comment_by current user & current allocated level is login user. 
+					//updated on 16-12-2017
+					//again cond. updated if current user is Ro and DyAMA both
+					if((($last_comment_by != $_SESSION['username'] || 
+						($check_user_role['dy_ama'] == 'yes' && $check_user_role['ro_inspection'] == 'yes')) 
+						&& $current_allocated_to == $_SESSION['username']) || 
 						
-						//below condition added on 19-01-2022 by Amol, to manage scenario when user commented last and swapped positions/transfer roles like position/transfer roles RO to Dy ama or Dy ama to RO etc
-						($last_comment_by == $_SESSION['username'] && ((($from_user=='dy_ama' || $from_user=='jt_ama' || $from_user=='ama') && $_SESSION['current_level']=='level_3') || ($from_user=='ro' && $_SESSION['current_level']=='level_4'))) || 
+						//below condition added on 19-01-2022 by Amol, to manage scenario when user commented last and swapped positions/transfer roles
+						//like position/transfer roles RO to Dy ama or Dy ama to RO etc
+						($last_comment_by == $_SESSION['username'] && 
+						((($from_user=='dy_ama' || $from_user=='jt_ama' || $from_user=='ama') && $_SESSION['current_level']=='level_3')||
+						($from_user=='ro' && $_SESSION['current_level']=='level_4'))) ||
 
-						//applied to show commenting options, to check valid Ro if last RO changed in between process - Amol [22-12-2022]
-						(!empty($check_valid_ro) && $to_user=='ro') ||
-
-						//Below condtion is added to when application is reffered back from Dy.AMA to RO and RO replied back to DY.AMA - Akash[04-05-2023]
-						($from_user=='ro' && $_SESSION['current_level']=='level_4')
-					
-					){ ?> 
+						//applied on 22-12-2022 by Amol, to check valid Ro if last RO changed in between process
+						//to show commenting options
+						(!empty($check_valid_ro) && $to_user=='ro')						
+						){ ?> 
 
 						<?php //application_type==3 condition on 13-04-2023
 						//updated condition on 23-01-2023 for PP as per new order of 10-01-2023

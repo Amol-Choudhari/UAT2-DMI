@@ -783,12 +783,7 @@ use App\Network\Response\Response;
 							
 							//check sub officer power
 							$SubOfscroles = $this->DmiUserRoles->find('all',array('fields'=>'so_grant_pp','conditions'=>array('user_email_id'=>$office_email_id)))->first();
-							
-							//check if SO office has no active officer, then it will be grant/esign by RO Incharge
-							//updates as per email sent by DMI on 09-05-2023
-							$soOfficerCnt = $this->Customfunctions->findOfficerCountInoffice($customer_id);
-							//cond. updated on 09-05-2023 by Amol
-							if($SubOfscroles['so_grant_pp'] == 'yes' && $soOfficerCnt != 0){
+							if($SubOfscroles['so_grant_pp'] == 'yes'){
 								$appl_array[$i]['show_esign_btn'] = 'No Grant Role';
 							}
 						} 
@@ -813,15 +808,7 @@ use App\Network\Response\Response;
 						elseif($cert_type == 'CA' && $office_type =='SO' && $ro_incharge == $username){
 							
 							if($form_type!='E'){
-								
-								//check if SO office has no active officer, then it will be grant/esign by RO Incharge
-								//updates as per email sent by DMI on 09-05-2023
-								$soOfficerCnt = $this->Customfunctions->findOfficerCountInoffice($customer_id);
-								//cond. added on 09-05-2023 by Amol
-								if($soOfficerCnt !=0){
-									$appl_array[$i]['show_esign_btn'] = 'No Grant Role';
-								}							
-								
+								$appl_array[$i]['show_esign_btn'] = 'No Grant Role';
 							}
 						} 
 					

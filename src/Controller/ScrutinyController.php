@@ -187,6 +187,43 @@ class ScrutinyController extends AppController{
 
 
 		$this->Session->write('application_type',$application_type);
+		 //added appl type 4  for chemist training by laxmi B. on 22-12-2022
+         if ($application_type== 4) { 
+          
+		// to fetch chemist is alredy registerd or new chemist added by laxmi on 22-12-22
+		 $this->loadModel('DmiChemistRegistrations');	
+		 $chemistdetails = $this->DmiChemistRegistrations->find('all', array('conditions'=>array('chemist_id IS'=>$customer_id)))->first();
+
+		//set in session variable for chemist training completed or not
+
+		 if(!empty($chemistdetails['is_training_completed'])){
+          $this->Session->write('is_training_completed', $chemistdetails['is_training_completed']);
+          $this->set('is_training_completed', $chemistdetails['is_training_completed']);
+             // set packer id in session
+           $this->Session->write('packer_id', $chemistdetails['created_by']);
+		 }
+         
+		 // set application is forwarded to RAL or not added by laxmi on 22-12-22
+           $this->loadModel('DmiChemistRoToRalLogs');	
+		 $isforwardedtoral = $this->DmiChemistRoToRalLogs->find('all', array('fields'=>'is_forwordedtoral', 'conditions'=>array('chemist_id IS'=>$customer_id , 'is_forwordedtoral IS NOT'=>NULL)))->first();
+		
+		 if(!empty($isforwardedtoral['is_forwordedtoral'])){
+            $this->set('is_forwordedtoral', $isforwardedtoral['is_forwordedtoral']);
+		 }else{
+		 	    $isforwardedtoral = 'no';
+		 	  $this->set('is_forwordedtoral', $isforwardedtoral);
+		 }
+
+		 //to check and add variable in session if trainingCompleteAtRo added by laxmi on 04-01-2023
+		 $this->loadModel('DmiChemistTrainingAtRo');	
+		 $trainingCompleteAtRo = $this->DmiChemistTrainingAtRo->find('all', array('fields'=>'training_completed', 'conditions'=>array('chemist_id IS'=>$customer_id , 'training_completed IS'=>1)))->first();
+		
+		 if(!empty($trainingCompleteAtRo)){
+		 	$this->Session->write('trainingCompleteAtRo',$trainingCompleteAtRo['training_completed']);
+            $this->set('trainingCompleteAtRo', $trainingCompleteAtRo['training_completed']);
+		 }
+		}
+
 
 		if($current_level){
 
@@ -202,6 +239,10 @@ class ScrutinyController extends AppController{
 		$export_unit_status = $this->Customfunctions->checkApplicantExportUnit($customer_id);
 		$this->set('export_unit_status',$export_unit_status);
 
+        //export_unit field set in session by laxmi on 09-01-2023
+
+        $this->Session->write('export_unit', $export_unit_status);
+																				 
 		$added_directors_details = $this->DmiAllDirectorsDetails->allDirectorsDetail($customer_id);
 		$this->set('added_directors_details',$added_directors_details);
 
@@ -793,9 +834,23 @@ class ScrutinyController extends AppController{
 			$final_submit_details = $this->Customfunctions->finalSubmitDetails($customer_id,'application_form');
 			$this->set('final_submit_details',$final_submit_details);
 
+           // customer id is changed to packer id to whoes create the chemist added by laxmi B. on 21-12-22
+             if($application_type == 4){
+               $DmiChemistRegistrations = TableRegistry::getTableLocator()->get('DmiChemistRegistrations');	
+			   $chemist_created_by = $DmiChemistRegistrations->find('list', array('valueField'=>'created_by', 'conditions'=>array('chemist_id IS'=>$customer_id)))->first();
+			   if(!empty($chemist_created_by)){
+                    $customer_id = $chemist_created_by;
+			   }
+
+             }
+ 				   
 			$firm_detail = $this->DmiChangeFirms->sectionFormDetails($customer_id);
 			$firm_details = $firm_detail[0];
 			$this->set('firm_details',$firm_details);
+             // revert back customer id to chemist id added by laxmi B. on 21-12-22
+            if($application_type == 4){
+            	 $customer_id = $_SESSION['customer_id'];
+            }																						 
 
 			// Fetch submitted Payment Details and show // Done By pravin 13/10/2017
 			$this->Paymentdetails->applicantPaymentDetails($customer_id,$firm_details['district'],$payment_table);
@@ -825,8 +880,8 @@ class ScrutinyController extends AppController{
 			}
 																	  
 			$sub_commodity_array = explode(',',$firm_details['sub_commodity']);
-
-			if(!empty($firm_details['sub_commodity'])){
+             //to hide commodities from application type 4 in checmist flow apply condition on or section by laxmi Bhadade on date 21-12-22
+			if(!empty($firm_details['sub_commodity']) && $application_type != 4){
 				$i=0;
 				foreach($sub_commodity_array as $sub_commodity_id)
 				{
@@ -846,8 +901,9 @@ class ScrutinyController extends AppController{
 
 				$this->set('sub_commodity_data',$sub_commodity_data);
 			}
-
-			if(!empty($firm_details['packaging_materials'])){
+             
+			 //to hide firm details from application type 4 in checmist flow apply condition on or section by laxmi Bhadade on date 21-12-22
+			if(!empty($firm_details['packaging_materials']) && $application_type != 4){
 
 				$packaging_materials = explode(',',$firm_details['packaging_materials']);
 				$packaging_type = $this->DmiPackingTypes->find('list', array('keyField'=>'id','valueField'=>'packing_type', 'conditions'=>array('id IN'=>$packaging_materials)))->toArray();

@@ -25,6 +25,8 @@ class ApplicationController extends AppController{
 		$this->loadComponent('Flowbuttons');
 		$this->loadComponent('Randomfunctions');
 		$this->loadModel('DmiSmsEmailTemplates');
+		//load chemist payment details model for chemist application by laxmi on 03-05-2023
+		$this->loadModel('DmiChemistPaymentDetails');
 	
 
 		$this->viewBuilder()->setHelpers(['Form','Html','Time']);
@@ -225,6 +227,7 @@ class ApplicationController extends AppController{
 		$this->loadModel('DmiAllDirectorsDetails');
 		$this->loadModel('DmiFirms');
 		$this->loadModel('DmiChemistRegistrations');
+		$this->loadModel('DmiChemistPaymentDetails');
 
 		$application_type = $this->Session->read('application_type');
 		$this->set('application_type',$application_type);
@@ -239,13 +242,16 @@ class ApplicationController extends AppController{
 
 		// For Chemist added the appluicant type 4 and replaced chemist id with customer id , Done By AKASH THAKRE 30-09-2021
 		if ($application_type == 4) {
-
+    
 			$chemistDetails = $this->DmiChemistRegistrations->find('all',array('conditions'=>array('chemist_id IS'=>$customer_id,'delete_status IS NULL')))->first();
 			if (!empty($chemistDetails)) {
 				$chemist_id = $customer_id;
 				$customer_id = $chemistDetails['created_by'];
 				$packer_id = $customer_id;
 				$this->Session->write('packer_id',$packer_id);
+				//for chemist training alredy done set isTrainingCompleted in session with yes by laxmi B on. 17-01-2023
+				$is_training_completed = $chemistDetails['is_training_completed'];
+				$this->Session->write('is_training_completed',$is_training_completed);														  
 			}
 
 			$this->Session->write('application_dashboard','chemist');
@@ -701,7 +707,7 @@ class ApplicationController extends AppController{
 	
 	// PAYMENT
 	public function payment() {
-
+        
 		// set menu name for current active menu in sidebar
 		$this->set('current_menu', 'menu_payment');
 
@@ -811,9 +817,21 @@ class ApplicationController extends AppController{
 			$this->set('progress_bar_status',$progress_bar_status);
 
 			//intensionally called from DMiChangeFirms, it will fetch record from dmi firms by default if not found from the function
+			//for chemist applicant save pod id with using customer id who register the chemist
+			//added by laxmi B. on 14-12-2022
+			if($application_type == 4){
+			 $customer_id = $this->Session->read('packer_id');
+			}							  
 			$firm_detail = $this->DmiChangeFirms->sectionFormDetails($customer_id);
 			$firm_details = $firm_detail[0];
 			$this->set('firm_details',$firm_details);
+			//for chemist applicant save pod id with using customer id who register the chemist
+			//added by laxmi B. on 14-12-2022
+			//revert above customer id to chemist id by laxmi B on 14-12-2022
+			if($application_type == 4){
+				$customer_id = $this->Session->read('username');
+			    $form_type='CHM';
+			}									
 
 			// Fetch submitted Payment Details and show // Done By pravin 13/10/2017
 			$this->Paymentdetails->applicantPaymentDetails($customer_id,$firm_details['district'],$payment_table);

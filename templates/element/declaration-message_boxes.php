@@ -2,13 +2,20 @@
 
 		$customer_id = $_SESSION['username'];
 
+	 //for chemist application use customer id as packer id who register the chemist added by laxmi B. on 15-12-2022
+    if($_SESSION['application_type']==4){
+    	 $customer_id = $_SESSION['packer_id'];
+    }
+   
+
 		$split_customer_id = explode('/',$customer_id);
 		//added this message on 27-10-2017 by Amol
 		//commented on 31-05-2018 because, getting message from DB now
 	//	$esign_msg = "Please preview your application pdf, if all fine click 'Ok' to E-Sign the document, if you don't want to E-Sign now please click 'Cancel', Your Application will final submitted only after E-Signing.";
 
 	//	$aadhar_auth_msg = 'I hereby state that I have no objection in authenticating myself with Aadhaar based authentication system and consent to providing my Aadhaar number, Biometric and/or One Time Pin (OTP) data for Aadhaar based authentication for the purposes of availing of eSign service/ e-KYC services / both in PAN application from DMI.';
-		if($_SESSION['application_type']==1 || $_SESSION['application_type']==3 || $_SESSION['application_type']==5 || $_SESSION['application_type']==6 || $_SESSION['application_type']==8 || $_SESSION['application_type']==9){
+		//for chemist added condition with application type 4 by laxmi B. on 15-12-2022 																		  
+		if($_SESSION['application_type']==1 || $_SESSION['application_type']==3 || $_SESSION['application_type']==5 || $_SESSION['application_type']==6 || $_SESSION['application_type']==8 || $_SESSION['application_type']==9 || $_SESSION['application_type']==4){
 			if($split_customer_id[1] == 1){
 
 				if($ca_bevo_applicant == 'yes'){

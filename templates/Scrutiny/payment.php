@@ -12,6 +12,8 @@
 											<div class="table-format">
 												<div class="total_charges_table">
 													<table class="table m-0 table-bordered box2shadow">
+													<!-- in chemist training approval hide commodity details conditionally added by laxmi on 21-12-2022 -->													  
+													<?php if($_SESSION['application_type'] != 4){?>		 
 														<thead class="tablehead">
 															<tr>
 																<th>Sr. No.</th>
@@ -25,7 +27,8 @@
 													</thead>
 													<tbody>
 													<?php //above four line commented & below code applied on 10-09-2017 by Amol
-															if(!empty($firm_details['sub_commodity'])){
+													     //in chemist training approval  hide commodity details added by laxmi on 21-12-2022
+															if(!empty($firm_details['sub_commodity']) && $_SESSION['application_type'] != 4){
 															$i=1;
 															foreach($commodity_name_list as $commodity_name){ ?>
 															<tr>
@@ -46,8 +49,8 @@
 															</td>
 														</tr>
 													<?php $i=$i+1; } } ?>
-
-													<?php if(!empty($firm_details['packaging_materials'])){
+                                                     <!--in chemist training approval  hide commodity details added by laxmi on 21-12-2022-->
+													<?php if(!empty($firm_details['packaging_materials']) && $_SESSION['application_type'] != 4){
 																	$sr_no = 1;
 																	foreach($packaging_type as $each_packaging_type){ ?>
 
@@ -58,7 +61,8 @@
 													<?php $sr_no = $sr_no + 1;	} } ?>
 
 													<tr>
-														<?php if(!empty($firm_details['sub_commodity'])){ ?>
+														  <!-- in chemist training approval no hide commodity details added by laxmi on 21-12-2022 -->														
+														<?php if(!empty($firm_details['sub_commodity']) && $_SESSION['application_type'] != 4 ){ ?>
 															<td></td>
 														<?php } ?>
 														<td class="cffffw">Processing Fee</td>

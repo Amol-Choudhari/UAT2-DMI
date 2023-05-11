@@ -488,7 +488,9 @@ class RandomfunctionsComponent extends Component {
 			$commodityTable = TableRegistry::getTableLocator()->get('MCommodity');
 			$packingTypeTable = TableRegistry::getTableLocator()->get('DmiPackingTypes');
 
-			if($firm_type==1){
+             //for chemist training and application type is 4 then not required firm details and commodity details t.e. apply condition for application type not equal to 4 by laxmi Bhadade on 03-05-23
+
+			if($firm_type==1 && ($_SESSION['application_type'] != 4)){
 
 				//in CA to show only already selected category list, to avoid payment amount conflict
 				$commodity_array = explode(',',$firm_details['sub_commodity']);

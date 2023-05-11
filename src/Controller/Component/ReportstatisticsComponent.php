@@ -21,7 +21,7 @@ class ReportstatisticsComponent extends Component {
 		$this->Session = $this->getController()->getRequest()->getSession();
 	}
 
-	public function backlog_app_processed($searchConditions, $from_date=null, $to_date=null){//from_date to_date added by laxmi on 13-20-2023
+	public function backlog_app_processed($searchConditions, $from_date, $to_date){//from_date to_date added by laxmi on 13-20-2023
 
 		
 		$DmiFirms = TableRegistry::getTableLocator()->get('DmiFirms');//initialize model in component
@@ -48,7 +48,7 @@ class ReportstatisticsComponent extends Component {
 		return $final_result;
 	}
 	
-	public function new_app_processed($searchConditions,$from_date=null, $to_date=null){//added from_date and to_date by laxmi on 14-02-23
+	public function new_app_processed($searchConditions,$from_date, $to_date){//added from_date and to_date by laxmi on 14-02-23
 		
 		$DmiFirms = TableRegistry::getTableLocator()->get('DmiFirms');//initialize model in component
 		$final_submitT	= 'DmiFinalSubmits';//change table name by laxmi on 14-12-2023 	
@@ -76,7 +76,7 @@ class ReportstatisticsComponent extends Component {
 		return $final_result;
 	}
 	
-	public function renewal_app_processed($searchConditions,$from_date=null, $to_date=null){//added from_date and to_date by laxmi on 14-02-23
+	public function renewal_app_processed($searchConditions,$from_date, $to_date){//added from_date and to_date by laxmi on 14-02-23
 		
 		$DmiFirms = TableRegistry::getTableLocator()->get('DmiFirms');//initialize model in component
 		$final_submitT	= 'DmiRenewalFinalSubmits';	//change table name by laxmi on 14-12-2023 

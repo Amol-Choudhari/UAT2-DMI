@@ -68,19 +68,7 @@
 		
 		<tr>
 			<td style="padding:10px; vertical-align:top;">3. Status of the printing press:</td>
-			<td style="padding:10px; vertical-align:top;">
-				<?php 
-					// This below Block is updated
-					// Before : The variable which is showing the status of the printing press used like '$business_type_value['business_type']' which is inaccesible.
-					// After : So the above variable changed to '$business_type_value'
-					// Akash [09-05-2023]
-					if(!empty($business_type_value)){ 
-						echo $business_type_value; 
-					}else{ 
-						echo 'NA'; 
-					} 
-				?>
-			</td>
+			<td style="padding:10px; vertical-align:top;"><?php if(!empty($business_type_value['business_type'])){ echo $business_type_value['business_type']; }else{ echo 'NA'; } ?></td>
 		</tr>
 		
 		
@@ -108,23 +96,11 @@
 		
 		<tr>
 			<td style="padding:10px; vertical-align:top;">5. Whether the printing press is assessed for the purpose of Income Tax. If yes give GST No.:</td>
-			<td style="padding:10px; vertical-align:top;">  
-				<?php // This all block is changed and variables are changed as it was not showing the GST Number of Applicant.
-					 /// the variable is first attched is '$printing_premises_profile' which is not defined on controller nor created.
-					 /// Hence the variable '$printing_report_detail' which is already set is used.
-					 /// Also the field named 'gst_no' is changed to 'assessed_for_tax_no' which is not exists in Database 
-					 /// Akash [09-05-2023]
-					if($printing_report_detail[0]['is_assessed_for'] == 'yes'){
-						if(!empty($printing_report_detail[0]['assessed_for_tax_no'])){ 
-							echo "<b>GST NO :</b>" ." ".$printing_report_detail[0]['assessed_for_tax_no']; 
-						}else{
-							echo 'NA'; 
-						}  
-					} else{ 
-						echo 'No'; 
-					} 
-				?>
-			</td>
+			<td style="padding:10px; vertical-align:top;">  <?php if($printing_report_detail[0]['is_assessed_for'] == 'yes'){ ?>
+															
+															<b>GST NO :</b>
+															<?php if(!empty($printing_premises_profile['gst_no'])){ echo $printing_premises_profile['gst_no']; }else{ echo 'NA'; } ?>
+			<?php } else{ echo 'No'; } ?></td>
 		</tr>
 		
 		<tr>

@@ -38,6 +38,18 @@ class DmiCommonScrutinyFlowDetailsTable extends Table{
 		}
 		
 		$_SESSION['paymentSection'] = $paymentSection;
+		 //check if chemist is alredy registerd if yes then payment form not include
+		// added by laxmi B. on 13-12-2022
+		  if($application_type == 4){
+			  
+			 $client = TableRegistry::get('DmiChemistRegistrations');
+			$checkClient = $client->find('all')->where(array('chemist_id IS'=>$_SESSION['username']))->first();
+			
+			if (!empty($checkClient) && $checkClient['is_training_completed']=='yes') {
+				
+				$_SESSION['paymentSection'] = NULL;
+			}
+		  }
 		
 		return $allSectionDetails;
 	}

@@ -317,6 +317,10 @@ class DmiSmsEmailTemplatesTable extends Table{
 			//for Accounts  (Done by pravin 20-07-2018)
 			if (in_array(8,$destination_array)) {
 
+				//for chemist get chemist id from session added by laxmi on 09-02-2023
+                if($application_type == 4){
+                   $customer_id = $_SESSION['chemistId'];
+                }
 				$DmiApplicantPaymentDetails = TableRegistry::getTableLocator()->get($DmiFinalSubmitTable['payment']);//added on 20-07-2017 by Pravin
 				$find_pao_id = $DmiApplicantPaymentDetails->find('all',array('conditions'=>array('customer_id IS'=>$customer_id),'order' => array('id' => 'desc')))->first();
 
@@ -858,6 +862,16 @@ class DmiSmsEmailTemplatesTable extends Table{
 
 		}
 
+
+				// Description : for chemist training set packer id as customer id for temporary to get firm details
+				// Author : Laxmi Bhadade
+				// Date : 04-05-2023
+				// For Module : Chemist Training
+		     if($application_type == 4) {
+             $customer_id = $_SESSION['packer_id'];
+		      }
+
+
 		$DmiCustomers = TableRegistry::getTableLocator()->get('DmiCustomers');
 		$DmiFirms = TableRegistry::getTableLocator()->get('DmiFirms');
 		$DmiRoOffices = TableRegistry::getTableLocator()->get('DmiRoOffices');
@@ -871,7 +885,6 @@ class DmiSmsEmailTemplatesTable extends Table{
 		$dmi_ca_pp_lab_mapings = TableRegistry::getTableLocator()->get('DmiCaPpLabMapings');
 		$dmi_replica_allotment_details = TableRegistry::getTableLocator()->get('DmiReplicaAllotmentDetails');
 		$dmi_replica_allotment_pdfs = TableRegistry::getTableLocator()->get('DmiReplicaAllotmentPdfs');
-
 
 		if (preg_match("/^[0-9]+\/[0-9]+$/",$customer_id,$matches)==1) {
 
@@ -909,6 +922,7 @@ class DmiSmsEmailTemplatesTable extends Table{
 			}
 			
 
+
 			$ro_user_data = $DmiUsers->find('all',array('conditions'=>array('email IS'=>$ro_email_id)))->first();
 			$ro_user_data = $ro_user_data;
 
@@ -930,7 +944,17 @@ class DmiSmsEmailTemplatesTable extends Table{
 			$ama_user_data = $DmiUsers->find('all',array('conditions'=>array('email IS'=>$ama_email_id)))->first();
 			$ama_user_data = $ama_user_data;
 
+ 
 			if (!empty($DmiFinalSubmitTable)) {
+
+				// Description : for chemist application type 4 use customer id as chemist  id 
+				// Author : Laxmi Bhadade
+				// Date : 04-05-2023
+				// For Module : Chemist Training
+
+				if($application_type == 4){
+					$customer_id = $_SESSION['chemistId'];
+				}
 
 				$final_submit_data = $DmiFinalSubmits->find('all',array('conditions'=>array('customer_id IS'=>$customer_id, 'status'=>'pending'),'order' => array('id' => 'desc')))->first();
 				//Check empty condition (Done by pravin 13/2/2018)
@@ -1096,7 +1120,12 @@ class DmiSmsEmailTemplatesTable extends Table{
 			#Replica COMMODITIES
 			$getReplicaCommodity = $dmi_replica_allotment_details->find('all')->select(['commodity'])->where(['customer_id IS' => $customer_id])->group('commodity')->toArray();
 			
-			if(empty($getReplicaCommodity)){
+			/*  for chemist training not neccessary replica details
+				i.e. apply ANDing conditon
+				by laxmi Bhadade : 
+				04-05-2023: 
+				*/
+			if(empty($getReplicaCommodity) && $application_type != 4){
 				
 				$getTableID = $DmiFirms->find('all')->select(['id'])->where(['customer_id'=>$customer_id])->first();
 				
@@ -1108,7 +1137,13 @@ class DmiSmsEmailTemplatesTable extends Table{
 				}
 			}
 			
-			if(!empty($getReplicaCommodity)){
+				/*  for chemist training not neccessary replica details
+				i.e. apply ANDing conditon
+				by laxmi Bhadade : 
+				04-05-2023: 
+				*/
+
+			if(!empty($getReplicaCommodity) && $application_type != 4){
 				
 				$i=0;
 				$replica_commodities=array();

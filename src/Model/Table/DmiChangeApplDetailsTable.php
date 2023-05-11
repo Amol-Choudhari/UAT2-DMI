@@ -36,7 +36,7 @@
 											   'reffered_back_date' => "", 'form_status' =>"", 'customer_reply' =>"", 'customer_reply_date' =>"", 'approved_date' => "",
 											   'user_email_id' => "", 'current_level' => "",'mo_comment' =>"", 'mo_comment_date' => "", 'ro_reply_comment' =>"", 'ro_reply_comment_date' =>"", 'delete_mo_comment' =>"", 'delete_ro_reply' => "",
 											   'delete_ro_referred_back' => "", 'delete_customer_reply' => "", 'ro_current_comment_to' => "",
-											   'rb_comment_ul'=>"",'mo_comment_ul'=>"",'rr_comment_ul'=>"",'cr_comment_ul'=>"",'dist_list'=>"",'business_type'=>"",'rel_doc'=>""); 
+											   'rb_comment_ul'=>"",'mo_comment_ul'=>"",'rr_comment_ul'=>"",'cr_comment_ul'=>"",'dist_list'=>"",'business_type'=>""); 
 				
 			}
 
@@ -336,19 +336,6 @@
 					$dataArray = array_merge($dataArray,array('business_type'=>htmlentities($forms_data['business_type'], ENT_QUOTES)));
 				}
 				
-				//added new field for relevant document uploading
-				//on 03-05-2023 by Amol
-				if(!empty($forms_data['rel_doc']->getClientFilename())){
-
-					$file_name = $forms_data['rel_doc']->getClientFilename();
-					$file_size = $forms_data['rel_doc']->getSize();
-					$file_type = $forms_data['rel_doc']->getClientMediaType();
-					$file_local_path = $forms_data['rel_doc']->getStream()->getMetadata('uri');
-												
-					$rel_doc = $CustomersController->Customfunctions->fileUploadLib($file_name,$file_size,$file_type,$file_local_path); // calling file uploading function		
-				
-				}else{ $rel_doc = $section_form_details[0]['rel_doc']; }
-				
 				//common required fields
 				$commonArr = array(				
 					'id'=>$max_id,
@@ -358,8 +345,7 @@
 					'customer_reply_date'=>$customer_reply_date,
 					'cr_comment_ul'=>$cr_comment_ul,
 					'created'=>$created,
-					'modified'=>date('Y-m-d H:i:s'),
-					'rel_doc'=>$rel_doc //added on 03-05-2023
+					'modified'=>date('Y-m-d H:i:s')
 				);
 				
 				$dataArray = array_merge($dataArray,$commonArr);
@@ -464,9 +450,7 @@
 			}
 			if(in_array(6,$selectedValues)){
 				
-				
-				
-				/*if(!empty($forms_data['chemist_details_docs']->getClientFilename())){
+				if(!empty($forms_data['chemist_details_docs']->getClientFilename())){
 
 					$file_name = $forms_data['chemist_details_docs']->getClientFilename();
 					$file_size = $forms_data['chemist_details_docs']->getSize();
@@ -475,11 +459,9 @@
 												
 					$chemist_details_docs = $CustomersController->Customfunctions->fileUploadLib($file_name,$file_size,$file_type,$file_local_path); // calling file uploading function		
 				
-				}else{ $chemist_details_docs = $section_form_details[0]['chemist_details_docs']; }*/
+				}else{ $chemist_details_docs = $section_form_details[0]['chemist_details_docs']; }
 				
-				
-				
-				/*if(!empty($forms_data['lab_equipped_docs']->getClientFilename())){
+				if(!empty($forms_data['lab_equipped_docs']->getClientFilename())){
 
 					$file_name = $forms_data['lab_equipped_docs']->getClientFilename();
 					$file_size = $forms_data['lab_equipped_docs']->getSize();
@@ -488,11 +470,9 @@
 												
 					$lab_equipped_docs = $CustomersController->Customfunctions->fileUploadLib($file_name,$file_size,$file_type,$file_local_path); // calling file uploading function		
 				
-				}else{ $lab_equipped_docs = $section_form_details[0]['lab_equipped_docs']; }*/
+				}else{ $lab_equipped_docs = $section_form_details[0]['lab_equipped_docs']; }
 				
-				
-				
-				/*if(!empty($forms_data['lab_consent_docs']->getClientFilename())){
+				if(!empty($forms_data['lab_consent_docs']->getClientFilename())){
 
 					$file_name = $forms_data['lab_consent_docs']->getClientFilename();
 					$file_size = $forms_data['lab_consent_docs']->getSize();
@@ -501,14 +481,7 @@
 												
 					$lab_consent_docs = $CustomersController->Customfunctions->fileUploadLib($file_name,$file_size,$file_type,$file_local_path); // calling file uploading function		
 				
-				}else{ $lab_consent_docs = $section_form_details[0]['lab_consent_docs']; }*/
-				
-				//added these lines on 10-05-2023, as issue noticed on UAT while MO reply to RO
-				//and commented above file upload related code, not required in referred back process
-				
-				$chemist_details_docs = $forms_data['chemist_details_docs'];
-				$lab_equipped_docs = $forms_data['lab_equipped_docs'];
-				$lab_consent_docs = $forms_data['lab_consent_docs'];
+				}else{ $lab_consent_docs = $section_form_details[0]['lab_consent_docs']; }
 				
 				$dataArray = array_merge($dataArray,array(
 					'lab_name'=>htmlentities($forms_data['lab_name'], ENT_QUOTES),
@@ -537,23 +510,6 @@
 				$dataArray = array_merge($dataArray,array('business_type'=>htmlentities($forms_data['business_type'], ENT_QUOTES)));
 			}
 			
-			//added new field for relevant document uploading
-			//on 03-05-2023 by Amol
-			/*if(!empty($forms_data['rel_doc']->getClientFilename())){
-
-				$file_name = $forms_data['rel_doc']->getClientFilename();
-				$file_size = $forms_data['rel_doc']->getSize();
-				$file_type = $forms_data['rel_doc']->getClientMediaType();
-				$file_local_path = $forms_data['rel_doc']->getStream()->getMetadata('uri');
-											
-				$rel_doc = $CustomersController->Customfunctions->fileUploadLib($file_name,$file_size,$file_type,$file_local_path); // calling file uploading function		
-			
-			}else{ $rel_doc = $section_form_details[0]['rel_doc']; }*/
-			
-			//added these lines on 10-05-2023, as issue noticed on UAT while MO reply to RO
-			//and commented above file upload related code, not required in referred back process
-			$rel_doc = $forms_data['rel_doc'];
-			
 			//common required fields
 			$commonArr = array(				
 
@@ -572,8 +528,7 @@
 				'mo_comment_ul'=>$mo_comment_ul,
 				'ro_reply_comment'=>$ro_reply_comment,
 				'ro_reply_comment_date'=>$ro_reply_comment_date,
-				'rr_comment_ul'=>$rr_comment_ul,
-				'rel_doc'=>$rel_doc //added on 03-05-2023
+				'rr_comment_ul'=>$rr_comment_ul
 			);
 			
 			$dataArray = array_merge($dataArray,$commonArr);

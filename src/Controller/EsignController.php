@@ -428,6 +428,12 @@ class EsignController extends AppController {
 		//get generated pdf to create hash
 		$doc_path = $_SERVER["DOCUMENT_ROOT"].'/testdocs/DMI/temp/'.$pdf_file_name;	
 		
+		//added condition  to set doc path by laxmi bhadade for chemist application
+		$appl_type = $this->Session->read('application_type');
+		$application_dashboard = $this->Session->read('application_dashboard');
+		if($appl_type == 4 && $application_dashboard == 'chemist'){
+          $doc_path = $_SERVER["DOCUMENT_ROOT"].'/testdocs/DMI/applications/CHM/'.$pdf_file_name;
+		}
 		//added new condition for replica allotment esign
 		//on 30-07-2021 by Amol
 		$ca_unique_no = $this->Session->read('ca_unique_no');

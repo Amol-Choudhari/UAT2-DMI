@@ -27,15 +27,36 @@ class DmiApplWithRoMappingsTable extends Table{
 
 	//This function is used to get RO office shortcode from application Id
 	public function getOfficeDetails($customer_id){
+ 
+        //to fetch  ro office after payment confirm set session packer id who register the chemist //added by laxmi B. on 16-12-2022
+
+			if(!empty($_SESSION['application_type'])){
+			if($_SESSION['application_type'] == 4){
+			$DmiChemistRegistrations = TableRegistry::getTableLocator()->get('DmiChemistRegistrations');
+			$chemistdetails = $DmiChemistRegistrations->find('all', array('fields'=>'created_by', 'conditions'=>array('chemist_id'=>$customer_id)))->first();
+			if(isset($chemistdetails['created_by'])){
+			$customer_id = $chemistdetails['created_by'];
+			}
+			}
+			}
 
 		$DmiRoOffices = TableRegistry::getTableLocator()->get('DmiRoOffices');
-
 		//get office id from mapping table
 		$office_id = $this->find('all',array('conditions'=>array('customer_id IS'=>$customer_id)))->first();
 				
 		//get office details from office table
 		$office_details = $DmiRoOffices->find('all',array('conditions'=>array('id IS'=>$office_id['office_id'],'OR'=>array('delete_status IS NULL','delete_status'=>'no'))))->first();
 
+
+
+		// condition for export unit to RAL and Ro mumbai for application added by laxmi on 9-1-23
+		if(!empty($_SESSION['application_type']) && !empty($_SESSION['export_unit'])){
+
+		 if($_SESSION['application_type'] == 4 && $_SESSION['export_unit'] == 'yes'){
+
+		$office_details = $DmiRoOffices->find('all',array('conditions'=>array('ro_office IS'=>'Mumbai','OR'=>array('delete_status IS NULL','delete_status'=>'no'))))->first();
+		 } 
+        }
 		return $office_details;
 	}
 

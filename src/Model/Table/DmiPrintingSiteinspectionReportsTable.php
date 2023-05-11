@@ -1,12 +1,11 @@
 <?php
 
-namespace app\Model\Table;
-use Cake\ORM\Table;
-use App\Model\Model;
-use App\Controller\AppController;
-use App\Controller\CustomersController;
-use Cake\ORM\TableRegistry;
-use Cake\Validation\Validation;
+	namespace app\Model\Table;
+	use Cake\ORM\Table;
+	use App\Model\Model;
+	use App\Controller\AppController;
+	use App\Controller\CustomersController;
+	use Cake\ORM\TableRegistry;
 
 class DmiPrintingSiteinspectionReportsTable extends Table{
 	
@@ -84,9 +83,7 @@ class DmiPrintingSiteinspectionReportsTable extends Table{
 					'rule'=>array('maxLength',10),				
 					),			
 	);
-
-
-
+			
 	// Fetch form section all details
 	public function sectionFormDetails($customer_id)
 	{
@@ -112,12 +109,9 @@ class DmiPrintingSiteinspectionReportsTable extends Table{
 		
 		$Dmi_printing_unit_details = TableRegistry::getTableLocator()->get('DmiPrintingUnitDetails');
 		$firm_unit_details = $Dmi_printing_unit_details->sectionFormDetails($customer_id);
-	
+		
 		return array($form_fields_details,$firm_premises_details,$firm_unit_details);			
 	}
-
-
-
 
 	public function saveFormDetails($customer_id,$forms_data){
 
@@ -131,13 +125,12 @@ class DmiPrintingSiteinspectionReportsTable extends Table{
 		
 		
 		$id = ''; $message_id = 1;
-		$current_level = $_SESSION['current_level'];
+		$current_level = $_SESSION['current_level'];					
 
 		$section_form_details = $this->sectionFormDetails($customer_id);
-		
 		if(!empty($section_form_details[0]['id'])){	
 		
-			$message_id = 2;
+			$message_id = 2;																	
 			$id = $section_form_details[0]['id'];
 			
 			if(isset($forms_data['io_reply'])){$io_reply = $forms_data['io_reply']; }else{ $io_reply = null; }
@@ -150,19 +143,22 @@ class DmiPrintingSiteinspectionReportsTable extends Table{
 			
 			if($current_level == 'level_2' && !empty($io_reply) && $reportFinalStatusValue == 'referred_back'){
 				
-				$message_id = 3;
+				$message_id = 3;							
 			}
 		
 		}
 		
+							
 		$htmlencoded_reason_of_withdrawal = htmlentities($forms_data['reason_of_withdrawal'], ENT_QUOTES);
 		$htmlencoded_any_other_point = htmlentities($forms_data['any_other_point'], ENT_QUOTES);
 		$htmlencoded_recommendations = htmlentities($forms_data['recommendations'], ENT_QUOTES);
+		
+		/*Code start By Pravin 18/3/2017*/
 		$htmlencoded_machines_requisite_details = htmlentities($forms_data['machines_requisite_details'], ENT_QUOTES);
-
+		/*Code end By Pravin 18/3/2017*/
 		
 		
-		//checking radio buttons input
+		//checking radio buttons input					
 		$post_input_request = $forms_data['machines_requisite'];				
 		$machines_requisite = $CustomersController->Customfunctions->radioButtonInputCheck($post_input_request);//calling librabry function
 		if($machines_requisite == null){ return false;}
@@ -249,7 +245,6 @@ class DmiPrintingSiteinspectionReportsTable extends Table{
 		
 		
 		if(!empty($section_form_details[0]['id'])){
-
 			if(empty($machines_requisite_docs)){
 		
 				$machines_requisite_docs = $section_form_details[0]['machines_requisite_docs'];
@@ -266,126 +261,108 @@ class DmiPrintingSiteinspectionReportsTable extends Table{
 				
 				$ink_declaration_docs = $section_form_details[0]['ink_declaration_docs'];
 			}
-
-			
 		}
-
-		#this code is added to resolve the radio button value is not saving in the table as it is disabled - Akash [09-05-2023]
-		//these are the pre fetched values from application form 
-		$is_assessed_for = $section_form_details[1][0]['have_vat_cst_no'];
-		$assessed_for_tax_no = $section_form_details[1][0]['gst_no'];
-		$earlier_permitted = $section_form_details[2][0]['earlier_approved'];
 		
-
-
-		if(!empty($report_final_status)){
-			if($report_final_status['status'] == 'referred_back' && !empty($forms_data['io_reply'])){
-				
-				$htmlencoded_io_reply = htmlentities($forms_data['io_reply'], ENT_QUOTES);
-				
-				if(!empty($forms_data['ir_comment_ul']->getClientFilename())){				
-		
-					$file_name = $forms_data['ir_comment_ul']->getClientFilename();
-					$file_size = $forms_data['ir_comment_ul']->getSize();
-					$file_type = $forms_data['ir_comment_ul']->getClientMediaType();
-					$file_local_path = $forms_data['ir_comment_ul']->getStream()->getMetadata('uri');
+					if(!empty($report_final_status)){
+						if($report_final_status['status'] == 'referred_back' && !empty($forms_data['io_reply'])){
+							
+							$htmlencoded_io_reply = htmlentities($forms_data['io_reply'], ENT_QUOTES);
+							
+							if(!empty($forms_data['ir_comment_ul']->getClientFilename())){				
 					
-					$ir_comment_ul = $CustomersController->Customfunctions->fileUploadLib($file_name,$file_size,$file_type,$file_local_path); // calling file uploading function
-			
-				}else{ $ir_comment_ul = null; }
-	
-				$ioReplyEntity = $this->newEntity(array(
-				'id'=>$id,
-				'io_reply_once_no'=>$_SESSION['once_card_no'],
-				'io_reply_date'=>date('Y-m-d H:i:s'),
-				'io_reply'=>$htmlencoded_io_reply,
-				'ir_comment_ul'=>$ir_comment_ul,
-				'current_level'=>'level_3',
-				));
+								$file_name = $forms_data['ir_comment_ul']->getClientFilename();
+								$file_size = $forms_data['ir_comment_ul']->getSize();
+								$file_type = $forms_data['ir_comment_ul']->getClientMediaType();
+								$file_local_path = $forms_data['ir_comment_ul']->getStream()->getMetadata('uri');
+								
+								$ir_comment_ul = $CustomersController->Customfunctions->fileUploadLib($file_name,$file_size,$file_type,$file_local_path); // calling file uploading function
+						
+							}else{ $ir_comment_ul = null; }
 				
-				$this->save($ioReplyEntity);
-			}
-		}	
-	
-		$formSavedEntity = $this->newEntity(array(
-
-			'id'=>$id,
-			'customer_id'=>$customer_id,
-			'user_email_id'=>$_SESSION['username'],
-			'user_once_no'=>$_SESSION['once_card_no'],	
-			'reason_of_withdrawal'=>$htmlencoded_reason_of_withdrawal,
-			'machines_requisite'=>$machines_requisite,
-			'machines_requisite_details'=>$htmlencoded_machines_requisite_details,
-			'machines_requisite_docs'=>$machines_requisite_docs,
-			'in_house_storage_facility'=>$in_house_storage_facility,
-			'account_maintained'=>$account_maintained,
-			'fabrication_facility'=>$fabrication_facility,
-			'fabrication_facility_docs'=>$fabrication_facility_docs,
-			'declaration_given'=>$declaration_given,
-			'ink_declaration_docs'=>$ink_declaration_docs,
-			'is_press_sponsored'=>$is_press_sponsored,
-			'is_press_authorised'=>$is_press_authorised,
-			'press_sponsored_docs'=>$press_sponsored_docs,
-			'any_other_point'=>$htmlencoded_any_other_point,
-			'recommendations'=>$htmlencoded_recommendations,
-			'form_status'=>'saved',
-			'is_assessed_for' => $is_assessed_for, 			//This field was not in the array previosly to save - Akash [09-05-2023]
-			'assessed_for_tax_no' => $assessed_for_tax_no,	//This field was not in the array previosly to save - Akash [09-05-2023]
-			'earlier_permitted' => $earlier_permitted,		//This field was not in the array previosly to save - Akash [09-05-2023]
+							$ioReplyEntity = $this->newEntity(array(
+							'id'=>$id,
+							'io_reply_once_no'=>$_SESSION['once_card_no'],
+							'io_reply_date'=>date('Y-m-d H:i:s'),
+							'io_reply'=>$htmlencoded_io_reply,
+							'ir_comment_ul'=>$ir_comment_ul,
+							'current_level'=>'level_3',								
+							));
+							
+							$this->save($ioReplyEntity);
+						}
+					}	
 		
-		));
-		
-		if($this->save($formSavedEntity)){ return $message_id; }else{ $message_id = ""; return $message_id; }  		
+			$formSavedEntity = $this->newEntity(array(						
 	
-	
+				'id'=>$id,
+				'customer_id'=>$customer_id,
+				'user_email_id'=>$_SESSION['username'],
+				'user_once_no'=>$_SESSION['once_card_no'],	
+				'reason_of_withdrawal'=>$htmlencoded_reason_of_withdrawal,
+				'machines_requisite'=>$machines_requisite,							
+				'machines_requisite_details'=>$htmlencoded_machines_requisite_details,
+				'machines_requisite_docs'=>$machines_requisite_docs,
+				'in_house_storage_facility'=>$in_house_storage_facility,
+				'account_maintained'=>$account_maintained,
+				'fabrication_facility'=>$fabrication_facility,
+				'fabrication_facility_docs'=>$fabrication_facility_docs,
+				'declaration_given'=>$declaration_given,
+				'ink_declaration_docs'=>$ink_declaration_docs,
+				'is_press_sponsored'=>$is_press_sponsored,
+				'is_press_authorised'=>$is_press_authorised,
+				'press_sponsored_docs'=>$press_sponsored_docs,
+				'any_other_point'=>$htmlencoded_any_other_point,
+				'recommendations'=>$htmlencoded_recommendations,								
+				'form_status'=>'saved'
+			
+			));
+			
+			if($this->save($formSavedEntity)){ return $message_id; }else{ $message_id = ""; return $message_id; }  		
 	}
-
-
-
 
 	public function saveReferredBackComment($customer_id,$report_details,$reffered_back_comment,$rb_comment_ul){
 			
-		$formSavedEntity = $this->newEntity(array(	
+			
+			
+			$formSavedEntity = $this->newEntity(array(	
+			
+				'customer_id'=>$customer_id,
+				'user_email_id'=>$_SESSION['username'],
+				'user_once_no'=>$_SESSION['once_card_no'],	
+				'reason_of_withdrawal'=>$report_details['reason_of_withdrawal'],
+				'machines_requisite'=>$report_details['machines_requisite'],							
+				'machines_requisite_details'=>$report_details['machines_requisite_details'],
+				'machines_requisite_docs'=>$report_details['machines_requisite_docs'],
+				'in_house_storage_facility'=>$report_details['in_house_storage_facility'],
+				'account_maintained'=>$report_details['account_maintained'],
+				'fabrication_facility'=>$report_details['fabrication_facility'],
+				'fabrication_facility_docs'=>$report_details['fabrication_facility_docs'],
+				'declaration_given'=>$report_details['declaration_given'],
+				'ink_declaration_docs'=>$report_details['ink_declaration_docs'],
+				'is_press_sponsored'=>$report_details['is_press_sponsored'],
+				'is_press_authorised'=>$report_details['is_press_authorised'],
+				'press_sponsored_docs'=>$report_details['press_sponsored_docs'],
+				'any_other_point'=>$report_details['any_other_point'],
+				'recommendations'=>$report_details['recommendations'],
+				'referred_back_comment'=>$reffered_back_comment,
+				'rb_comment_ul'=>$rb_comment_ul,
+				'referred_back_date'=>date('Y-m-d H:i:s'),
+				'referred_back_by_email'=>$_SESSION['username'],
+				'referred_back_by_once'=>$_SESSION['once_card_no'],
+				'form_status'=>'referred_back',
+				'current_level'=>$_SESSION['current_level'],
+				'created'=>date('Y-m-d H:i:s'),
+				'modified'=>date('Y-m-d H:i:s')					
+			));
+			
+			if($this->save($formSavedEntity)){
+				
+				return 1;
+			}else{
+				
+				return 0;
+			}
 		
-			'customer_id'=>$customer_id,
-			'user_email_id'=>$_SESSION['username'],
-			'user_once_no'=>$_SESSION['once_card_no'],	
-			'reason_of_withdrawal'=>$report_details['reason_of_withdrawal'],
-			'machines_requisite'=>$report_details['machines_requisite'],							
-			'machines_requisite_details'=>$report_details['machines_requisite_details'],
-			'machines_requisite_docs'=>$report_details['machines_requisite_docs'],
-			'in_house_storage_facility'=>$report_details['in_house_storage_facility'],
-			'account_maintained'=>$report_details['account_maintained'],
-			'fabrication_facility'=>$report_details['fabrication_facility'],
-			'fabrication_facility_docs'=>$report_details['fabrication_facility_docs'],
-			'declaration_given'=>$report_details['declaration_given'],
-			'ink_declaration_docs'=>$report_details['ink_declaration_docs'],
-			'is_press_sponsored'=>$report_details['is_press_sponsored'],
-			'is_press_authorised'=>$report_details['is_press_authorised'],
-			'press_sponsored_docs'=>$report_details['press_sponsored_docs'],
-			'any_other_point'=>$report_details['any_other_point'],
-			'recommendations'=>$report_details['recommendations'],
-			'referred_back_comment'=>$reffered_back_comment,
-			'rb_comment_ul'=>$rb_comment_ul,
-			'referred_back_date'=>date('Y-m-d H:i:s'),
-			'referred_back_by_email'=>$_SESSION['username'],
-			'referred_back_by_once'=>$_SESSION['once_card_no'],
-			'form_status'=>'referred_back',
-			'current_level'=>$_SESSION['current_level'],
-			'created'=>date('Y-m-d H:i:s'),
-			'modified'=>date('Y-m-d H:i:s'),
-			'is_assessed_for' => $report_details['is_assessed_for'], 			//This field was not in the array previosly to save - Akash [09-05-2023]
-			'assessed_for_tax_no' => $report_details['assessed_for_tax_no'],	//This field was not in the array previosly to save - Akash [09-05-2023]
-			'earlier_permitted' => $report_details['earlier_permitted']			//This field was not in the array previosly to save - Akash [09-05-2023]
-		));
-			
-		if($this->save($formSavedEntity)){
-			
-			return 1;
-		}else{
-			
-			return 0;
-		}
 		
 	}	
 			

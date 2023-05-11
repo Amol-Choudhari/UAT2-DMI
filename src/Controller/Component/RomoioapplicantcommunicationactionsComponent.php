@@ -184,9 +184,24 @@ class RomoioapplicantcommunicationactionsComponent extends Component {
 							}
 							
 						} elseif ($application_type==4) {
+							//comment below line and fetch details from chemist registration details for chemist to find chemist is old or new added by laxmi on 02-05-2023
 							
-							$NewChemist = 'yes';
-							if ($NewChemist=='yes') {return 2;}
+							//$NewChemist = 'yes';
+							//if ($NewChemist=='yes') {return 2;}
+							
+					    // to fetch chemist is alredy registerd or new chemist added by laxmi on 21-12-22
+						$DmiChemistRegistrations = TableRegistry::getTableLocator()->get('DmiChemistRegistrations');	
+						$chemistdetails = $DmiChemistRegistrations->find('list', array('valueField'=>'is_training_completed', 'conditions'=>array('chemist_id IS'=>$customer_id)))->first();
+                           
+						// set in session variable for chemist training completed or not
+						 if(!empty($chemistdetails)){
+                          $this->Session->write('is_training_completed', $chemistdetails);
+                          
+						 }
+
+						if ((!empty($chemistdetails) && $chemistdetails=='no') && ($office_type == 'RO' || $office_type == 'SO')) {return 2;
+						}
+							
 							
 						} elseif ($office_type=='RO' && $application_type==9) {
 							return 2;

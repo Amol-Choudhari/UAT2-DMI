@@ -380,7 +380,7 @@
 				'state'=>$forms_data['state'],
 				'district'=>$forms_data['district'],
 				'postal_code'=>$forms_data['postal_code'],
-				'lab_email_id'=>$forms_data['lab_email_id'],// Updated this line and removed the base64_encode as it is taking the encoded value from the DB - Akash [02-05-2023]
+				'lab_email_id'=>base64_encode($forms_data['lab_email_id']),//for email encoding
 				'lab_mobile_no'=>$forms_data['lab_mobile_no'],
 				'lab_fax_no'=>$forms_data['lab_fax_no'],
 				'is_lab_equipped'=>$forms_data['is_lab_equipped'],

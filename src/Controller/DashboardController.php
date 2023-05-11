@@ -985,22 +985,16 @@ class DashboardController extends AppController{
 								$reports_submitted_status = $this->$final_submit_table->find('all',array('conditions'=>array('customer_id IS'=>$customer_id,$grantDateCondition,'status'=>'approved','current_level'=>'level_2')))->first();
 								//check final submit status for level 3 & 4 and approved for each allocated id
 								$approved_status = $this->$final_submit_table->find('all',array('conditions'=>array('customer_id IS'=>$customer_id,$grantDateCondition,'status'=>'approved','OR'=>array('current_level IN'=>array('level_3','level_4')))))->first();
-								
-								//Query to check the last ro-so comments to_user field - Akash [04-05-2023]
-								$last_ro_so_comment = $this->$ro_so_comments_table->find()->select('to_user')->where(['customer_id IS' => $customer_id])->order(['id desc'])->first();
-
-
+					
 								if(!empty($reports_submitted_status) && empty($approved_status)){
 
 									//commented below condition to show allocated appls also in allocation window, on 10-08-2022
 									//if($current_pos['current_level']=='level_4_ro' && $current_pos['current_user_email_id']==$username){
 
-									//application must not be with applicant while allocation
+										//application must not be with applicant while allocation
 										//added on 03-02-2023 by Amol
 										$finalSubmitStatus = $this->$final_submit_table->find('all',array('conditions'=>array('customer_id IS'=>$customer_id),'order'=>'id desc'))->first();
-
-										//added level_4 from current postion variable and to_user condtion to hide the application from scrutiny tab if it is forwarded to HO. - Akash [04-05-2023]
-										if($finalSubmitStatus['status'] != 'referred_back' && $current_pos['current_level'] !='level_4' && $last_ro_so_comment['to_user'] != 'so'){ 
+										if($finalSubmitStatus['status'] != 'referred_back'){
 											$creat_array = true;
 										}
 

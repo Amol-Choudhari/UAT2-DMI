@@ -37,6 +37,8 @@
 	$menu_primary_application   = '';
 	$menu_secondary_application = '';
 	$menu_go_to_lims            = '';
+	//for chemist training module added new menu as empty here by laxmi B on 28-12-2022
+	$menu_chemist_training      = '';
 
 	if ($current_menu == 'menu_profile') {
 		$menu_profile = 'active';
@@ -487,7 +489,36 @@
 						</li>
 
 					<?php } ?>
-					
+		<!-- added chemist training menu  by laxmi B. on 28-12-2022 -->
+
+					<?php if($current_user_roles['ro'] == 'yes' || $current_user_roles['so'] == 'yes'){ ?>
+				            <li class="nav-item">
+							<li class="nav-item has-treeview">
+								<a href="#" class="nav-link">
+									<i class="nav-icon fas fa-flask"></i>
+									<p>Chemist Training<i class="fas fa-long-arrow-alt-right right"></i></p>
+								</a>
+								<ul class="nav nav-treeview ">
+									<li class="nav-item has-treeview">
+										<li class="nav-item">
+											<a href="<?php echo $this->request->getAttribute("webroot");?>chemist/listOfChemistApplRoToRal" class="bg-cyan nav-link">
+												<i class="fas fa-list nav-icon"></i>
+
+												<p class="nav-icon-p">RO to RAL List</p>
+											</a>
+										</li>
+
+										<li class="nav-item">
+											<a href="<?php echo $this->request->getAttribute("webroot");?>chemist/listOfChemistApplRalToRo" class="bg-cyan nav-link">
+												<i class="fas fa-list nav-icon"></i>
+												<p class="nav-icon-p">RAL to RO List</p>
+											</a>
+										</li>
+									</li>
+								</ul>
+							</li>
+						</li>
+			   <?php }?>														  
 					<!-- added for testing user redirect for DMI and LMIS -->
 					<?php if ($current_user_division['division'] == 'BOTH') { ?>
 
