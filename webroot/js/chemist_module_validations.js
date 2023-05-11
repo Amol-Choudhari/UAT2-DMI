@@ -83,7 +83,7 @@
 			var email = $("#email").val();
 			var mobile = $("#mobile").val();
 			var dob = $("#dob").val();
-
+            var is_training_completed = $("#approved").val();
 			var value_return = 'true';
 
 
@@ -173,6 +173,15 @@
 
 				}*/
 
+			}
+
+			//to select chemist alredy approved for training or not radio button added by laxmi B on 16-12-2022
+			if(is_training_completed == ""){
+
+				$("#error_is_training_completed").show().text("Please Select any option");
+				$("#approved").addClass("is-invalid");
+				$("#approved").click(function(){$("#error_is_training_completed").hide().text;$("#approved").removeClass("is-invalid");});
+				value_return = 'false';
 			}
 
 			if(value_return == 'false'){

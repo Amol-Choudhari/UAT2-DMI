@@ -17,7 +17,6 @@
 .wd22  { width     : 22%; }
 .wd42  { width     : 42%; }
 .wd60  { width     : 60px; }
-.wd120 {width: 120px;}
 .wd100 { width     : 100%; }
 .wd180 { width     : 180px; }
 .wd350 { width     : 350px; }
@@ -60,9 +59,7 @@
 .marginRM19{ margin-right  : -19px  !important; }
 .marginL20 { margin-left   :  20px  !important; }
 .margin5   { margin        :  5px; }
-.margin35  { margin-left   :  35px !important;}
-.marginL9 {margin-left: 9px;}
-.mml6{  margin: 2;margin-left: 6;   }
+
 /*COLORS*/
 
 .cBrown { color : brown; }
@@ -128,8 +125,6 @@
 }
 .sub_card_header_prof {
 	background-color: #007bff !important;
-    color:#fff; 
-    /* color code added by shankhpal shende on 04/01/2023 */
 }
 .progress_bar_status {
 	font-size: 14px;
@@ -526,7 +521,7 @@ text-align:center;border-top:1px solid #ccc;;}
 }
 
 .card-body {
-    padding-bottom: 1rem !important;
+    padding-bottom: 0rem !important;
 }
 
 #comment_reply_box{
@@ -713,7 +708,7 @@ a:hover {
 #show_appl_status .btn{width:100px; float:right;}
 #show_appl_status .close{cursor:pointer;}
 
-#applSearchInPopup{background-color: rgba(0,0,0,0.7);}
+#applSearchInPopup{background-color: rgba(0,0,0,0.7); overflow:scroll;} /*overflow added by laxmi on 20-02-2023 for common id search */
 #applSearchInPopup .modal-content{width:50%; margin:100px auto 0;padding:15px;}
 #applSearchInPopup .btn{width:100px; float:right;}
 #applSearchInPopup .close{cursor:pointer;}
@@ -759,9 +754,7 @@ a:hover {
 .marTop{
     margin-top: 41px;
 }
-.marLeft {
-    margin-left: 10px;
-}
+
 .encodedEmail{
     color:green;font-weight:600 ;font-size: 17px;
 }
@@ -798,7 +791,7 @@ a:hover {
 #approved_check_modal p{font-size:15px !important; color:navy;}
 #check_for_proceed{margin:0;}
 .textAlignCenter{text-align:center;}
-.backimag{background-image: url("/testdocs/home-slider/background.jpg");}
+.backimag{background-image: url("/writereaddata/home-slider/background.jpg");}
 .mt33{margin-top: 33px;}
 .mtNegative3{margin-top: -3px;}
 .applicartionTypeH5{color:navy; margin-left: 13px;}
@@ -906,54 +899,25 @@ date: 04/11/2022
     width: 200%;
     overflow: auto;
  }
-.bgrtbl {
-    width: 150%;
-    overflow: auto;
-}
  .scroll{
     overflow-x: scroll;
  }
-.bsc{border:1px solid cadetblue;}
 
-.card-master{
-    background-color:#105fa6;
-    color:#fff;
- }
- .status-in-progress {
-    color: green;
-  }
-  
-  .status-referred-back {
-    color: orange;
-  }
-  
-  .status-renewal-granted {
-    color: blue;
-  }
 
-  .status-renewal-due {
-    color: rgb(43, 77, 43);
-  }
+/* added by laxmi for chemist dashboard on 30-12-2022*/
 
-  .status-granted {
-    color: blue;
-  }
+.text-white1{
 
-  .status-not-applied {
-    color: yellow;
-  }
-
-  .readOnly{
-    pointer-events: none;
-  }
-  
-  blink {
-    animation: blinker 0.6s linear infinite;
-    color: red;
+	font-size: 18px;
 }
+/*end by Laxmi*/
 
-@keyframes blinker {
-    50% {
-        opacity: 0;
-    }
+/*to forward chemist app from RAL to Ro if checkbox is not checked hide submit button*/
+/*added by laxmi B. on 02-01-2023*/
+#submitbtn{
+    display: none;
+}
+/*increase check box size by laxmi B on 29-12-22*/
+#trainingCompleted{
+    transform: scale(2);
 }
