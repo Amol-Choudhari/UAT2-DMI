@@ -980,24 +980,23 @@ class ChemistController extends AppController {
 			}
 			
 			//list of application forwarded back Ral to RO added by laxmi on 29/12/2022
-			public function  listOfChemistApplRalToRo(){
+			public function  listOfChemistApplRalToRo(){  
 			$this->viewBuilder()->setLayout('admin_dashboard');
-
+            
 			$this->loadModel('DmiChemistRalToRoLogs');
 			$this->loadModel('DmiRoOffices');
 			$this->loadModel('DmiChemistTrainingAtRo');
 			$this->loadModel('DmiChemistRegistrations');
 			$this->loadModel('DmiChemistAllCurrentPositions');
 			$this->loadModel('DmiChemistRoToRalLogs');
-
-
-			$ro_email = $_SESSION['username'];
+			
+			$ro_email = $this->Session->read('username');
 			$chemist_allocation  = $this->DmiChemistAllCurrentPositions->find('all',array('fields'=>array('current_level', 'current_user_email_id')))->where(array('current_user_email_id IS'=>$ro_email))->first();
 			$this->set('current_level', $chemist_allocation['current_level']);
 			$this->Session->write('current_level', $chemist_allocation['current_level']);	
-
+			
 			$ro_office_data = $this->DmiRoOffices->find('all',array('fields'=>array('id', 'office_type','ro_office'), 'conditions'=>array('ro_email_id IS'=>$ro_email, 'ro_email_id'=>$chemist_allocation['current_user_email_id'])))->first(); 
-
+			
 			$this->set('level_3_for', $ro_office_data['office_type']);
 			$this->Session->write('level_3_for', $ro_office_data['office_type']);
 			$listofApp = $this->DmiChemistRalToRoLogs->find('all')->where(array('training_completed IS  '=>1, 'ro_office_id IS'=>$ro_office_data['id']))->order('created desc')->toArray();
@@ -1009,7 +1008,7 @@ class ChemistController extends AppController {
 			$is_trainingScheduleRO = array();
 			$ro_schedule_letter = array();
 			$reschedule_status =  array();
-
+			    
 			if(!empty($listofApp)){
 			foreach($listofApp as $list){
 			$ral_offices[$i] = $this->DmiRoOffices->find('list',array('valueField'=>'ro_office', 'conditions'=>array('id IS'=>$list['ral_office_id'])))->first();
@@ -1043,7 +1042,7 @@ class ChemistController extends AppController {
              //check application is final granted
 			$this->loadModel('DmiChemistFinalReports');
 			$status = $this->DmiChemistFinalReports->find('all',array('fields'=>array('status'), 'conditions'=>['customer_id IS'=>$chemistTableid['chemist_id']]))->last();
-            if(!empty($status)){
+            if(!empty($reschedule_status)){
              $this->set('grant_approval_status',$status['status']);
             }
 			$this->set('ro_schedule_letter',$ro_schedule_letter);
