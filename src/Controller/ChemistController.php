@@ -835,8 +835,8 @@ class ChemistController extends AppController {
 		}
 		}
 
-		$ro_office_id= $this->DmiRoOffices->find('all')->where(array('office_type IS'=>'RO' ,'office_type IS' =>'SO', 'ro_email_id'=>$ro_email))->first();
-          
+		$ro_office_id= $this->DmiRoOffices->find('all')->where(array('ro_email_id'=>$ro_email, 'or'=>array(['office_type IS'=>'RO'],['office_type IS'=>'SO'])))->first();
+         
 		if($this->request->is('post') != '' ){
 		$document= $this->request->getData('document');
 		$shedule_from = $this->request->getData('shedule_from');
@@ -883,7 +883,7 @@ class ChemistController extends AppController {
 		'shedule_to' => $to_date,
 		'ro_office_id' =>$ro_office_id['id'],
 		));
-
+          
 		if($this->DmiChemistRoToRalLogs->save($data)){
 
 		//to enter RAL Email id in allocation and current position table added by laxmi on 10-01-2023

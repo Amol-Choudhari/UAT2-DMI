@@ -88,7 +88,7 @@
       <div class="row">
         <div class="col-md-12 row">
           <div class="col-md-2">
-            <label for="field3"><span>Remark <span class="cRed">*</span></span></label>
+            <label for="field3"><span>Remark </span></label>
           </div>
           <div class="col-md-4">
             <?php echo $this->Form->control('remark', array('type'=>'textarea', 'id'=>'remark', 'escape'=>false,  'placeholder'=>'Enter Remark', 'class'=>'cvOn cvReq cvAlphaNum form-control',   'label'=>false)); ?>
