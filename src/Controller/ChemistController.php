@@ -1096,7 +1096,7 @@ class ChemistController extends AppController {
 				$file_local_path = $attchment->getStream()->getMetadata('uri');
 				// calling file uploading function
 
-				$document = $this->Customfunctions->fileUploadLib($file_name,$file_size,$file_type,$file_local_path);print_r($document);exit;
+				$document = $this->Customfunctions->fileUploadLib($file_name,$file_size,$file_type,$file_local_path);
 				}else{
 				$document = NULL;
 				}
@@ -1169,32 +1169,35 @@ class ChemistController extends AppController {
 				$this->loadModel('DmiChemistRegistrations');
 				$this->loadModel('DmiChemistRalToRoLogs');
 
-				$ralToRoDatas = $this->DmiChemistRalToRoLogs->find('all')->where(['id'=>$id])->first();
+				$ralToRoDatas = $this->DmiChemistRalToRoLogs->find('all')->where(['id'=>$id])->last();
 				$chemist_id =  $ralToRoDatas['chemist_id'];
+				
 				$this->Session->write('customer_id',$ralToRoDatas['chemist_id']);
 
 				$chemist_details = $this->DmiChemistRegistrations->find('all')->where(array('chemist_id'=>$chemist_id))->first();
 				$this->set('chemist_id', $chemist_id);
-
+                $this->set('ral_reschedule_status', $ralToRoDatas['reshedule_status']);
 				if(!empty($chemist_details['chemist_fname'] && !empty($chemist_details['chemist_lname']))){
 				$this->set('chemist_fname', $chemist_details['chemist_fname']);
 				$this->set('chemist_lname', $chemist_details['chemist_lname']);
+				
 				}
 
 				$this->loadModel('DmiChemistRoToRalLogs');
                 $check_reschedule = $this->DmiChemistRoToRalLogs->find('all', ['conditions'=>['chemist_id IS'=> $chemist_id]])->last();
-                  
-                $this->set('ro_schedule_from', date('Y-m-d',strtotime($check_reschedule['ro_schedule_from'])));
-                $this->set('ro_schedule_to', date('Y-m-d',strtotime($check_reschedule['ro_schedule_to'])));
-               $this->set('resedule_status', $check_reschedule['ro_reschedule_status']);
+                 
+                $this->set('ro_schedule_from', date('d/m/Y',strtotime($check_reschedule['ro_schedule_from'])));
+                $this->set('ro_schedule_to', date('d/m/Y',strtotime($check_reschedule['ro_schedule_to'])));
+                $this->set('reschedule_status', $check_reschedule['ro_reschedule_status']);
 
+                $this->set('is_training_scheduled_ro', $check_reschedule['is_training_scheduled_ro']);
 
 				if($this->request->is('post') != '' ){
                  
 				$shedule_from = $this->request->getData('shedule_from');
-				$from_date = date('Y-m-d H:i:s', strtotime($shedule_from));
+				$from_date = date('Y-m-d H:i:s', strtotime(str_replace('/','-',$shedule_from)));
 				$shedule_to = $this->request->getData('shedule_to');
-				$to_date = date('Y-m-d H:i:s', strtotime($shedule_to));
+				$to_date = date('Y-m-d H:i:s', strtotime(str_replace('/','-',$shedule_to)));
 
 				$postdata = $this->request->getData();
 
@@ -1231,7 +1234,7 @@ class ChemistController extends AppController {
                 }else{
                 	
                 	$reqData = $this->request->getData();
-                	$ro_office_id = $this->DmiRoOffices->find('all', ['conditions'=>['ro_email_id IS'=> $_SESSION['username'],'office_type IS'=>'RO', 'office_type IS'=>'SO', 'delete_status IS'=> NULL ]])->first();
+                	$ro_office_id = $this->DmiRoOffices->find('all', ['conditions'=>['ro_email_id IS'=> $_SESSION['username'],'OR'=>array(['office_type IS'=>'RO'], ['office_type IS'=>'SO']), 'delete_status IS'=> NULL ]])->first();
                 	
 					$this->loadModel('DmiChemistRoToRalLogs');
 					$rescheduleDateData = $this->DmiChemistRoToRalLogs->newEntity( array('chemist_id' => $reqData['chemist_id'],
@@ -1239,8 +1242,8 @@ class ChemistController extends AppController {
 					'chemist_last_name' => $reqData['chemist_last_name'],
 					'ro_first_name' => $reqData['ro_first_name'],
 					'ro_last_name' => $reqData['ro_last_name'],
-					'ro_schedule_from'=> date('Y-m-d H:i:s',strtotime($reqData['shedule_from'])),
-					'ro_schedule_to'=> date('Y-m-d H:i:s',strtotime($reqData['shedule_to'])),
+					'ro_schedule_from'=> date('Y-m-d H:i:s',strtotime(str_replace('/','-',$reqData['shedule_from']))),
+					'ro_schedule_to'=> date('Y-m-d H:i:s',strtotime(str_replace('/','-',$reqData['shedule_to']))),
 					'is_training_scheduled_ro'=> 1,
 					'created' => date('Y-m-d H:i:s'),
 					'reshedule_remark' =>$reqData['reshedule_remark'],
@@ -1249,7 +1252,7 @@ class ChemistController extends AppController {
 					'reshedule_status' =>'confirm',
 					'ro_office_id' =>$ro_office_id['id'],
 					));
-                
+               
                  $result = $this->DmiChemistRoToRalLogs->save($rescheduleDateData);
                  if($result){
 				$message ="Chemist Training Schedule at Ro";

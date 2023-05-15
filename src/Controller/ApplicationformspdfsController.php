@@ -3705,7 +3705,8 @@ class ApplicationformspdfsController extends AppController{
 				$ral_office = $this->DmiRoOffices->find('all')->where(array('id IS'=>$ral_id))->first();
 				$this->set('ral_office', $ral_office['ro_office']);
 				$this->set('ral_office_address', $ral_office['ro_office_address']);
-
+                
+				
 				$dateF = date('d-m-Y',strtotime(str_replace('/', '.',$ral_officeData['shedule_from'])));
 				$dateTo = date('d-m-Y',strtotime(str_replace('/', '.',$ral_officeData['shedule_to'])));
 				$this->set('schedule_from',$dateF);
@@ -3818,11 +3819,12 @@ class ApplicationformspdfsController extends AppController{
 				$this->set('sub_commodity_data',$sub_commodity_data);	
 
 				}
-
-				$scheduleDates = $this->DmiChemistRoToRalLogs->find('all', array('fields'=>array('ro_schedule_from','ro_schedule_to')))->where(array('chemist_id IS'=>$customer_id, 'is_forwordedtoral'=>'yes'))->first();
+                $this->loadModel('DmiChemistRalToRoLogs');
+				$scheduleDates = $this->DmiChemistRalToRoLogs->find('all')->where(array('chemist_id IS'=>$customer_id))->first();
+				
 				if(!empty($scheduleDates)){
-				$schedule_from = date('d-m-Y',strtotime(str_replace('/','.', $scheduleDates['ro_schedule_from'])));
-				$schedule_to = date('d-m-Y',strtotime(str_replace('/','.', $scheduleDates['ro_schedule_to'])));
+				$schedule_from = date('d-m-Y',strtotime(str_replace('/','-', $scheduleDates['reshedule_from_date'])));
+				$schedule_to = date('d-m-Y',strtotime(str_replace('/','-', $scheduleDates['reshedule_to_date'])));
 				$this->set('schedule_from',$schedule_from);
 				$this->set('schedule_to',$schedule_to);
 
@@ -4055,11 +4057,12 @@ class ApplicationformspdfsController extends AppController{
 			$this->set('commodity_name_list',$commodity_name_list);		
 			$this->set('sub_commodity_data',$sub_commodity_data);
 			//to fetch ral name
-			$roToRalData = $this->DmiChemistRoToRalLogs->find('all', array('conditions'=>array('chemist_id IS'=>$customer_id)))->first(); 
+			$roToRalData = $this->DmiChemistRoToRalLogs->find('all', array('conditions'=>array('chemist_id IS'=>$customer_id)))->last(); 
+			
 			if(!empty($roToRalData)){
-			$scheduleFrom = date('d-m-Y', strtotime(str_replace('/','.',$roToRalData['ro_schedule_from'])));
-			$scheduleTo = date('d-m-Y', strtotime(str_replace('/','.',$roToRalData['ro_schedule_to'])));
-
+			$scheduleFrom = date('d-m-Y', strtotime(str_replace('/','-',$roToRalData['ro_schedule_from'])));
+			$scheduleTo = date('d-m-Y', strtotime(str_replace('/','-',$roToRalData['ro_schedule_to'])));
+			  
 			$this->set('schedule_from',$scheduleFrom);
 			$this->set('shedule_to',$scheduleTo);
 

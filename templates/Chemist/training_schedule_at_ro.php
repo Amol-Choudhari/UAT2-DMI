@@ -3,7 +3,11 @@
 
    <div class="row">
     <div class="col-lg-12 mx-auto text-center">
+      <?php if($ral_reschedule_status == 'confirm' && !empty($reschedule_status) && !empty($is_training_scheduled_ro )){?>
       <p class="fontSize26"><b>Training Schedule At RO</b></p>
+      <?php }else{ ?>
+        <p class="fontSize26"><b>Training Reschedule At RO</b></p>
+        <?php } ?>
        <!-- <hr/> -->
     </div>
   </div>
@@ -68,8 +72,14 @@
            <div class="col-md-2">
             <label for="field3"><span>Schedule Training From Dates <span class="cRed">*</span></span></label>
           </div>
+          
           <div class="col-md-4">
-          <?php echo $this->Form->control('shedule_from',['class' => 'form-control datepicker-here', 'label' => false,'id' => 'sheduleFrom', 'type' => 'Text',]); ?>
+          <?php if($ral_reschedule_status == 'confirm' && !empty($reschedule_status) && !empty($is_training_scheduled_ro )){?>
+       
+          <?php echo $this->Form->control('shedule_from',['class' => 'form-control datepicker-here', 'label' => false,'id' => 'sheduleFrom', 'type' => 'Text']); ?>
+          <?php } else{ ?>
+            <?php echo $this->Form->control('shedule_from',['class' => 'form-control datepicker-here', 'label' => false,'id' => 'sheduleFrom', 'type' => 'Text', 'value'=>$ro_schedule_from]); ?>
+            <?php } ?>
              <div class="err_cv_shedule_from text-red"></div>
           </div>
 
@@ -85,14 +95,33 @@
             <label for="field3"><span>Schedule Training To Dates <span class="cRed">*</span></span></label>
           </div>
             <div class="col-md-4">
+            <?php if($ral_reschedule_status == 'confirm' && !empty($reschedule_status) && !empty($is_training_scheduled_ro )){?>
           <?php echo $this->Form->control('shedule_to',['class' => 'form-control datepicker-here', 'label' => false,'id' => 'sheduleTo', 'type' => 'Text']); ?>
-            </div>
+          <?php } else{ ?>
+            <?php echo $this->Form->control('shedule_to',['class' => 'form-control datepicker-here', 'label' => false,'id' => 'sheduleTo', 'type' => 'Text', 'value'=>$ro_schedule_to]); ?>
+            <?php } ?>
+        </div>
              <div class="err_cv_shedule_to text-red"></div>
 
+            
+            <?php if($ral_reschedule_status == 'confirm' && empty($reschedule_status) && !empty($is_training_scheduled_ro )){?>
+              <div class="col-md-2">
+            <label for="field3"><span>Remark</span></label>
+            </div>
+              <div class="col-md-4">
+              <?php echo $this->Form->control('reshedule_remark', array('type'=>'textarea', 'id'=>'remark', 'escape'=>false,  'placeholder'=>'Enter Remark', 'class'=>'cvOn cvReq cvAlphaNum form-control',   'label'=>false)); ?>
+            </div>
+              <?php } ?>
             <div class="col-md-2"></div>
+           
             <div class="col-md-2">
+            <?php if($ral_reschedule_status == 'confirm' && !empty($reschedule_status) && !empty($is_training_scheduled_ro )){?>
             <button type="submit" value="submit" id="submit" class="form-control btn btn-success">Submit
            </button>
+           <?php }else{?>
+            <button type="submit" value="submit" id="submit" class="form-control btn btn-success">Confirm Dates
+           </button>
+           <?php } ?>
           </div>
         </div>
       </div>

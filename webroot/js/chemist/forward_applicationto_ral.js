@@ -7,13 +7,15 @@ $(document).ready(function(){
     
     autoclose: true,
     setDate: new Date(),
-    startDate:'+0d'
+    startDate:'+0d',
+    format: 'dd/mm/yyyy'
   });
 
   $('#sheduleFrom').datepicker({
     setDate: new Date(),
     autoclose: true,
-    startDate:'+0d'
+    startDate:'+0d',
+    format: 'dd/mm/yyyy'
   });
 
 	$('#submitbtn').on('click', function() {
