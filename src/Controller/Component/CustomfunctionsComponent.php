@@ -3273,10 +3273,13 @@ class CustomfunctionsComponent extends Component {
 		foreach($self_registered_chemist as $chemistList){
            $chemistId = $DmiChemistRegistrations->find('all',array('fields'=>'chemist_id','conditions'=>array('created_by IS' => $customer_id)))->toArray();
            $chemistIds[$i] = $chemistId[$i]['chemist_id']; 
-           $DmiChemistRoTRal = TableRegistry::getTableLocator()->get('DmiChemistRoToRalLogs');
-           $chemistRoLetterData = $DmiChemistRoTRal->find('all', array('fields'=>'pdf_file'))->where(array('chemist_id'=>$chemistIds[$i] , 'is_forwordedtoral IS NOT'=>NULL))->first(); 
-        if(!empty($chemistRoLetterData)){
-		  $chemistRoforwardedLetter[$i] = $chemistRoLetterData['pdf_file'];
+           $DmiChemistRalToRoLogs = TableRegistry::getTableLocator()->get('DmiChemistRalToRoLogs');
+           $chemistRalLetterData = $DmiChemistRalToRoLogs->find('all')->where(array('chemist_id'=>$chemistIds[$i], 'training_completed IS'=>NULL, 'reshedule_status IS'=>'confirm' ))->first(); 
+        
+		   
+		
+		   if(!empty($chemistRalLetterData)){
+		  $chemistRoforwardedLetter[$i] = $chemistRalLetterData['reshedule_pdf'];
 		}
           
           //ro side reliving letter show to packer id added by laxmi on 03-1-2023 
@@ -3296,11 +3299,11 @@ class CustomfunctionsComponent extends Component {
              $cetificatePdf[$i] = $cetificatePdfs['pdf_file'];
             } 
             
-            //grant certificate added by laxmi on 05-01-2023
-         
-           $trainingScheduleLetterFromRo = $DmiChemistRoTRal->find('all', array('fields'=>'ro_schedule_letter'))->where(array('chemist_id'=>$chemistIds[$i]))->first();
+            //RO side training schedule letter added by laxmi on 05-01-2023
+			$DmiChemistRoTRal = TableRegistry::getTableLocator()->get('DmiChemistRoToRalLogs');
+            $trainingScheduleLetterFromRo = $DmiChemistRoTRal->find('all', array('fields'=>'ro_schedule_letter'))->where(array('chemist_id'=>$chemistIds[$i]))->last();
 
-            if(!empty($trainingScheduleLetterFromRo)){
+          if(!empty($trainingScheduleLetterFromRo)){
            
              $ro_side_schedule_letter[$i] = $trainingScheduleLetterFromRo['ro_schedule_letter'];
             } 
