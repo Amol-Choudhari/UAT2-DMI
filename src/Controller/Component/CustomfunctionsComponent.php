@@ -3270,17 +3270,16 @@ class CustomfunctionsComponent extends Component {
 		$reliving_pdf = array();
 		$cetificatePdf = array();
 		$ro_side_schedule_letter = array();
+		$ral_trainingCom_letter = array();
 		foreach($self_registered_chemist as $chemistList){
            $chemistId = $DmiChemistRegistrations->find('all',array('fields'=>'chemist_id','conditions'=>array('created_by IS' => $customer_id)))->toArray();
            $chemistIds[$i] = $chemistId[$i]['chemist_id']; 
            $DmiChemistRalToRoLogs = TableRegistry::getTableLocator()->get('DmiChemistRalToRoLogs');
            $chemistRalLetterData = $DmiChemistRalToRoLogs->find('all')->where(array('chemist_id'=>$chemistIds[$i], 'training_completed IS'=>NULL, 'reshedule_status IS'=>'confirm' ))->first(); 
         
-		   
-		
 		   if(!empty($chemistRalLetterData)){
-		  $chemistRoforwardedLetter[$i] = $chemistRalLetterData['reshedule_pdf'];
-		}
+		     $chemistRoforwardedLetter[$i] = $chemistRalLetterData['reshedule_pdf'];
+		    }
           
           //ro side reliving letter show to packer id added by laxmi on 03-1-2023 
           $DmiChemistTrainingAtRo = TableRegistry::getTableLocator()->get('DmiChemistTrainingAtRo');
@@ -3307,7 +3306,14 @@ class CustomfunctionsComponent extends Component {
            
              $ro_side_schedule_letter[$i] = $trainingScheduleLetterFromRo['ro_schedule_letter'];
             } 
-
+			
+           //get and view Ral side training completed letter by laxmi on 05-01-2023 for chemist_training
+              
+             $raltrainingComLetter = $DmiChemistRalToRoLogs->find('all', ['conditions'=>['chemist_id IS'=>$chemistIds[$i], 'training_completed IS NOT'=>NULL]])->last();
+			 
+            if(!empty($raltrainingComLetter)){
+                $ral_trainingCom_letter[$i] = $raltrainingComLetter['pdf_file'];
+			}
            $i++;
 
 		}
@@ -3315,7 +3321,9 @@ class CustomfunctionsComponent extends Component {
 		 $this->Controller->set('viewLetterFromRo',$chemistRoforwardedLetter);
 		 $this->Controller->set('reliving_pdf',$reliving_pdf);
 		 $this->Controller->set('cetificatePdf',$cetificatePdf);
-		 $this->Controller->set('ro_side_schedule_letter',$ro_side_schedule_letter);//end Laxmi B.
+		 $this->Controller->set('ro_side_schedule_letter',$ro_side_schedule_letter);
+		 $this->Controller->set('ral_trainingCom_letter',$ral_trainingCom_letter);
+		 //end Laxmi B.
 	}
 
 

@@ -40,7 +40,7 @@
 						</tr>
 					</thead>
 					<tbody>
-					<?php if (!empty($self_registered_chemist)) {
+					<?php if (!empty($self_registered_chemist)) { 
 
 						$i=0; $sr_no = 1;
 
@@ -52,10 +52,15 @@
 							<td><?php echo base64_decode($each['email']); ?></td>
 							<td><?php echo $each['created']; ?></td>
 							<!-- RO side schedule letter pdf added by laxmi on 29-11-2022 -->
+							<td>
 							<?php if(!empty($viewLetterFromRo[$i])){ ?>
-							<td><a href="<?php echo $viewLetterFromRo[$i];?>" target="_blank"><?php echo "RAL Schedule Letter"; ?></a> |
+							<a href="<?php echo $viewLetterFromRo[$i];?>" target="_blank"><?php echo "RAL Schedule Letter"; ?></a> |
 						    <?php } ?>
-
+                            
+							<!-- Ral side training completed letter from Ral added by laxmi on 27-1-23 -->
+							<?php if(!empty($ral_trainingCom_letter[$i])){ ?>
+								<a href="<?php echo $ral_trainingCom_letter[$i];?>" target="_blank"><?php echo "RAL Reliving Letter"; ?></a> |
+							<?php } ?>
 						    <!-- RO side training scheduled letter pdf added by laxmi on 027-01-2023 -->
                                <?php if(!empty($ro_side_schedule_letter[$i])){ ?>
 							     <a href="<?php echo $ro_side_schedule_letter[$i];?>" target="_blank"><?php echo "Ro Schedule Letter"; ?></a> |
@@ -65,8 +70,8 @@
                               <!-- RO side reliving letter pdf added by laxmi on 03-01-2023 -->
                                <?php if(!empty($reliving_pdf[$i])){ ?>
 							     <a href="<?php echo $reliving_pdf[$i];?>" target="_blank"><?php echo "Ro Relieving Letter"; ?></a>
-							</td>
-						      <?php } ?>
+							
+						      <?php } ?></td>
 
 
 
