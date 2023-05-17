@@ -1009,9 +1009,11 @@ class ChemistController extends AppController {
 			$is_trainingScheduleRO = array();
 			$ro_schedule_letter = array();
 			$reschedule_status =  array();
+			$appl_type = array();
+			$status  = array();
 			    
 			if(!empty($listofApp)){
-			foreach($listofApp as $list){
+			foreach($listofApp as $list){ 
 			$ral_offices[$i] = $this->DmiRoOffices->find('list',array('valueField'=>'ro_office', 'conditions'=>array('id IS'=>$list['ral_office_id'])))->first();
 
 			//training complete or not
@@ -1036,15 +1038,24 @@ class ChemistController extends AppController {
 			$ro_schedule_letter[$i] = $ro_schedule_training['ro_schedule_letter'];
             $reschedule_status[$i] = $ro_schedule_training['reshedule_status'];
 			}
-               
+               if(!empty($list['appliaction_type'])){
+               $this->loadModel('DmiApplicationTypes');
+			   $application_type = $this->DmiApplicationTypes->find('all',array( 'conditions'=>['id IS'=>$list['appliaction_type']]))->first();
+			  $appl_type[$i] = $application_type['application_type'];
+			}
+
+			$this->loadModel('DmiChemistGrantCertificatePdfs');
+			$g_status = $this->DmiChemistGrantCertificatePdfs->find('all',array('fields'=>array('pdf_file'), 'conditions'=>['customer_id IS'=>$chemistTableid['chemist_id']]))->last();
+			if(!empty($g_status)){
+			$status[$i] =$g_status['pdf_file'];
+			}
 			$i= $i+1;	
 			}
 
              //check application is final granted
-			$this->loadModel('DmiChemistFinalReports');
-			$status = $this->DmiChemistFinalReports->find('all',array('fields'=>array('status'), 'conditions'=>['customer_id IS'=>$chemistTableid['chemist_id']]))->last();
-            if(!empty($reschedule_status)){
-             $this->set('grant_approval_status',$status['status']);
+			
+            if(!empty($status)){
+             $this->set('grant_approval_pdf',$status);
             }
 			$this->set('ro_schedule_letter',$ro_schedule_letter);
 			$this->set('is_trainingScheduleRO',$is_trainingScheduleRO);
@@ -1055,7 +1066,7 @@ class ChemistController extends AppController {
 			$this->set('pdf_file',$pdf_file);
 			$this->set('ro_offices',$ro_office_data['ro_office']);
 			$this->set('reschedule_status',$reschedule_status);
-			
+			$this->set('appl_type', $appl_type);
  
 			}
 

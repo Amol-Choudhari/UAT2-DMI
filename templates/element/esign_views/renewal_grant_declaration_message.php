@@ -21,7 +21,7 @@
 		<div class="clearfix"></div>
 		
 		<!--<form action="https://esignservice.cdac.in/esign2.1/2.1/form/signdoc" method="POST">-->
-	<?php echo $this->Form->create(null,array('action'=>'https://10.158.81.78/UAT-DMI/esign/renGrantEsign','method'=>'POST'));?>
+	<?php echo $this->Form->create(null,array('action'=>'https://10.158.81.72/UAT-DMI/esign/renGrantEsign','method'=>'POST'));?>
 
 			<input type="hidden" id = "eSignRequest" name="eSignRequest" value=""/>
 			<input type="hidden" id = "aspTxnID" name="aspTxnID" value=""/>

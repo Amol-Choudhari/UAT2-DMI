@@ -42,7 +42,8 @@
          <?php if($list['training_completed'] == 1){ ?>
          <td><?php echo "Completed";?></td>
          <?php } ?>
-         <td><a href="<?php echo $list['pdf_file'] ;?>" target="_blank" type="application/pdf" rel="alternate">RAL Relieving Letter</a> | 
+         <td>
+          <a href="<?php echo $list['pdf_file'] ;?>" target="_blank" type="application/pdf" rel="alternate">RAL Relieving Letter</a> | 
  
            <?php if(empty($isTrainingComplete[$i]) && empty($is_trainingScheduleRO[$i]) && $is_trainingScheduleRO[$i] == '' ){ ?>
           <a href="<?php echo $this->getRequest()->getAttribute('webroot')."chemist/trainingScheduleAtRo/".$list['id'];?>" class=" btn btn-success">Training Schedule At RO</a>
@@ -63,16 +64,68 @@
         <a href="<?php echo $pdf_file[$i] ;?>" target="_blank" type="application/pdf" rel="alternate">RO Relieving Letter</a>
         <?php }?>
 
-        | <?php if(!empty($chemistTblid) && empty($grant_approval_status)){?>
+        | <?php if(!empty($chemistTblid[$i]) && empty($grant_approval_status[$i])){?>
           <a href="<?php echo '../scrutiny/form_scrutiny_fetch_id/'.$chemistTblid[$i].'/view/'.  $list['appliaction_type'];?>" class="btn btn-success">Proceed Grant Certificate</a>
         <?php }else{ ?>
-            <a href="<?php echo '#';?>" class="btn btn-success">Grant Certificate</a>
+            <a href="<?php echo $grant_approval_pdf[$i] ;?>" class="btn btn-success">Grant Certificate</a>
         <?php }
             }
+           echo '|  <a id=rejectApp_'.$chemistTblid[$i].' class = rejectModel><span class="glyphicon glyphicon-remove"></span></a>';
+          
+           
+          
+
+
+
+         
+       echo '<div id="myModal" class="modal">
+             <div class="modal-content">
+             <div class="modal-header">
+              <h4>Rejection of Application for Chemist Training</h4>
+              <span class="close">&times;</span>
+              </div>
+              <div class="modal-body">
+              <table id="rej-appl-table" class="table table-striped table-bordered">
+                <thead>
+                  <tr>
+                    <th>Application Type</th>
+                    <th>Application Id</th>
+                    <th>Remark/Reason</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                  <tr>';
+                  echo $this->Form->create(null, array( 'enctype'=>'multipart/form-data', 'id'=>'rejectApp','class'=>'form_name'));
+                    echo '<td>';
+                     echo $this->Form->control('application_type', array('type'=>'text', 'disabled'=>true, 'class'=>'cvOn cvReq cvAlphaNum ', 'value'=>$appl_type[$i],'label'=>false)); 
+                    echo '</td>
+                    <td>';
+                     echo $this->Form->control('application_id', array('type'=>'text', 'disabled'=>true, 'class'=>'cvOn cvReq cvAlphaNum ', 'value'=>$list['chemist_id'],'label'=>false)) ;
+                     echo '</td>
+                    <td>';
+                    echo $this->Form->control('remark', array('type'=>'textarea', 'id'=>'remark', 'escape'=>false,  'placeholder'=>'Enter Remark/Reason', 'class'=>'cvOn cvReq cvAlphaNum ',   'label'=>false));
+                    echo '</td>
+                    <td><Button class="btn btn-primary" type="submit" >Reject</button></td>';
+                      echo $this->Form->end();
+                  echo '</tr>
+                </tbody>
+              </table>
+             </div>
+             <div class="modal-footer">
+             </div>
+             </div>
+          </div>';
+          
+         
+        
           $i++;
+
         } ?>
+       
         </td>
-        </td> 
+        
+        
      </tr>
      <?php  } 
      ?>
@@ -81,4 +134,49 @@
 </table>	
 </div>
 	
+<!-- reject application model body -->
+<!-- The Modal -->
+<!-- <div id="myModal" class="modal">
+
+ 
+
+ Modal content -->
+<!-- <div class="modal-content">
+  <div class="modal-header">
+   
+    <h4>Rejection of Application for Chemist Training</h4>
+    <span class="close">&times;</span>
+  </div>
+  <div class="modal-body">
+    <table id="rej-appl-table" class="table table-striped table-bordered">
+      <thead>
+        <tr>
+          <th>Application Type</th>
+          <th>Application Id</th>
+          <th>Remark/Reason</th>
+          <th>Action</th>
+      </tr>
+      </thead>
+      <tbody>
+        <tr>
+        <?php  //echo $this->Form->create(null, array( 'enctype'=>'multipart/form-data', 'id'=>'rejectApp','class'=>'form_name'));  ?>
+          <td>
+           <?php //echo $this->Form->control('application_type', array('type'=>'text', 'disabled'=>true, 'class'=>'cvOn cvReq cvAlphaNum ', 'value'=>'','label'=>false)) ;?>
+          </td>
+          <td><?php// echo $this->Form->control('application_type', array('type'=>'text', 'disabled'=>true, 'class'=>'cvOn cvReq cvAlphaNum ', 'value'=>'','label'=>false)) ;?></td>
+          <td><?php // echo $this->Form->control('remark', array('type'=>'textarea', 'id'=>'remark', 'escape'=>false,  'placeholder'=>'Enter Remark/Reason', 'class'=>'cvOn cvReq cvAlphaNum ',   'label'=>false)); ?></td>
+          <td><Button class="btn btn-primary" type="submit" >Reject</button></td>
+          <?php  //echo $this->Form->end();  ?>
+        </tr>
+      </tbody>
+  </table>
+  </div>
+  <div class="modal-footer">
+  
+  </div>
+</div> -->
+
 </div>
+
+<?php echo $this->Html->css('chemist/reject_application');?>
+<?php echo $this->Html->Script('chemist/reject_application');?>

@@ -91,8 +91,8 @@
             <label for="field3"><span>Remark </span></label>
           </div>
           <div class="col-md-4">
-            <?php echo $this->Form->control('remark', array('type'=>'textarea', 'id'=>'remark', 'escape'=>false,  'placeholder'=>'Enter Remark', 'class'=>'cvOn cvReq cvAlphaNum form-control',   'label'=>false)); ?>
-            <div class="err_cv_remark text-red"></div>
+            <?php echo $this->Form->control('remark', array('type'=>'textarea', 'id'=>'rej_remark', 'escape'=>false,  'placeholder'=>'Enter Remark', 'class'=>'cvOn cvReq cvAlphaNum form-control',   'label'=>false)); ?>
+            
           </div>
            <div class="col-md-2">
             <label for="field3"><span>Upload </span></label>
