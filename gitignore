@@ -1,0 +1,54 @@
+# CakePHP specific files #
+##########################
+/logs/*
+/tmp/*
+/vendor/*
+/bin/*
+/config/*
+/plugins/*
+/resources/*
+/tests/*
+# Esign Bypass related files #
+/src/Controller/EsignController.php
+/templates/element/declaration-message_boxes.php
+/templates/element/esign_views/declaration-message-before-grant.php
+/templates/element/esign_views/declaration-message_boxes.php
+/templates/element/esign_views/renewal_grant_declaration_message.php
+/templates/element/esign_views/re_esign_pdf_popup.php
+/templates/element/replica/replica_approval_esign_consent.php
+
+# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+ehthumbs.db
+Thumbs.db
+.directory
+
+# Tool specific files #
+#######################
+# PHPUnit
+.phpunit.result.cache
+# vim
+*~
+*.swp
+*.swo
+# sublime text & textmate
+*.sublime-*
+*.stTheme.cache
+*.tmlanguage.cache
+*.tmPreferences.cache
+# Eclipse
+.settings/*
+# JetBrains, aka PHPStorm, IntelliJ IDEA
+.idea/*
+# NetBeans
+nbproject/*
+# Visual Studio Code
+.vscode
+# Sass preprocessor
+.sass-cache/

@@ -70,52 +70,12 @@
             <a href="<?php echo $grant_approval_pdf[$i] ;?>" class="btn btn-success">Grant Certificate</a>
         <?php }
             }
-           echo '|  <a id=rejectApp_'.$chemistTblid[$i].' class = rejectModel><span class="glyphicon glyphicon-remove"></span></a>';
+           echo '|  <a id=rejectApp_'.$chemistTblid[$i].' class = rejectModel value='.$list['chemist_id'].' appl_type ="' .$appl_type[$i].'"> <span class="glyphicon glyphicon-remove"></span></a>';
           
            
           
 
 
-
-         
-       echo '<div id="myModal" class="modal">
-             <div class="modal-content">
-             <div class="modal-header">
-              <h4>Rejection of Application for Chemist Training</h4>
-              <span class="close">&times;</span>
-              </div>
-              <div class="modal-body">
-              <table id="rej-appl-table" class="table table-striped table-bordered">
-                <thead>
-                  <tr>
-                    <th>Application Type</th>
-                    <th>Application Id</th>
-                    <th>Remark/Reason</th>
-                    <th>Action</th>
-                </tr>
-                </thead>
-                <tbody>
-                  <tr>';
-                  echo $this->Form->create(null, array( 'enctype'=>'multipart/form-data', 'id'=>'rejectApp','class'=>'form_name'));
-                    echo '<td>';
-                     echo $this->Form->control('application_type', array('type'=>'text', 'disabled'=>true, 'class'=>'cvOn cvReq cvAlphaNum ', 'value'=>$appl_type[$i],'label'=>false)); 
-                    echo '</td>
-                    <td>';
-                     echo $this->Form->control('application_id', array('type'=>'text', 'disabled'=>true, 'class'=>'cvOn cvReq cvAlphaNum ', 'value'=>$list['chemist_id'],'label'=>false)) ;
-                     echo '</td>
-                    <td>';
-                    echo $this->Form->control('remark', array('type'=>'textarea', 'id'=>'remark', 'escape'=>false,  'placeholder'=>'Enter Remark/Reason', 'class'=>'cvOn cvReq cvAlphaNum ',   'label'=>false));
-                    echo '</td>
-                    <td><Button class="btn btn-primary" type="submit" >Reject</button></td>';
-                      echo $this->Form->end();
-                  echo '</tr>
-                </tbody>
-              </table>
-             </div>
-             <div class="modal-footer">
-             </div>
-             </div>
-          </div>';
           
          
         
@@ -136,12 +96,12 @@
 	
 <!-- reject application model body -->
 <!-- The Modal -->
-<!-- <div id="myModal" class="modal">
+ <div id="myModal" class="modal">
 
  
 
- Modal content -->
-<!-- <div class="modal-content">
+ <!--Modal content -->
+<div class="modal-content">
   <div class="modal-header">
    
     <h4>Rejection of Application for Chemist Training</h4>
@@ -159,14 +119,14 @@
       </thead>
       <tbody>
         <tr>
-        <?php  //echo $this->Form->create(null, array( 'enctype'=>'multipart/form-data', 'id'=>'rejectApp','class'=>'form_name'));  ?>
+        <?php  echo $this->Form->create(null, array( 'enctype'=>'multipart/form-data', 'id'=>'rejectApp','class'=>'form_name'));  ?>
           <td>
-           <?php //echo $this->Form->control('application_type', array('type'=>'text', 'disabled'=>true, 'class'=>'cvOn cvReq cvAlphaNum ', 'value'=>'','label'=>false)) ;?>
+           <?php echo $this->Form->control('application_type', array('type'=>'text', 'readonly'=>true, 'class'=>'cvOn cvReq cvAlphaNum applicationType', 'value'=>'', 'label'=>false)) ;?>
           </td>
-          <td><?php// echo $this->Form->control('application_type', array('type'=>'text', 'disabled'=>true, 'class'=>'cvOn cvReq cvAlphaNum ', 'value'=>'','label'=>false)) ;?></td>
-          <td><?php // echo $this->Form->control('remark', array('type'=>'textarea', 'id'=>'remark', 'escape'=>false,  'placeholder'=>'Enter Remark/Reason', 'class'=>'cvOn cvReq cvAlphaNum ',   'label'=>false)); ?></td>
-          <td><Button class="btn btn-primary" type="submit" >Reject</button></td>
-          <?php  //echo $this->Form->end();  ?>
+          <td><?php echo $this->Form->control('application_id', array('type'=>'text', 'readonly'=>true, 'class'=>'cvOn cvReq cvAlphaNum chemistId ', 'value'=>'', 'label'=>false)) ;?></td>
+          <td><?php  echo $this->Form->control('remark', array('type'=>'textarea', 'id'=>'remark', 'escape'=>false,  'placeholder'=>'Enter Remark/Reason', 'value'=>'','class'=>'cvOn cvReq cvAlphaNum ',   'label'=>false)); ?></td>
+          <td><a class="btn btn-primary" type="submit" id="rejectBtn">Reject</a></td>
+          <?php  echo $this->Form->end();  ?>
         </tr>
       </tbody>
   </table>
@@ -174,7 +134,7 @@
   <div class="modal-footer">
   
   </div>
-</div> -->
+</div> 
 
 </div>
 
