@@ -20,19 +20,60 @@ $('.rejectModel').click(function(){
 });
 $('.close').click(function(){
     $('.modal').hide();
+    $('#remark').val('');
+    $('.errorClass').hide();
 });
 
 
 //After click on reject button from popup take a parameter as input and pass it to the contrller to save
-
-$('.modal #rejectBtn').click( function(){
-    debugger;
-    alert(123);
-var app_type = $('#application_type').attr('value');
-var chemist_id = $('#application_id').attr('val');
-var remark     = $('#remark').attr('value');
-console.log($(this).attr('value'));
+$('.reject').click(function(e){
+    e.preventDefault(); 
+$('.errorClass').hide();
 });
+$('.modal #rejectBtn').click( function(){
 
+    
+var app_type = $('.applicationType').val();
+var chemist_id = $('.chemistId').val();
+var remark     = $('.reject').val();
+
+
+if(remark == undefined || remark ==''){
+    $('.errorClass').show();
+    $('.errorClass').text('Please add application reject reason.');
+}else{
+$.ajax({
+        type: "POST",
+        url: '../chemist/chemistApplicationReject/',
+        data: {appl_type:app_type, chemist_id:chemist_id, remark:remark},
+        cache: false,
+        beforeSend: function (xhr){
+            xhr.setRequestHeader('X-CSRF-Token', $('[name="_csrfToken"]').val());
+        }, 
+        success: function(data)
+        {
+           
+            $.alert({
+                content:"Application Rejected Successfully.",
+                onClose: function(){
+                location.reload();
+                }
+                
+            }); 
+            $('#remark').val('');
+        },
+        error: function () {
+            $.alert({
+                content:"Something went wrong, Please try again.",
+                onClose: function(){
+                location.reload();
+                }
+                
+            }); 
+            $('#remark').val('');
+           }
+     });
+   }
+  });
 
 });

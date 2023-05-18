@@ -84,7 +84,8 @@ class Application extends BaseApplication
 			if (is_null($controller) || is_null($action)) {
 				return false;
 			}
-			if (strcmp($controller,'Nsws') == 0 || strcmp($controller,'Reports') == 0 || strcmp($controller,'AjaxFunctions') == 0 || strcmp($controller,'Esign') == 0) {    // Skip token check for specified controller or methods.
+            //added chemist controller in below line for chemist reject application ajax allow for chemist training module by laxmi B. on 18-05-2023
+			if (strcmp($controller,'Nsws') == 0 || strcmp($controller,'Reports') == 0 || strcmp($controller,'AjaxFunctions') == 0 || strcmp($controller,'Esign') == 0 || strcmp($controller,'Chemist') == 0) {    // Skip token check for specified controller or methods.
 				return true;
 			}
 			return false;

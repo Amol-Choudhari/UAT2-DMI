@@ -70,14 +70,9 @@
             <a href="<?php echo $grant_approval_pdf[$i] ;?>" class="btn btn-success">Grant Certificate</a>
         <?php }
             }
-           echo '|  <a id=rejectApp_'.$chemistTblid[$i].' class = rejectModel value='.$list['chemist_id'].' appl_type ="' .$appl_type[$i].'"> <span class="glyphicon glyphicon-remove"></span></a>';
-          
-           
-          
-
-
-          
-         
+            if(empty($grant_approval_status[$i]) && !empty($isTrainingComplete[$i])){
+           echo '|  <button id=rejectApp_'.$chemistTblid[$i].' class = rejectModel value='.$list['chemist_id'].' appl_type ="' .$appl_type[$i].'"> <span class="glyphicon glyphicon-remove"></span></button>';
+            }
         
           $i++;
 
@@ -123,8 +118,12 @@
           <td>
            <?php echo $this->Form->control('application_type', array('type'=>'text', 'readonly'=>true, 'class'=>'cvOn cvReq cvAlphaNum applicationType', 'value'=>'', 'label'=>false)) ;?>
           </td>
-          <td><?php echo $this->Form->control('application_id', array('type'=>'text', 'readonly'=>true, 'class'=>'cvOn cvReq cvAlphaNum chemistId ', 'value'=>'', 'label'=>false)) ;?></td>
-          <td><?php  echo $this->Form->control('remark', array('type'=>'textarea', 'id'=>'remark', 'escape'=>false,  'placeholder'=>'Enter Remark/Reason', 'value'=>'','class'=>'cvOn cvReq cvAlphaNum ',   'label'=>false)); ?></td>
+          <td><?php echo $this->Form->control('application_id', array('type'=>'text', 'readonly'=>true, 'class'=>'cvOn cvReq cvAlphaNum chemistId ', 'label'=>false)) ;?>
+          
+        </td>
+          
+          <td><?php  echo $this->Form->control('remark', array('type'=>'textarea', 'id'=>'remark', 'escape'=>false,  'placeholder'=>'Enter Remark/Reason', 'value'=>'','class'=>'cvOn cvReq cvAlphaNum reject',   'label'=>false)); ?>
+          <div><b class="errorClass text-red"></b></div></td>
           <td><a class="btn btn-primary" type="submit" id="rejectBtn">Reject</a></td>
           <?php  echo $this->Form->end();  ?>
         </tr>

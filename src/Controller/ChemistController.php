@@ -1293,6 +1293,53 @@ class ChemistController extends AppController {
 
 				}  
 
+              //For reject chemist application from ro side and save value in rejectedLogs table for chemist training module added by laxmi B. on 18-05-2023
+				public function chemistApplicationReject(){
+					$this->setLayout= false;
+					$this->autoRender = false;
+					//$message = "";
+					
+					if($this->request->is('post')){
+						$reqData = $this->request->getData();
+						$app_type = $reqData['appl_type'];
+						$chemistId = $reqData['chemist_id'];
+						$reason    = $reqData['remark'];
+						$byuser    = $this->Session->read('username');
+
+						$this->loadModel('DmiRejectedApplLogs');
+						$this->loadModel('DmiApplicationTypes');
+
+						$appl_type = $this->DmiApplicationTypes->find('all',array('fields'=>['id'], 'conditions'=>['application_type'=>$app_type]))->first();
+						
+						if($appl_type['id'] == 4) {
+
+							$form_type='CHM';
+						}
+                       
+						if(!empty($reason)){
+                        $DmiRejectedApplLogsEntity = $this->DmiRejectedApplLogs->newEntity(
+							array(
+								'appl_type'   => $appl_type['id'],
+								'form_type'   => $form_type,
+								'customer_id' => $chemistId,
+								'by_user'     => $byuser,
+								'remark'      => $reason,
+								'created'     => date('Y-m-d H:i:s'),
+							));
+						}else{
+							$message = "Please enter all fields data.";
+						}
+
+                        
+						if($this->DmiRejectedApplLogs->save($DmiRejectedApplLogsEntity) ) {
+                              $message ="Application Rejected successfully.";
+						}else{
+							$message ="Something went wrong, Please try Again.";
+						}
+                         
+					}
+				}
+
 
 }
 
