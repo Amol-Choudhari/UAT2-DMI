@@ -830,7 +830,7 @@ class ChemistController extends AppController {
 
 		// for export unit  condition added by laxmi on 9-1-23
 		if(!empty($_SESSION['export_unit']) && $_SESSION['export_unit'] == 'yes'){
-		$ral_details = $this->DmiRoOffices->find('all')->select(['id','ro_office'])->where(array('office_type IS'=>'RAL', 'ro_office IS'=> 'Mumbai'))->toArray();
+		$ral_details = $this->DmiRoOffices->find('all')->select(['id','ro_office'])->where(array('office_type IS'=>'RAL', 'ro_office IS'=> 'Mumbai'))->first();
 		if(!empty($ral_details)){
 		$this->set('ral_details',$ral_details);
 		}
@@ -841,9 +841,9 @@ class ChemistController extends AppController {
 		if($this->request->is('post') != '' ){
 		$document= $this->request->getData('document');
 		$shedule_from = $this->request->getData('shedule_from');
-		$from_date = date('Y-m-d H:i:s', strtotime($shedule_from));
+		$from_date = date('Y-m-d H:i:s', strtotime(str_replace('/','-',$shedule_from)));
 		$shedule_to = $this->request->getData('shedule_to');
-		$to_date = date('Y-m-d H:i:s', strtotime($shedule_to));
+		$to_date = date('Y-m-d H:i:s', strtotime(str_replace('/','-',$shedule_to)));
  
 		if (!empty($this->request->getData('document')->getClientFilename())) {
 
@@ -884,7 +884,7 @@ class ChemistController extends AppController {
 		'shedule_to' => $to_date,
 		'ro_office_id' =>$ro_office_id['id'],
 		));
-          
+         
 		if($this->DmiChemistRoToRalLogs->save($data)){
 		
 		//to enter RAL Email id in allocation and current position table added by laxmi on 10-01-2023
