@@ -991,6 +991,7 @@ class ChemistController extends AppController {
 			$this->loadModel('DmiChemistAllCurrentPositions');
 			$this->loadModel('DmiChemistRoToRalLogs');
 			$this->loadModel('DmiRejectedApplLogs');
+			$conn = ConnectionManager::get('default');
 
 			$ro_email = $this->Session->read('username');
 			$chemist_allocation  = $this->DmiChemistAllCurrentPositions->find('all',array('fields'=>array('current_level', 'current_user_email_id')))->where(array('current_user_email_id IS'=>$ro_email))->first();
@@ -1004,15 +1005,11 @@ class ChemistController extends AppController {
 			$this->Session->write('level_3_for', $ro_office_data['office_type']);
 			
 			
-			//$listofApp = $this->DmiChemistRalToRoLogs->find('all')->where(array('training_completed IS  '=>1, 'ro_office_id IS'=>$ro_office_data['id']))->order('created desc')->toArray();
-		    
-			$query = "select * from dmi_chemist_ral_to_ro_logs  
-			where chemist_id not in (select customer_id from dmi_rejected_appl_logs) 
-            AND ro_office_id = '".$ro_office_data['id']."' AND training_completed = '1'";
-			$listofApp = $this->DmiChemistRalToRoLogs->query($query)->toArray();
 
-			
-			//print_r($listofApp);exit;			
+			$query = $conn->execute( "SELECT * FROM dmi_chemist_ral_to_ro_logs  WHERE chemist_id NOT IN (SELECT customer_id FROM dmi_rejected_appl_logs) 
+			AND ro_office_id = '".$ro_office_data['id']."' AND training_completed = '1'");
+			$listofApp = $query->fetchAll('assoc');
+				
 			}
              
 
@@ -1027,7 +1024,7 @@ class ChemistController extends AppController {
 			$reschedule_status =  array();
 			$appl_type = array();
 			$status  = array();
-			    
+			
 			if(!empty($listofApp)){
 			foreach($listofApp as $list){ 
 			$ral_offices[$i] = $this->DmiRoOffices->find('list',array('valueField'=>'ro_office', 'conditions'=>array('id IS'=>$list['ral_office_id'])))->first();
