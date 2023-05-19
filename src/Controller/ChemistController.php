@@ -28,7 +28,7 @@ class ChemistController extends AppController {
 
 		//$this->viewBuilder()->setLayout('admin_dashboard');
 		$this->Session = $this->getRequest()->getSession();
-
+         
 		//Load Models
 		$this->loadModel('DmiChemistRegistrations');
 		$this->loadModel('DmiFirms');
@@ -993,6 +993,7 @@ class ChemistController extends AppController {
 			
 			$ro_email = $this->Session->read('username');
 			$chemist_allocation  = $this->DmiChemistAllCurrentPositions->find('all',array('fields'=>array('current_level', 'current_user_email_id')))->where(array('current_user_email_id IS'=>$ro_email))->first();
+			if(!empty($chemist_allocation)){
 			$this->set('current_level', $chemist_allocation['current_level']);
 			$this->Session->write('current_level', $chemist_allocation['current_level']);	
 			
@@ -1000,7 +1001,9 @@ class ChemistController extends AppController {
 			
 			$this->set('level_3_for', $ro_office_data['office_type']);
 			$this->Session->write('level_3_for', $ro_office_data['office_type']);
+			
 			$listofApp = $this->DmiChemistRalToRoLogs->find('all')->where(array('training_completed IS  '=>1, 'ro_office_id IS'=>$ro_office_data['id']))->order('created desc')->toArray();
+		    }
 			$i=0;
 			$ral_offices = array();
 			$isTainingCompleted = array();
