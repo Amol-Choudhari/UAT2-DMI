@@ -22,7 +22,7 @@
   <tbody>
     
       <?php $i = 0; 
-      if(!empty($listOfChemistApp)){ 
+      if(!empty($listOfChemistApp)){  
       foreach ($listOfChemistApp as $key => $list) {?>
       	<tr>
       <th scope="row"><?php echo $i+1; ?></th>
@@ -70,14 +70,14 @@
             <a href="<?php echo $grant_approval_pdf[$i] ;?>" class="btn btn-success">Grant Certificate</a>
         <?php }
             }
-            if(empty($grant_approval_status[$i]) && !empty($isTrainingComplete[$i])){
-           echo '|  <button id=rejectApp_'.$chemistTblid[$i].' class = rejectModel value='.$list['chemist_id'].' appl_type ="' .$appl_type[$i].'"> <span class="glyphicon glyphicon-remove"></span></button>';
-            }
-        
+            
+            if(empty($grant_approval_status[$i])){
+              echo '|  <button id=rejectApp_'.$chemistTblid[$i].' class = rejectModel value='.$list['chemist_id'].' appl_type ="' .$appl_type[$i].'"> <span class="glyphicon glyphicon-remove"></span></button>';
+               }
           $i++;
 
         } ?>
-       
+        
         </td>
         
         

@@ -3819,12 +3819,12 @@ class ApplicationformspdfsController extends AppController{
 				$this->set('sub_commodity_data',$sub_commodity_data);	
 
 				}
-                $this->loadModel('DmiChemistRalToRoLogs');
-				$scheduleDates = $this->DmiChemistRalToRoLogs->find('all')->where(array('chemist_id IS'=>$customer_id))->first();
-				
+                $this->loadModel('DmiChemistROToRalLogs');
+				$scheduleDates = $this->DmiChemistROToRalLogs->find('all')->where(array('chemist_id IS'=>$customer_id, 'reshedule_status IS'=>'confirm'))->last();
+					
 				if(!empty($scheduleDates)){
-				$schedule_from = date('d-m-Y',strtotime(str_replace('/','-', $scheduleDates['reshedule_from_date'])));
-				$schedule_to = date('d-m-Y',strtotime(str_replace('/','-', $scheduleDates['reshedule_to_date'])));
+				$schedule_from = date('d-m-Y',strtotime(str_replace('/','-', $scheduleDates['ro_schedule_from'])));
+				$schedule_to = date('d-m-Y',strtotime(str_replace('/','-', $scheduleDates['ro_schedule_to'])));
 				$this->set('schedule_from',$schedule_from);
 				$this->set('schedule_to',$schedule_to);
 

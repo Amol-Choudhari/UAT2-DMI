@@ -1067,9 +1067,9 @@ class ChemistController extends AppController {
 
              //check application is final granted
 			
-            if(!empty($status)){
+           
              $this->set('grant_approval_pdf',$status);
-            }
+           
 			$this->set('ro_schedule_letter',$ro_schedule_letter);
 			$this->set('is_trainingScheduleRO',$is_trainingScheduleRO);
 			$this->set('chemistTblid',$chemistTblid);
@@ -1210,11 +1210,11 @@ class ChemistController extends AppController {
 
 				$this->loadModel('DmiChemistRoToRalLogs');
                 $check_reschedule = $this->DmiChemistRoToRalLogs->find('all', ['conditions'=>['chemist_id IS'=> $chemist_id]])->last();
-                 
-                $this->set('ro_schedule_from', date('d/m/Y',strtotime($check_reschedule['ro_schedule_from'])));
-                $this->set('ro_schedule_to', date('d/m/Y',strtotime($check_reschedule['ro_schedule_to'])));
+         
+                $this->set('ro_schedule_from',date('Y-m-d', strtotime(str_replace("/","-",$check_reschedule['ro_schedule_from']))));
+                $this->set('ro_schedule_to', date('Y-m-d',strtotime(str_replace("/","-",$check_reschedule['ro_schedule_to']))));
                 $this->set('reschedule_status', $check_reschedule['ro_reschedule_status']);
-
+                   
                 $this->set('is_training_scheduled_ro', $check_reschedule['is_training_scheduled_ro']);
 
 				if($this->request->is('post') != '' ){
@@ -1277,7 +1277,7 @@ class ChemistController extends AppController {
 					'reshedule_status' =>'confirm',
 					'ro_office_id' =>$ro_office_id['id'],
 					));
-               
+              
                  $result = $this->DmiChemistRoToRalLogs->save($rescheduleDateData);
                  if($result){
 				$message ="Chemist Training Schedule at Ro";
