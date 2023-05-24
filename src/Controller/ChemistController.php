@@ -830,9 +830,12 @@ class ChemistController extends AppController {
 
 		// for export unit  condition added by laxmi on 9-1-23
 		if(!empty($_SESSION['export_unit']) && $_SESSION['export_unit'] == 'yes'){
-		$ral_details = $this->DmiRoOffices->find('all')->select(['id','ro_office'])->where(array('office_type IS'=>'RAL', 'ro_office IS'=> 'Mumbai'))->first();
+		$ral_details = $this->DmiRoOffices->find('all')->select(['id','ro_office'])->where(array('office_type IS'=>'RAL', 'ro_office IS'=> 'Mumbai', 'delete_status IS'=>NULL ))->toArray();
+		
 		if(!empty($ral_details)){
 		$this->set('ral_details',$ral_details);
+		// $this->set('ral_office',$ral_details['ro_office']);
+		// $this->set('ral_office_id',$ral_details['id']);
 		}
 		}
 
@@ -945,6 +948,7 @@ class ChemistController extends AppController {
 			$this->loadModel('DmiChemistRoToRalLogs');
 			$this->loadModel('DmiRoOffices');
 			$this->loadModel('DmiChemistRegistrations');
+			$this->loadModel('DmiChemistRalToRoLogs');
 			$this->viewBuilder()->setLayout('admin_dashboard');
 
 			$ro_email = $_SESSION['username'];	
@@ -955,6 +959,7 @@ class ChemistController extends AppController {
 			$ral_offices= array();
 			$chemistId= array(); 
 			$ro_offices = array();
+			$ral_schedule_pdf = array();
 
 			if(!empty($listofApp)){
 			$this->set('listOfChemistApp',$listofApp);
@@ -968,13 +973,15 @@ class ChemistController extends AppController {
 			if(!empty($ro_officesId)){
 			$ro_offices[$i]= $ro_officesId['ro_office'];
 			}
-
-
+            $ral_schedule = $this->DmiChemistRalToRoLogs->find('all')->where(array('chemist_id'=>$list['chemist_id'], 'reshedule_pdf IS NOT'=>NULL, 'reshedule_status'=>'confirm'))->last();
+            if(!empty($ral_schedule)){$ral_schedule_pdf[$i] = $ral_schedule['reshedule_pdf'];}
+			
 			$i= $i+1;
 			}
 			$this->set('ro_office', $ro_offices);
 			$this->set('ral_offices',$ral_offices);
 			$this->set('chemisttblId',$chemistId);
+			$this->set('ral_schedule_pdf',$ral_schedule_pdf);
 
 			}
 
