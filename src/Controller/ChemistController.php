@@ -827,19 +827,20 @@ class ChemistController extends AppController {
 		if(!empty($ral_details)){
 		$this->set('ral_details',$ral_details);
 		}
-
+		$ro_office_id= $this->DmiRoOffices->find('all')->where(array('ro_email_id'=>$ro_email, 'or'=>array(['office_type IS'=>'RO'],['office_type IS'=>'SO'])))->first();
+		
 		// for export unit  condition added by laxmi on 9-1-23
 		if(!empty($_SESSION['export_unit']) && $_SESSION['export_unit'] == 'yes'){
 		$ral_details = $this->DmiRoOffices->find('all')->select(['id','ro_office'])->where(array('office_type IS'=>'RAL', 'ro_office IS'=> 'Mumbai', 'delete_status IS'=>NULL ))->toArray();
 		
 		if(!empty($ral_details)){
 		$this->set('ral_details',$ral_details);
-		// $this->set('ral_office',$ral_details['ro_office']);
-		// $this->set('ral_office_id',$ral_details['id']);
-		}
 		}
 
-		$ro_office_id= $this->DmiRoOffices->find('all')->where(array('ro_email_id'=>$ro_email, 'or'=>array(['office_type IS'=>'RO'],['office_type IS'=>'SO'])))->first();
+		$ro_office_id= $this->DmiRoOffices->find('all')->where(array('ro_email_id'=>$ro_email, 'or'=>array(['office_type IS'=>'RO'],['office_type IS'=>'SO'], 'ro_office IS'=>'Mumbai')))->first();
+		}
+
+		
          
 		if($this->request->is('post') != '' ){
 		$document= $this->request->getData('document');
