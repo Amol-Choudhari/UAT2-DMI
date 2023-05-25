@@ -962,15 +962,17 @@ class ChemistController extends AppController {
 			$this->viewBuilder()->setLayout('admin_dashboard');
 
 			$ro_email = $_SESSION['username'];	
-			$ro_office_id = $this->DmiRoOffices->find('list',array('valueField'=>'id', 'conditions'=>array('ro_email_id IS'=>$ro_email)))->first(); 
+			$ro_office_id = $this->DmiRoOffices->find('list',array('valueField'=>'id', 'conditions'=>array('ro_email_id IS'=>$ro_email)))->last(); 
 			
+
+
 			$export_unit = $this->Session->read('export_unit');
 			if(!empty($export_unit) && $export_unit == 'yes'){
 				$ro_office_id = $this->DmiRoOffices->find('list',array('valueField'=>'id', 'conditions'=>array('ro_email_id IS'=>$ro_email, 'ro_office IS'=>'Mumbai')))->first(); 
 			}
 			
 			$listofApp = $this->DmiChemistRoToRalLogs->find('all')->where(array('is_forwordedtoral IS NOT '=>NULL, 'ro_office_id IS'=>$ro_office_id))->order('created desc')->toArray();
-             
+			
 			$i=0;
 			$ral_offices= array();
 			$chemistId= array(); 
@@ -1021,9 +1023,11 @@ class ChemistController extends AppController {
 			$chemist_allocation  = $this->DmiChemistAllCurrentPositions->find('all',array('fields'=>array('current_level', 'current_user_email_id')))->where(array('current_user_email_id IS'=>$ro_email))->first();
 			if(!empty($chemist_allocation)){
 			$this->set('current_level', $chemist_allocation['current_level']);
-			$this->Session->write('current_level', $chemist_allocation['current_level']);	
-			
-			$ro_office_data = $this->DmiRoOffices->find('all',array('fields'=>array('id', 'office_type','ro_office'), 'conditions'=>array('ro_email_id IS'=>$ro_email, 'ro_email_id'=>$chemist_allocation['current_user_email_id'])))->first(); 
+			$this->Session->write('current_level', $chemist_allocation['current_level']);
+				
+		}
+		
+			$ro_office_data = $this->DmiRoOffices->find('all',array('fields'=>array('id', 'office_type','ro_office'), 'conditions'=>array('ro_email_id IS'=>$ro_email, 'ro_email_id'=>$chemist_allocation['current_user_email_id'])))->last(); 
 			
 			$export_unit = $this->Session->read('export_unit');
 			if(!empty($export_unit) && $export_unit == 'yes'){
@@ -1038,7 +1042,7 @@ class ChemistController extends AppController {
 			AND ro_office_id = '".$ro_office_data['id']."' AND training_completed = '1'");
 			$listofApp = $query->fetchAll('assoc');
 				
-			}
+		
              
 
 
@@ -1304,12 +1308,12 @@ class ChemistController extends AppController {
 					'modified' => date('Y-m-d H:i:s'),
 					'appliaction_type' =>4,
 					'reshedule_status' =>'confirm',
-					'ro_office_id' =>$ro_office_id['id'],
+					'ro_office_id' =>$check_reschedule['ro_office_id'],
 					));
-              
+           
                  $result = $this->DmiChemistRoToRalLogs->save($rescheduleDateData);
                  if($result){
-				$message ="Chemist Training Schedule at Ro";
+				$message ="Chemist Training Schedule Dates Confirm at Ro";
 				$message_theme = "success";
 				$redirect_to = '../../applicationformspdfs/trainingScheduleLetterFromRo/';
                 }else{
