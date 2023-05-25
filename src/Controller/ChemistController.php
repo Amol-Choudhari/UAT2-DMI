@@ -824,6 +824,7 @@ class ChemistController extends AppController {
 
 		$ral_details =$this->DmiRoOffices->find('all')->select(['id','ro_office'])->where(['office_type IS'=>'RAL', 'delete_status IS '=>NULL])->toArray();
 
+		
 		if(!empty($ral_details)){
 		$this->set('ral_details',$ral_details);
 		}
@@ -836,8 +837,16 @@ class ChemistController extends AppController {
 		if(!empty($ral_details)){
 		$this->set('ral_details',$ral_details);
 		}
-
-		$ro_office_id= $this->DmiRoOffices->find('all')->where(array('ro_email_id'=>$ro_email, 'or'=>array(['office_type IS'=>'RO'],['office_type IS'=>'SO'], 'ro_office IS'=>'Mumbai')))->first();
+		$ro_office_id= $this->DmiRoOffices->find('all')->where(array('ro_email_id'=>$ro_email, 'or'=>array(['office_type IS'=>'RO'],['office_type IS'=>'SO'])))->first();
+		//for export unit is yes for chemist then application with only Mumbai office
+		$export_unit = $this->Session->read('export_unit');
+		
+		if(!empty($export_unit) && $export_unit == 'yes'){
+			
+			$ro_office_id= $this->DmiRoOffices->find('all')->where(array('ro_email_id'=>$ro_email, 'ro_office IS'=>'Mumbai', 'or'=>array(['office_type IS'=>'RO'],['office_type IS'=>'SO'])))->first();
+			
+		}
+		
 		}
 
 		
@@ -954,13 +963,14 @@ class ChemistController extends AppController {
 
 			$ro_email = $_SESSION['username'];	
 			$ro_office_id = $this->DmiRoOffices->find('list',array('valueField'=>'id', 'conditions'=>array('ro_email_id IS'=>$ro_email)))->first(); 
+			
 			$export_unit = $this->Session->read('export_unit');
 			if(!empty($export_unit) && $export_unit == 'yes'){
 				$ro_office_id = $this->DmiRoOffices->find('list',array('valueField'=>'id', 'conditions'=>array('ro_email_id IS'=>$ro_email, 'ro_office IS'=>'Mumbai')))->first(); 
 			}
 			
 			$listofApp = $this->DmiChemistRoToRalLogs->find('all')->where(array('is_forwordedtoral IS NOT '=>NULL, 'ro_office_id IS'=>$ro_office_id))->order('created desc')->toArray();
-               
+             
 			$i=0;
 			$ral_offices= array();
 			$chemistId= array(); 

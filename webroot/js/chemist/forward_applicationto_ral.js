@@ -1,6 +1,6 @@
 // file created by laxmi on 23-12-22
 $(document).ready(function(){
-
+  
   //datepicker added by laxmi on 28-12-2022
   // The Calender
   $('#sheduleTo').datepicker({
@@ -18,30 +18,31 @@ $(document).ready(function(){
     format: 'dd/mm/yyyy'
   });
 
-	$('#submitbtn').on('click', function() {
+	$('#btnSubmit').on('click', function() {
     var roOffice = $('#roOffice').val();
-    var remark = $('#remark').val();
      var scheduleDateFrom = $('#sheduleFrom').val();
       var scheduleDateTo= $('#sheduleTo').val();
-    var value_return = 'true';
-    if(roOffice == ""){
-     $('.err_cv_ro_office').html("Please select RO Office");
-      value_return = 'false';
+     // alert(roOffice);
+    
+    if(roOffice == ""  || roOffice == null){
+     
+     $('.err_cv_ro_office').html("Please select RAL Office");
+      return false;
+     
      }
-      if(remark == ""){
-     $('.err_cv_remark').html("Please enter any Remark");
-       value_return = 'false';
-		}
+      
+		
     if(scheduleDateFrom == ""){
-     $('.err_cv_shedule_from').html("Please select schedule Training From date");
-       value_return = 'false';
+     $('.err_cv_shedule_from').html("Please select  From date");
+     return false;
     }
     
     if(scheduleDateTo == ""){
-     $('.err_cv_shedule_to').html("Please select schedule Training To date");
-       value_return = 'false';
+     $('.err_cv_shedule_to').html("Please select To date");
+     return false;
     }
-    return;
+
+    return true;
 });
 });
 

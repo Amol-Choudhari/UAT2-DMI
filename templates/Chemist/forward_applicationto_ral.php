@@ -77,7 +77,7 @@
             }
             ?>
             </select>
-            <div class="err_cv_ro_office"></div>
+            <div class="err_cv_ro_office text-red"></div>
           </div>
         </div>
       </div>
@@ -121,8 +121,9 @@
           </div>
             <div class="col-md-4">
           <?php echo $this->Form->control('shedule_to',['class' => 'form-control datepicker-here', 'label' => false,'id' => 'sheduleTo', 'type' => 'Text']); ?>
-            </div>
-             <div class="err_cv_shedule_to text-red"></div>
+          <div class="err_cv_shedule_to text-red"></div>
+        </div>
+             
         </div>
       </div>
     </div>
@@ -133,8 +134,9 @@
         <div class="col-md-12 row">
            <div class="col-md-2"></div>
           <div class="col-md-2">
-            <button type="submit" value="submit" id="btnSubmit" class="form-control btn btn-success">Submit
-           </button>
+            <!-- <a value="submit" type="submit"  id="btnSubmit" class="form-control btn btn-success">Submit</a> -->
+            <?php echo $this->Form->submit(' Forward', array('name'=>'Forward', 'id'=>'btnSubmit', 'class'=>'form-control btn btn-success','title'=>'Be sure all fields and details are properly filled for application', 'label'=>false));?>
+          
           </div>
         </div>
       </div>
