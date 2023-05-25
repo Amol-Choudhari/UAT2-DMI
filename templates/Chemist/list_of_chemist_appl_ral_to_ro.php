@@ -46,12 +46,14 @@
           <a href="<?php echo $list['pdf_file'] ;?>" target="_blank" type="application/pdf" rel="alternate">RAL Relieving Letter</a> | 
  
            <?php if(empty($isTrainingComplete[$i]) && empty($is_trainingScheduleRO[$i]) && $is_trainingScheduleRO[$i] == '' ){ ?>
-          <a href="<?php echo $this->getRequest()->getAttribute('webroot')."chemist/trainingScheduleAtRo/".$list['id'];?>" class=" btn btn-success">Training Schedule At RO</a>
+         
+            <a href="<?php echo $this->getRequest()->getAttribute('webroot')."chemist/trainingScheduleAtRo/".$list['id'];?>" class=" btn btn-success">Training Schedule At RO</a>
+
           <?php }elseif(empty($isTrainingComplete[$i]) && !empty($is_trainingScheduleRO[$i]) && $is_trainingScheduleRO[$i] == 1  && $reschedule_status[$i] != 'confirm') {?>
 
                 <a href="<?php echo $this->getRequest()->getAttribute('webroot')."chemist/trainingScheduleAtRo/".$list['id'];?>" class=" btn btn-success">Confirm Dates</a>
 
-        <?php }elseif(empty($isTrainingComplete[$i]) && $is_trainingScheduleRO[$i] == 1){?>
+        <?php }elseif(empty($isTrainingComplete[$i]) && $is_trainingScheduleRO[$i] == 1 && $reschedule_status[$i] == 'confirm'){?>
             
 
             <a href="<?php echo $ro_schedule_letter[$i] ;?>" target="_blank" type="application/pdf" rel="alternate">RO Training Schedule Letter</a>
@@ -64,7 +66,7 @@
         <a href="<?php echo $pdf_file[$i] ;?>" target="_blank" type="application/pdf" rel="alternate">RO Relieving Letter</a>
         <?php }?>
 
-        | <?php if(!empty($chemistTblid[$i]) && empty($grant_approval_pdf[$i])){?>
+        | <?php if(!empty($chemistTblid[$i]) && empty($grant_approval_pdf[$i]) && !empty($isTrainingComplete[$i]) ){?>
           <a href="<?php echo '../scrutiny/form_scrutiny_fetch_id/'.$chemistTblid[$i].'/view/'.  $list['appliaction_type'];?>" class="btn btn-success">Proceed Grant Certificate</a>
         <?php }else{ ?>
             <a href="<?php if(!empty($grant_approval_pdf[$i])){ echo $grant_approval_pdf[$i] ; }?>" class="btn btn-success">Grant Certificate</a>

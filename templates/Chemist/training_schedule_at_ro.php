@@ -116,8 +116,8 @@
             <div class="col-md-2"></div>
            
             <div class="col-md-2">
-            <?php if($ral_reschedule_status == 'confirm' && !empty($reschedule_status) && !empty($is_training_scheduled_ro )){?>
-            <button type="submit" value="submit" id="submit" class="form-control btn btn-success">Submit
+            <?php if($ral_reschedule_status == 'confirm' && empty($reschedule_status) && empty($is_training_scheduled_ro )){?>
+            <button type="submit" value="submit" id="submit" class="form-control btn btn-success">Schedule
            </button>
            <?php }else{?>
             <button type="submit" value="submit" id="submit" class="form-control btn btn-success">Confirm Dates

@@ -59,3 +59,13 @@ jQuery(document).ready(function($) {
 });
 
 });
+
+
+// $(document).ready( function(){
+// $('#sheduleTo').focusin(function(){
+// var scheduleF = $('#sheduleFrom').val();
+// var date = new Date();
+// var toDate =  date.getMonth();
+// alert(toDate);
+// });
+// });

@@ -954,6 +954,11 @@ class ChemistController extends AppController {
 
 			$ro_email = $_SESSION['username'];	
 			$ro_office_id = $this->DmiRoOffices->find('list',array('valueField'=>'id', 'conditions'=>array('ro_email_id IS'=>$ro_email)))->first(); 
+			$export_unit = $this->Session->read('export_unit');
+			if(!empty($export_unit) && $export_unit == 'yes'){
+				$ro_office_id = $this->DmiRoOffices->find('list',array('valueField'=>'id', 'conditions'=>array('ro_email_id IS'=>$ro_email, 'ro_office IS'=>'Mumbai')))->first(); 
+			}
+			
 			$listofApp = $this->DmiChemistRoToRalLogs->find('all')->where(array('is_forwordedtoral IS NOT '=>NULL, 'ro_office_id IS'=>$ro_office_id))->order('created desc')->toArray();
                
 			$i=0;
@@ -1002,6 +1007,7 @@ class ChemistController extends AppController {
 			$conn = ConnectionManager::get('default');
 
 			$ro_email = $this->Session->read('username');
+			
 			$chemist_allocation  = $this->DmiChemistAllCurrentPositions->find('all',array('fields'=>array('current_level', 'current_user_email_id')))->where(array('current_user_email_id IS'=>$ro_email))->first();
 			if(!empty($chemist_allocation)){
 			$this->set('current_level', $chemist_allocation['current_level']);
@@ -1009,6 +1015,10 @@ class ChemistController extends AppController {
 			
 			$ro_office_data = $this->DmiRoOffices->find('all',array('fields'=>array('id', 'office_type','ro_office'), 'conditions'=>array('ro_email_id IS'=>$ro_email, 'ro_email_id'=>$chemist_allocation['current_user_email_id'])))->first(); 
 			
+			$export_unit = $this->Session->read('export_unit');
+			if(!empty($export_unit) && $export_unit == 'yes'){
+				$ro_office_data = $this->DmiRoOffices->find('all',array('fields'=>array('id', 'office_type','ro_office'), 'conditions'=>array('ro_email_id IS'=>$ro_email, 'ro_email_id'=>$chemist_allocation['current_user_email_id'],'ro_office'=>'Mumbai')))->first();
+			}
 			$this->set('level_3_for', $ro_office_data['office_type']);
 			$this->Session->write('level_3_for', $ro_office_data['office_type']);
 			
@@ -1209,6 +1219,7 @@ class ChemistController extends AppController {
 
 				$chemist_details = $this->DmiChemistRegistrations->find('all')->where(array('chemist_id'=>$chemist_id))->first();
 				$this->set('chemist_id', $chemist_id);
+			
                 $this->set('ral_reschedule_status', $ralToRoDatas['reshedule_status']);
 				if(!empty($chemist_details['chemist_fname'] && !empty($chemist_details['chemist_lname']))){
 				$this->set('chemist_fname', $chemist_details['chemist_fname']);
