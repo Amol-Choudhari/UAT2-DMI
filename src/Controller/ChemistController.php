@@ -794,6 +794,24 @@ class ChemistController extends AppController {
 	
 		// forward application from Ro to RAL added by laxmi B. on 21-12-2022
 		public function forwardApplicationtoRal(){
+
+			//$username = $this->Session->read('username');
+			$username = $this->getRequest()->getSession()->read('username');
+
+			if($username == null){
+				$this->customAlertPage("Sorry You are not authorized to view this page..");
+				exit();
+			}
+			else{
+				$this->loadModel('DmiUsers');
+				//check if user entry in Dmi_users table for valid user
+				$check_user = $this->DmiUsers->find('all',array('conditions'=>array('email'=>$this->Session->read('username'))))->first();
+
+				if(empty($check_user)){
+					$this->customAlertPage("Sorry You are not authorized to view this page..");
+					exit();
+				}
+			}
 		$message = "";
 		$message_theme = "";
 		$redirect_to = "";
@@ -955,6 +973,24 @@ class ChemistController extends AppController {
 
 			// List of chemist application  forwarded by ro to RAL added by laxmi on 26-12-2022
 			public function listOfChemistApplRoToRal(){
+				//$username = $this->Session->read('username');
+			$username = $this->getRequest()->getSession()->read('username');
+
+			if($username == null){
+				$this->customAlertPage("Sorry You are not authorized to view this page..");
+				exit();
+			}
+			else{
+				$this->loadModel('DmiUsers');
+				//check if user entry in Dmi_users table for valid user
+				$check_user = $this->DmiUsers->find('all',array('conditions'=>array('email'=>$this->Session->read('username'))))->first();
+
+				if(empty($check_user)){
+					$this->customAlertPage("Sorry You are not authorized to view this page..");
+					exit();
+				}
+			}
+
 			$this->loadModel('DmiChemistRoToRalLogs');
 			$this->loadModel('DmiRoOffices');
 			$this->loadModel('DmiChemistRegistrations');
@@ -1007,6 +1043,24 @@ class ChemistController extends AppController {
 			
 			//list of application forwarded back Ral to RO added by laxmi on 29/12/2022
 			public function  listOfChemistApplRalToRo(){  
+				//$username = $this->Session->read('username');
+			$username = $this->getRequest()->getSession()->read('username');
+
+			if($username == null){
+				$this->customAlertPage("Sorry You are not authorized to view this page..");
+				exit();
+			}
+			else{
+				$this->loadModel('DmiUsers');
+				//check if user entry in Dmi_users table for valid user
+				$check_user = $this->DmiUsers->find('all',array('conditions'=>array('email'=>$this->Session->read('username'))))->first();
+
+				if(empty($check_user)){
+					$this->customAlertPage("Sorry You are not authorized to view this page..");
+					exit();
+				}
+			}
+
 			$this->viewBuilder()->setLayout('admin_dashboard');
             
 			$this->loadModel('DmiChemistRalToRoLogs');
@@ -1119,6 +1173,23 @@ class ChemistController extends AppController {
 
                //List of chemist training application where training completed at ro office added by laxmi on 3/1/2023
 				public function chemistTrainingCompleteAtRo ($id){
+					//$username = $this->Session->read('username');
+			$username = $this->getRequest()->getSession()->read('username');
+
+			if($username == null){
+				$this->customAlertPage("Sorry You are not authorized to view this page..");
+				exit();
+			}
+			else{
+				$this->loadModel('DmiUsers');
+				//check if user entry in Dmi_users table for valid user
+				$check_user = $this->DmiUsers->find('all',array('conditions'=>array('email'=>$this->Session->read('username'))))->first();
+
+				if(empty($check_user)){
+					$this->customAlertPage("Sorry You are not authorized to view this page..");
+					exit();
+				}
+			}
 				$this->viewBuilder()->setLayout('admin_dashboard');
 				$message="";
 				$message_theme ="";
@@ -1210,6 +1281,23 @@ class ChemistController extends AppController {
 				
 				// Training scheduled at Ro added by laxmi on 27-01-2023
 				public function trainingScheduleAtRo($id=null){
+					//$username = $this->Session->read('username');
+			$username = $this->getRequest()->getSession()->read('username');
+
+			if($username == null){
+				$this->customAlertPage("Sorry You are not authorized to view this page..");
+				exit();
+			}
+			else{
+				$this->loadModel('DmiUsers');
+				//check if user entry in Dmi_users table for valid user
+				$check_user = $this->DmiUsers->find('all',array('conditions'=>array('email'=>$this->Session->read('username'))))->first();
+
+				if(empty($check_user)){
+					$this->customAlertPage("Sorry You are not authorized to view this page..");
+					exit();
+				}
+			}
 				$message = "";
 				$message_theme = "";
 				$redirect_to = "";
@@ -1341,6 +1429,23 @@ class ChemistController extends AppController {
 
               //For reject chemist application from ro side and save value in rejectedLogs table for chemist training module added by laxmi B. on 18-05-2023
 				public function chemistApplicationReject(){
+					//$username = $this->Session->read('username');
+			$username = $this->getRequest()->getSession()->read('username');
+
+			if($username == null){
+				$this->customAlertPage("Sorry You are not authorized to view this page..");
+				exit();
+			}
+			else{
+				$this->loadModel('DmiUsers');
+				//check if user entry in Dmi_users table for valid user
+				$check_user = $this->DmiUsers->find('all',array('conditions'=>array('email'=>$this->Session->read('username'))))->first();
+
+				if(empty($check_user)){
+					$this->customAlertPage("Sorry You are not authorized to view this page..");
+					exit();
+				}
+			}
 					$this->setLayout= false;
 					$this->autoRender = false;
 					//$message = "";

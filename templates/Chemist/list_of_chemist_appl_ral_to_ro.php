@@ -69,7 +69,7 @@
         | <?php if(!empty($chemistTblid[$i]) && empty($grant_approval_pdf[$i]) && !empty($isTrainingComplete[$i]) ){?>
           <a href="<?php echo '../scrutiny/form_scrutiny_fetch_id/'.$chemistTblid[$i].'/view/'.  $list['appliaction_type'];?>" class="btn btn-success">Proceed Grant Certificate</a>
         <?php }else{ ?>
-            <a href="<?php if(!empty($grant_approval_pdf[$i])){ echo $grant_approval_pdf[$i] ; }?>" class="btn btn-success">Grant Certificate</a>
+            <a href="<?php if(!empty($grant_approval_pdf[$i])){ echo $grant_approval_pdf[$i] ; }?>" target = "_blank">Grant Certificate</a>
         <?php }
             }
             
