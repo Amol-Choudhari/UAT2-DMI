@@ -668,7 +668,10 @@ class ChemistController extends AppController {
 		$ral_letter = $this->DmiChemistRalToRoLogs->find('all',array('fields'=>'pdf_file', 'conditions'=>array('chemist_id'=>$_SESSION['username'])))->first(); 
 		if(!empty($ral_letter)){
 		$this->set('ral_letter', $ral_letter['pdf_file']);
-		 }										 
+		 }		
+		 
+		 //check application yet to start with ddo or RO or not for withdraw application added by laxmi Bhadade
+		  
 	}
 
 
