@@ -2494,7 +2494,7 @@ class ApplicationformspdfsController extends AppController{
 		}
 			
 			
-			$pdf->AddPage();//print_r($html);exit;	
+			$pdf->AddPage();	
 			
 			$pdf->writeHTML($html, true, false, true, false, '');
 
