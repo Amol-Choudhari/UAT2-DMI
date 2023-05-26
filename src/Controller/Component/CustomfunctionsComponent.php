@@ -560,13 +560,7 @@ class CustomfunctionsComponent extends Component {
 				$form_approve_count = $form_approve_count+1;
 			}
 
-
-            //if chemist training($_SESSION['is_training_completed']) already done payment section hidden and return saved form value as 1 in application side added by laxmi on 17-01-2023 
-			if((!empty($_SESSION['is_training_completed']) && $_SESSION['is_training_completed'] =='yes') && $section_form_status == 'saved'){
-             $return_value = 1;
-             $registeredChemist =1;
-            }
-		}
+            
 		$payment_table = $sections[0]['payment_section'];
 		$oldapplication = $this->isOldApplication($customer_id);
 
@@ -579,6 +573,12 @@ class CustomfunctionsComponent extends Component {
 				$return_value = 0;
 			}
 		}
+		//if chemist training($_SESSION['is_training_completed']) already done payment section hidden and return saved form value as 1 in application side added by laxmi on 17-01-2023 
+		if((!empty($_SESSION['is_training_completed']) && $_SESSION['is_training_completed'] =='yes') && $section_form_status == 'saved'){
+			$return_value = 1;
+			$registeredChemist =1;
+		   }
+	   }
 
 		if ($form_approve_count == count($sections)) { $return_value = 2; }
 
