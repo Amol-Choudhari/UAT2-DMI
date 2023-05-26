@@ -88,13 +88,13 @@ class EsignController extends AppController {
 			$esign_status = 1;
 			if ($esign_status == 1) {
 
-				$this->Session->delete('pdf_file_name');//added to clear pdf file name from session, after esign					
+				//$this->Session->delete('pdf_file_name');//added to clear pdf file name from session, after esign					
 					
 				//calling final submit process now after signature appended in pdf.
 
 				$url_to_redirect = 	null;
 									
-					if ($Dmi_esign_status_tb->saveEsignStatus()==1) { 
+					if ($Dmi_esign_status_tb->saveEsignStatus()==1) {
 						
 						$split_customer_id = explode('/',$customer_id);
 						

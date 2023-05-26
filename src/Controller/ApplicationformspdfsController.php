@@ -3561,6 +3561,13 @@ class ApplicationformspdfsController extends AppController{
 					if(!empty($chemist_created_by)){
 					$short_code =  trim($chemist_created_by,"/1234567890"); 
 					$ro_offices_data = $this->DmiRoOffices->find('all')->where(array('short_code IS'=>$short_code))->first();
+					
+
+					$export_unit = $this->Customfunctions->checkApplicantExportUnit($chemist_created_by);
+					if(!empty($export_unit) && $export_unit == 'yes'){
+						$ro_offices_data = $this->DmiRoOffices->find('all')->where(array('short_code IS'=>"MUM" ,'ro_office'=>'Mumbai'))->first();
+					}
+					
 					$roAddress=  str_replace(',', '<br />', $ro_offices_data['ro_office']);
 					$ro_address=  str_replace('&amp;', '&', $roAddress);
 

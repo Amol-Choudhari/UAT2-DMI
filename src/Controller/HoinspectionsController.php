@@ -762,13 +762,15 @@ use App\Network\Response\Response;
 					//else{
 						$this->loadModel('DmiGrantProvCertificateLogs');
 						$getStatus = $this->DmiGrantProvCertificateLogs->find('all',array('fields'=>array('id','status'),'conditions'=>array('customer_id'=>$customer_id),'order'=>'id desc'))->first();
+						
+						$appl_array[$i]['status'] = null;//set default value to null on 26-05-2023 by Amol
 						if(!empty($getStatus) && $getStatus['status']==null){
 							$appl_array[$i]['show_esign_btn'] = 'yes';
-							
+							$appl_array[$i]['status'] = $getStatus['status'];//this line is moved inside condition, on 26-05-2023 by Amol
 						}
 					//}	
 						
-						$appl_array[$i]['status'] = $getStatus['status'];
+						
 						//This condition block is added to provide message if the SO Office is not having the role of so_pp_grant - Akash [18-01-2023]
 						//updated below conditions on 24-01-2023 by Amol
 						//for PP application

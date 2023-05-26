@@ -15,11 +15,13 @@ class DmiChemistEsignedStatusesTable extends Table{
 		//added new method by laxmi B. on 04-01-2022
 		public function getEsignedStatus($customer_id,$current_level){
 		// set packer id as customer id for firmdata details & for grantDate check added by laxmi B.	
-		$customer_id = $_SESSION['packer_id'];
+		
 		$CustomersController = new CustomersController;
 
-		$grantDateCondition = $CustomersController->Customfunctions->returnGrantDateCondition($customer_id); 
+		$grantDateCondition = $CustomersController->Customfunctions->returnGrantDateCondition($customer_id,4); //added appl type 4 in parameter on 26-05-2023 by Amol
 
+		//commented this line, not required packer id, chemist id is sufficient, on 26-05-2023 by Amol
+		//$customer_id = $_SESSION['packer_id'];
 		//create other model objects
 		$Dmi_firm = TableRegistry::getTableLocator()->get('DmiFirms');
 		$Dmi_flow_wise_tables_list = TableRegistry::getTableLocator()->get('DmiFlowWiseTablesLists');	
@@ -33,42 +35,49 @@ class DmiChemistEsignedStatusesTable extends Table{
 		//check application type new/old 
 		$get_type = $Dmi_firm->find('all',array('conditions'=>array('customer_id IS'=>$customer_id)))->first();
 
+		//for chemist flow, let it throw 'new' always, no issue, i.e customer id not change with packer id above
+		//on 26-05-2023 by Amol
 		if(!empty($get_type) && $get_type['is_already_granted']=='yes'){			
 		$type = 'old';
 		}else{
 		$type = 'new';
 		}
 		//Revert back customer id to chemist id
-		$customer_id = $_SESSION['customer_id'];
+		//$customer_id = $_SESSION['customer_id'];//commented this line as not required, on 26-05-2023 by Amol
 		$status = null;
 		if($current_level == 'applicant'){
-		//get application status from final submit table
-		$get_ids = $Dmi_final_submit->find('list',array('conditions'=>array('customer_id IS'=>$customer_id,$grantDateCondition)))->toArray();
-		if(!empty($get_ids)){
-		$get_status = $Dmi_final_submit->find('all',array('conditions'=>array('id'=>max($get_ids))))->first();
-		$status = $get_status['status'];
-		}else{
-		$status = 'pending';
-		}
+			//get application status from final submit table
+			$get_ids = $Dmi_final_submit->find('list',array('conditions'=>array('customer_id IS'=>$customer_id,$grantDateCondition)))->toArray();
+			if(!empty($get_ids)){
+			$get_status = $Dmi_final_submit->find('all',array('conditions'=>array('id'=>max($get_ids))))->first();
+				$status = $get_status['status'];
+			}else{
+				$status = 'pending';
+			}
 
 		}elseif($current_level == 'level_3'){
-		//get application status from final submit table
-		$get_ids = $Dmi_siteinspection_final_report->find('list',array('valueField'=>'id','conditions'=>array('customer_id IS'=>$customer_id,$grantDateCondition)))->toArray();
+			//get application status from final submit table
+			$get_ids = $Dmi_siteinspection_final_report->find('list',array('valueField'=>'id','conditions'=>array('customer_id IS'=>$customer_id,$grantDateCondition)))->toArray();
 
-		if(!empty($get_ids)){
-		$get_status = $Dmi_siteinspection_final_report->find('all',array('conditions'=>array('id'=>max($get_ids))))->first();
-		$status = $get_status['status'];
-		}else{
-		$status = 'pending';
-		}
+			if(!empty($get_ids)){
+				$get_status = $Dmi_siteinspection_final_report->find('all',array('conditions'=>array('id'=>max($get_ids))))->first();
+				$status = $get_status['status'];
+				
+				//added condition to set status as 'Granted', as current level is 3, on 26-05-2023 by Amol, for level 2 it is 'approved'
+				if($status=='approved'){
+					$status='Granted';
+				}
+			}else{
+				$status = 'pending';
+			}
 
 		}
 
 		//taking condition for query conditionally
 		if($current_level == 'applicant' || $current_level == 'level_3'){
-		$query_conditions = array('customer_id'=>$customer_id, 'application_type'=>$type, 'application_status'=>$status ,$grantDateCondition);
+			$query_conditions = array('customer_id'=>$customer_id, 'application_type'=>$type, 'application_status'=>$status ,$grantDateCondition);
 		}else{
-		$query_conditions = array('customer_id'=>$customer_id, 'application_type'=>$type, $grantDateCondition);
+			$query_conditions = array('customer_id'=>$customer_id, 'application_type'=>$type, $grantDateCondition);
 		}
 
 		$get_esign_details = $this->find('all',array('conditions'=>$query_conditions))->first();		
@@ -80,22 +89,22 @@ class DmiChemistEsignedStatusesTable extends Table{
 
 		if($get_esign_details['application_esigned']=='yes'){
 
-		$esign_status = 'yes';
+			$esign_status = 'yes';
 		}
 		}
 		elseif($current_level == 'level_2'){
 
-		if($get_esign_details['report_esigned']=='yes'){
+			if($get_esign_details['report_esigned']=='yes'){
 
-		$esign_status = 'yes';
-		}
+				$esign_status = 'yes';
+			}
 		}
 		elseif($current_level == 'level_3' || $current_level == 'level_4'){
 
-		if($get_esign_details['certificate_esigned']=='yes'){
+			if($get_esign_details['certificate_esigned']=='yes'){
 
-		$esign_status = 'yes';
-		}
+				$esign_status = 'yes';
+			}
 		}
 
 		}
@@ -114,7 +123,7 @@ class DmiChemistEsignedStatusesTable extends Table{
 		}
 
 		$CustomersController = new CustomersController;
-		$grantDateCondition = $CustomersController->Customfunctions->returnGrantDateCondition($customer_id);
+		$grantDateCondition = $CustomersController->Customfunctions->returnGrantDateCondition($customer_id,4);//added appl type 4 in parameter on 26-05-2023 by Amol
 
 		$current_level = $_SESSION['current_level'];
 
