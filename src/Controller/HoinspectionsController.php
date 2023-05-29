@@ -685,6 +685,7 @@ use App\Network\Response\Response;
 					if(!empty($appl_type_id) && $appl_type_id == 4){
 						$chemist_id = $customer_id;
                       $customer_id = $this->Session->read('packer_id');
+
 					}
 
 
@@ -693,6 +694,15 @@ use App\Network\Response\Response;
 					$get_firm_id = $this->DmiFirms->find('all',array('fields'=>array('id','firm_name'),'conditions'=>array('customer_id'=>$customer_id)))->first();
 					$f_id = $get_firm_id['id'];
 					
+
+					// to get chemist id  from chemist_registration table for view application added by laxmi B on 29-05-2023
+					if(!empty($appl_type_id) && $appl_type_id == 4){
+						$this->loadModel('DmiChemistRegistrations');
+						$get_chemist_id = $this->DmiChemistRegistrations->find('all',array('fields'=>array('id'),'conditions'=>array('chemist_id'=>$chemist_id)))->first();
+					    $f_id = $get_chemist_id['id'];
+					}
+
+
 					//get application form link
 					$appl_form = '../scrutiny/form_scrutiny_fetch_id/'.$f_id.'/view/'.$appl_type_id;
 					$report_form = '../inspections/inspection_report_fetch_id/'.$f_id.'/view/'.$appl_type_id;
