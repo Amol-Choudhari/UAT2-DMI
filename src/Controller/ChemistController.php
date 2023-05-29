@@ -632,7 +632,7 @@ class ChemistController extends AppController {
 	// DATE : 25-06-2021 
 			
 	public function home() {
-
+		
 		$this->viewBuilder()->setLayout('chemist_home_layout');
 		$this->Session->write('application_dashboard','chemist');
 	   //chemist application shedule letter display in dashboard added by laxmi b.on 30-12-22
@@ -671,7 +671,54 @@ class ChemistController extends AppController {
 		 }		
 		 
 		 //check application yet to start with ddo or RO or not for withdraw application added by laxmi Bhadade
-		  
+		 
+		 //for payment confirm or not 
+		 $this->loadModel('DmiChemistPaymentDetails');
+		 $chemist_id = $this->Session->read('username');
+		 $is_payment_confirm = $this->DmiChemistPaymentDetails->find('all', ['conditions'=>['customer_id IS'=>$chemist_id]])->last();
+		
+		 if(!empty($is_payment_confirm)){
+              $this->set('is_payment_confirm',$is_payment_confirm['payment_confirmation']);
+		}
+
+
+         // set application type in session 
+		 $this->Session->write('application_type', 4);
+		 $application_type = $this->Session->read('application_type');
+
+		 //get packer id in session 
+		 $this->loadModel('DmiChemistRegistrations');
+		 $chemist_reg = $this->DmiChemistRegistrations->find('all')->where(array('chemist_id IS' => $chemist_id ))->first();
+		 
+		 $this->Session->write('packer_id', $chemist_reg['created_by']);
+		 $packer_id =  $chemist_reg['created_by'];
+		 $this->Session->write('is_training_completed',$chemist_reg['is_training_completed']);
+		 $this->Session->write('user_email',$chemist_reg['email']);
+  
+
+		 $office_type = 'RO';
+		 $form_type = 'CHM';
+		 $form_type = $this->Customfunctions->checkApplicantFormType($chemist_id, $application_type);
+		 $firm_type  =  $this->Customfunctions->firmType($chemist_id);
+		
+
+		// get all section all details
+		$this->loadModel('DmiCommonScrutinyFlowDetails');
+		$allSectionDetails = $this->DmiCommonScrutinyFlowDetails->allSectionList($application_type,$office_type,$firm_type,$form_type);
+		
+
+		// if return value 1 (all forms saved), return value 2 (all forms approved), return value 0 (all forms not saved or approved)
+		$all_section_status = $this->Customfunctions->formStatusValue($allSectionDetails,$chemist_id);
+          if(!empty($all_section_status)){
+           $this->set('all_section_status',$all_section_status);
+		  }
+		
+		  // check application is rejected 
+		  $this->loadModel('DmiRejectedApplLogs');
+		  $rejectEntry = $this->DmiRejectedApplLogs->find('all')->where(['customer_id IS'=>$chemist_id])->first();
+		  if(!empty($rejectEntry)){
+              $this->set('rejectEntry', $rejectEntry);
+		  }
 	}
 
 
@@ -1431,67 +1478,56 @@ class ChemistController extends AppController {
 				}  
 
               //For reject chemist application from ro side and save value in rejectedLogs table for chemist training module added by laxmi B. on 18-05-2023
-				public function chemistApplicationReject(){
-					//$username = $this->Session->read('username');
-			$username = $this->getRequest()->getSession()->read('username');
-
-			if($username == null){
-				$this->customAlertPage("Sorry You are not authorized to view this page..");
-				exit();
-			}
-			else{
-				$this->loadModel('DmiUsers');
-				//check if user entry in Dmi_users table for valid user
-				$check_user = $this->DmiUsers->find('all',array('conditions'=>array('email'=>$this->Session->read('username'))))->first();
-
-				if(empty($check_user)){
-					$this->customAlertPage("Sorry You are not authorized to view this page..");
-					exit();
-				}
-			}
-					$this->setLayout= false;
-					$this->autoRender = false;
-					//$message = "";
+			public function chemistApplicationReject(){
 					
-					if($this->request->is('post')){
-						$reqData = $this->request->getData();
-						$app_type = $reqData['appl_type'];
-						$chemistId = $reqData['chemist_id'];
-						$reason    = $reqData['remark'];
-						$byuser    = $this->Session->read('username');
+							$this->setLayout= false;
+							$this->autoRender = false;
+					
+					
+							if($this->request->is('post')){
+								$reqData = $this->request->getData();
+								$app_type = $reqData['appl_type'];
+								$chemistId = $reqData['chemist_id'];
+								$reason    = $reqData['remark'];
+								$byuser    = $this->Session->read('username');
 
-						$this->loadModel('DmiRejectedApplLogs');
-						$this->loadModel('DmiApplicationTypes');
+								$this->loadModel('DmiRejectedApplLogs');
+								$this->loadModel('DmiApplicationTypes');
 
-						$appl_type = $this->DmiApplicationTypes->find('all',array('fields'=>['id'], 'conditions'=>['application_type'=>$app_type]))->first();
-						
-						if($appl_type['id'] == 4) {
+								$appl_type = $this->DmiApplicationTypes->find('all',array('fields'=>['id'], 'conditions'=>['application_type'=>$app_type]))->first();
+								
+								if($appl_type['id'] == 4) {
 
-							$form_type='CHM';
-						}
-                       
-						if(!empty($reason)){
-                        $DmiRejectedApplLogsEntity = $this->DmiRejectedApplLogs->newEntity(
-							array(
-								'appl_type'   => $appl_type['id'],
-								'form_type'   => $form_type,
-								'customer_id' => $chemistId,
-								'by_user'     => $byuser,
-								'remark'      => $reason,
-								'created'     => date('Y-m-d H:i:s'),
-							));
-						}else{
-							$message = "Please enter all fields data.";
-						}
+									$form_type='CHM';
+									$appll_dashboard = $this->Session->read('application_dashboard');
+									if(!empty($appll_dashboard) && $appll_dashboard == 'chemist'){
+										$byuser = $this->Session->read('user_email');
+									}
+									
+								}
+							
+								if(!empty($reason)){
+								$DmiRejectedApplLogsEntity = $this->DmiRejectedApplLogs->newEntity(
+									array(
+										'appl_type'   => $appl_type['id'],
+										'form_type'   => $form_type,
+										'customer_id' => $chemistId,
+										'by_user'     => $byuser,
+										'remark'      => $reason,
+										'created'     => date('Y-m-d H:i:s'),
+									));
+								}else{
+									$message = "Please enter all fields data.";
+								}
 
-                        
-						if($this->DmiRejectedApplLogs->save($DmiRejectedApplLogsEntity) ) {
-                              $message ="Application Rejected successfully.";
-						}else{
-							$message ="Something went wrong, Please try Again.";
-						}
-                         
-					}
+								
+								if($this->DmiRejectedApplLogs->save($DmiRejectedApplLogsEntity) ) {
+									$message ="Application Rejected successfully.";
+								}else{
+									$message ="Something went wrong, Please try Again.";
+								}
+								
+							}
 				}
 
 

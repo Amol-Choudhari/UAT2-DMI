@@ -47,7 +47,14 @@ class DmiChemistExperienceDetailsTable extends Table{
 
 		}else{
 
-			$section_id = $_SESSION['section_id'];
+			//added contion for chemist home withdraw application to section id null by laxmi B. on 29-05-2023
+			if(!empty($_SESSION['section_id'])){
+				$section_id = $_SESSION['section_id'];
+		    }else{
+					$section_id = null;
+			}
+
+			
 			$Dmi_chemist_comment = TableRegistry::getTableLocator()->get('DmiChemistComments');
 			$commentDetails = $Dmi_chemist_comment->find('all',array('conditions'=>array('customer_id IS'=>$chemist_id,'section_id IS'=>$section_id,'is_latest'=>1)))->first();
 			

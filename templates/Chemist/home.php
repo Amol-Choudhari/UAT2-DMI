@@ -1,5 +1,5 @@
-
-	<?php if (in_array($final_submit_status,array('pending','replied','referred_back'))) { ?>
+<!-- added withdraw or rejected application condition with anding by Laxmi on 29-05-2023  -->
+	<?php if (in_array($final_submit_status,array('pending','replied','referred_back')) && empty($rejectEntry)) { ?>
 
 		 	<div class="col-lg-8">
 				<div class="alert alert-info alert-dismissible">
@@ -8,8 +8,8 @@
 					<p>Your application for registration has been saved and finally submitted, to check status please click on "Registration Status" button. Thankyou</p>
 				</div>
 			</div>
-
-	<?php } elseif ($final_submit_status == 'approved') { ?>
+<!-- added withdraw or rejected application condition with anding by Laxmi on 29-05-2023  -->
+	<?php } elseif ($final_submit_status == 'approved' && empty($rejectEntry)) { ?>
 
 			<div class="col-lg-8">
 				<div class="alert alert-info alert-dismissible">
@@ -18,8 +18,8 @@
 					<p>Your application for registration has been successfully verified. Thankyou</p>
 				</div>
 			</div>
-
-	<?php } elseif ($final_submit_status == '') { ?>
+<!-- added withdraw or rejected application condition with anding by Laxmi on 29-05-2023  -->
+	<?php } elseif ($final_submit_status == '' && empty($rejectEntry)) { ?>
 
 		<div class="col-lg-8">
 			<div class="alert alert-info alert-dismissible">
@@ -28,8 +28,16 @@
 				<p class="">You need to register your application as a chemist on online system, so please click "Register Application" button to fill your details and apply. Thankyou</p>
 			</div>
 		</div>
-
-	<?php } ?>
+<!-- added withdraw or rejected application condition to view application reject status by Laxmi on 29-05-2023  -->
+	<?php } elseif(!empty($rejectEntry)){ ?>
+		<div class="col-lg-8">
+			<div class="alert alert-info alert-dismissible">
+				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+				<h5><i class="icon fas fa-info"></i> Please Note !</h5>
+				<p class="">Your application as a chemist has been Rejected/Withdrawn, so it is no longer in processing. Thankyou</p>
+			</div>
+		</div>
+		<?php } ?>
 
 
 
@@ -59,24 +67,29 @@
 	  <td><?php echo $_SESSION['f_name'] ;?></td>
       <td><?php echo $_SESSION['l_name'] ;?></td>
 	  <td><!-- training schedule letter from RO added by laxmi B. on 30-12-2022-->
-        <?php if(!empty($pdf_file)){?> <a href="<?php echo $pdf_file; ?>" target="_blank">Training Schedule At RAL</a><?php }?>
+        <?php if(!empty($pdf_file)){?> <a href="<?php echo $pdf_file; ?>" target="_blank">Training Schedule At RAL</a><?php } else { echo "In process"; }?>
     <!-- Ro side Schedule letter added by laxmi B. on 27-01-2023-->
 	<?php if(!empty($ro_side_schedule_letter)){ ?> | <a href="<?php echo'../../'.$ro_side_schedule_letter; ?>" target="_blank">Training Schedule At RO</a><?php } ?>
 	</td>
 	  <td>
 		<!-- training completed letter from RAL added by laxmi B. on 30-12-2022-->
-		<?php if(!empty($ral_letter)){?><a href="<?php echo $ral_letter; ?>" target="_blank">Reliving Letter From RAL</a><?php }?>
+		<?php if(!empty($ral_letter)){?><a href="<?php echo $ral_letter; ?>" target="_blank">Reliving Letter From RAL</a><?php } else { echo "In process"; }?>
 		<!-- training reliving letter from RO added by laxmi B. on 03-01-2023-->
 		<?php if(!empty($relivingLetter)){ ?> | <a href="<?php echo $relivingLetter; ?>" target="_blank">Relieving Letter From RO</a><?php } ?>
 	  </td>
 	  <td>
 		<!-- grant certificate added by laxmi B. on 05-01-2023-->
-		<?php if(!empty($certificate)){ ?><a href="<?php echo'../../'.$certificate; ?>" target="_blank">Grant Certificate</a><?php } ?>
+		<?php if(!empty($certificate)){ ?><a href="<?php echo'../../'.$certificate; ?>" target="_blank">Grant Certificate</a><?php } else { echo "In process"; } ?>
 	  </td>
+
+
+	  <!-- if application payment not confirm and each section not approve then withdraw button visible -->
+	  <?php  if(((!empty($is_payment_confirm) && $is_payment_confirm != 'confirmed') || (!empty($all_section_status) && $all_section_status != 2)) && empty($rejectEntry)) { ?>
 	  <td>
 		<!-- for withdraw application if it is no longer process added button by laxmi Bhadade on 26-5-2023 -->
         <a  class="btn btn-warning rejectModel" title="you can withdraw application if it is not processing">Withdraw Application</a>
      </td>
+	 <?php } ?>
     </tr>
     
     
