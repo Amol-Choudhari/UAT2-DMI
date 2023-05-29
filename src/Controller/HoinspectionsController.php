@@ -725,6 +725,7 @@ use App\Network\Response\Response;
 
 					if(!empty($appl_type_id) && $appl_type_id == 4){
 						$customer_id = $chemist_id;
+						
 					  }
 					//get application pdf links
 					
