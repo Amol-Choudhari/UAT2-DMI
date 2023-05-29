@@ -282,6 +282,14 @@
 												<p class="nav-icon-p">Approval for E-Code</p>
 											</a>
 										</li>
+                                        <!-- added new submenu chemist approval in granted application menu by Laxmi On 29-05-2023 -->
+										<li class="nav-item">
+											<a href="<?php echo $this->request->getAttribute("webroot");?>hoinspections/redirectGrantedApplications/4" class="bg-cyan nav-link <?php echo $menu_add_menu; ?>">
+												<i class="far fa-dot-circle nav-icon"></i>
+												<p class="nav-icon-p">Approval for Chemist</p>
+											</a>
+										</li>
+
 									</li>
 								</ul>
 							</li>

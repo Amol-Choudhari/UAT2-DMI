@@ -580,6 +580,7 @@ use App\Network\Response\Response;
 			if(empty($appl_type_id)){
 				$appl_type_id = $this->Session->read('application_type');
 			}
+
 			$username = $this->Session->read('username');
 			
 			//get flow wise application tables
@@ -603,7 +604,7 @@ use App\Network\Response\Response;
 			//by default
 			$to_dt = date('Y-m-d');
 			$from_dt = date('Y-m-d', strtotime('-1 month'));
-
+			
 			if ($this->request->is('post')) {
 
 				//on search
@@ -661,6 +662,7 @@ use App\Network\Response\Response;
 					//check application wise RO/SO office
 					$this->loadModel('DmiApplWithRoMappings');
 					$find_office_id = $this->DmiApplWithRoMappings->getOfficeDetails($customer_id);
+					
 					$office_email_id = $find_office_id['ro_email_id'];
 					$office_type = $find_office_id['office_type'];
 					//get RO in-charge id to display all SO applications to RO
@@ -678,6 +680,14 @@ use App\Network\Response\Response;
 						$appl_type = 'BackLog';
 					}*/
 					
+					//for chemist to get packer id added condtion by laxmi B. on 29-05-2023
+
+					if(!empty($appl_type_id) && $appl_type_id == 4){
+						$chemist_id = $customer_id;
+                      $customer_id = $this->Session->read('packer_id');
+					}
+
+
 					//get firm details table id
 					$this->loadModel('DmiFirms');
 					$get_firm_id = $this->DmiFirms->find('all',array('fields'=>array('id','firm_name'),'conditions'=>array('customer_id'=>$customer_id)))->first();
@@ -699,8 +709,13 @@ use App\Network\Response\Response;
 						$cert_type = 'Laboratory';
 						
 					}
+
 					
-					
+					//get revert back chemist id as customer id to aapear as application id added by laxmi on 29-05-2023
+
+					if(!empty($appl_type_id) && $appl_type_id == 4){
+						$customer_id = $chemist_id;
+					  }
 					//get application pdf links
 					
 					$appl_pdf = $appl_type_id;//set default to reload page if blank
@@ -766,6 +781,10 @@ use App\Network\Response\Response;
 						$appl_array[$i]['status'] = null;//set default value to null on 26-05-2023 by Amol
 						if(!empty($getStatus) && $getStatus['status']==null){
 							$appl_array[$i]['show_esign_btn'] = 'yes';
+							$appl_array[$i]['status'] = $getStatus['status'];//this line is moved inside condition, on 26-05-2023 by Amol
+						
+						//added else condition on 29-05-2023 by Amol
+						}elseif(!empty($getStatus)){
 							$appl_array[$i]['status'] = $getStatus['status'];//this line is moved inside condition, on 26-05-2023 by Amol
 						}
 					//}	

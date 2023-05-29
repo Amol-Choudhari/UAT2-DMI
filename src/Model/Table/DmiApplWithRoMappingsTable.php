@@ -29,15 +29,28 @@ class DmiApplWithRoMappingsTable extends Table{
 	public function getOfficeDetails($customer_id){
  
         //to fetch  ro office after payment confirm set session packer id who register the chemist //added by laxmi B. on 16-12-2022
+     
+			if((!empty($_SESSION['application_type']) && $_SESSION['application_type'] == 4 ) || (!empty($_SESSION['ap_id']) && $_SESSION['ap_id'] == 4)){ 
+			    
+				if(!empty($_SESSION['ap_id']) && $_SESSION['ap_id'] == 4){
+					$app_type = $_SESSION['ap_id'];
+					$_SESSION['application_type'] = $app_type;
+				}
 
-			if(!empty($_SESSION['application_type'])){
-			if($_SESSION['application_type'] == 4){
-			$DmiChemistRegistrations = TableRegistry::getTableLocator()->get('DmiChemistRegistrations');
-			$chemistdetails = $DmiChemistRegistrations->find('all', array('fields'=>'created_by', 'conditions'=>array('chemist_id'=>$customer_id)))->first();
-			if(isset($chemistdetails['created_by'])){
-			$customer_id = $chemistdetails['created_by'];
-			}
-			}
+				$DmiChemistRegistrations = TableRegistry::getTableLocator()->get('DmiChemistRegistrations');
+				$chemistdetails = $DmiChemistRegistrations->find('all', array( 'conditions'=>array('chemist_id'=>$customer_id)))->first();
+				
+				if(isset($chemistdetails['created_by'])){
+				$customer_id = $chemistdetails['created_by'];
+				$_SESSION['packer_id'] = $customer_id;
+				
+
+				// check export unit appliation
+				$Dmifirm = TableRegistry::getTableLocator()->get('DmiFirms');
+				$firmData = $Dmifirm->find('all')->where(['customer_id IS'=>$customer_id])->first();
+				$_SESSION['export_unit'] = $firmData['export_unit'];
+				}
+
 			}
 
 		$DmiRoOffices = TableRegistry::getTableLocator()->get('DmiRoOffices');
