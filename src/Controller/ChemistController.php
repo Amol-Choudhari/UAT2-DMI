@@ -1143,7 +1143,7 @@ class ChemistController extends AppController {
 			
 
 			$query = $conn->execute( "SELECT * FROM dmi_chemist_ral_to_ro_logs  WHERE chemist_id NOT IN (SELECT customer_id FROM dmi_rejected_appl_logs) 
-			AND ro_office_id = '".$ro_office_data['id']."' AND training_completed = '1'");
+			AND ro_office_id = '".$ro_office_data['id']."' AND training_completed = '1' ORDER BY id DESC" );
 			$listofApp = $query->fetchAll('assoc');
 				
 		
