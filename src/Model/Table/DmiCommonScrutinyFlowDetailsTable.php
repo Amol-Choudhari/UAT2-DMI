@@ -48,7 +48,13 @@ class DmiCommonScrutinyFlowDetailsTable extends Table{
 		  if($application_type == 4){
 			  
 			 $client = TableRegistry::get('DmiChemistRegistrations');
-			$checkClient = $client->find('all')->where(array('chemist_id IS'=>$_SESSION['customer_id']))->first();
+			 if(!empty($_SESSION['customer_id'])){
+				$checkClient = $client->find('all')->where(array('chemist_id IS'=>$_SESSION['customer_id']))->first();
+			 }
+
+			if(!empty($_SESSION['username'] && $_SESSION['application_dashboard'] == 'chemist')){
+				$checkClient = $client->find('all')->where(array('chemist_id IS'=>$_SESSION['username']))->first();
+			}
 			
 			if (!empty($checkClient) && $checkClient['is_training_completed']=='yes') {
 				
