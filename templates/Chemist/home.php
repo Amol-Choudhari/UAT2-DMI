@@ -89,7 +89,7 @@
 		<!-- for withdraw application if it is no longer process added button by laxmi Bhadade on 26-5-2023 -->
         <a  class="btn btn-warning rejectModel" title="you can withdraw application if it is not processing">Withdraw Application</a>
      </td>
-	 <?php } elseif ((!empty($all_section_status) && $all_section_status == 1) && empty($rejectEntry)){ ?>
+	 <?php } elseif ((!empty($all_section_status) && $all_section_status == 1) && empty($rejectEntry) && $is_payment_confirm != 'confirmed'){ ?>
 		<td>
 		<!-- for withdraw application if it is no longer process added button by laxmi Bhadade on 26-5-2023 -->
         <a  class="btn btn-warning rejectModel" title="you can withdraw application if it is not processing">Withdraw Application</a>
