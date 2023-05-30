@@ -20,7 +20,12 @@ class DmiCommonScrutinyFlowDetailsTable extends Table{
 	public function allSectionList($application_type,$office_type,$firm_type,$form_type){ 
 		
 		$paymentForChange = $_SESSION['paymentforchange'];
-		$oldapplication = $_SESSION['oldapplication'];
+		
+		//for chemist home if oldapplication not in session occured error , so added condtion and above set empty by laxmi B. on 30-05-2023
+		$oldapplication = '';
+		if(!empty($_SESSION['oldapplication'])){
+			$oldapplication = $_SESSION['oldapplication'];
+		}
 		$paymentSection = 'available';
 		
 		$allSectionDetails = $this->find('all',array('conditions'=>array('application_type IS'=>$application_type,'office_type IS'=>$office_type,'firm_type IS'=>$firm_type,

@@ -716,9 +716,9 @@ class ChemistController extends AppController {
 		  // check application is rejected 
 		  $this->loadModel('DmiRejectedApplLogs');
 		  $rejectEntry = $this->DmiRejectedApplLogs->find('all')->where(['customer_id IS'=>$chemist_id])->first();
-		  if(!empty($rejectEntry)){
+		  
               $this->set('rejectEntry', $rejectEntry);
-		  }
+		 
 	}
 
 
