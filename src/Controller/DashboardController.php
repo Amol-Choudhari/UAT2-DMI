@@ -96,6 +96,9 @@ class DashboardController extends AppController{
 				{
 					$this->Session->write('current_level','level_3');
 					$this->Session->write('level_3_for','RO');
+
+					//Regional Office tab clicked added application dashboard in session- Laxmi [30-05-2023]
+					$this->Session->write('application_dashboard','ro');
 					$status_title = 'Status of Applications in Regional Office';
 				}
 

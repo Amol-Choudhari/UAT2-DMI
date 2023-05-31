@@ -141,12 +141,10 @@
 				<?php if($_SESSION['application_type'] == 4 && !empty($_SESSION['is_training_completed']) && $_SESSION['is_training_completed']== 'no' && $is_forwordedtoral == 'no' && $all_section_status == 2){
                       ?>
                        
-                	    <a href="<?php echo $this->request->getAttribute('webroot').'chemist/forward_applicationto_ral';?> " class="btn btn-success float-right"> Forworded To RAL</a>
+                	    <a href="<?php echo $this->request->getAttribute('webroot').'chemist/forward_applicationto_ral';?> " class="btn btn-success float-right"> Schedule Training</a>
 
                	   <!-- check if training completed at ro then proceeds at RAL no appeared show added by  laxmi on 04-01-2023 -->
-                      <?php }elseif($is_forwordedtoral == 'yes' && empty($_SESSION['trainingCompleteAtRo'])){
-                       echo "<h5 class ='float-right text-white bg-red'><b><strong>Please Note: Application is in Process with RAL.</strong></b></h5>";
-                      } ?>
+                      <?php } ?>
                          
 		
 		<?php } ?>

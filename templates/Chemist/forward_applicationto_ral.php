@@ -135,7 +135,7 @@
            <div class="col-md-2"></div>
           <div class="col-md-2">
             <!-- <a value="submit" type="submit"  id="btnSubmit" class="form-control btn btn-success">Submit</a> -->
-            <?php echo $this->Form->submit(' Forward', array('name'=>'Forward', 'id'=>'btnSubmit', 'class'=>'form-control btn btn-success','title'=>'Be sure all fields and details are properly filled for application', 'label'=>false));?>
+            <?php echo $this->Form->submit(' Forwarded To RAL', array('name'=>'Forward', 'id'=>'btnSubmit', 'class'=>'form-control btn btn-success','title'=>'Be sure all fields and details are properly filled for application', 'label'=>false));?>
           
           </div>
         </div>

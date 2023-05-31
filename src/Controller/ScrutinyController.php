@@ -189,7 +189,10 @@ class ScrutinyController extends AppController{
 		$this->Session->write('application_type',$application_type);
 		 //added appl type 4  for chemist training by laxmi B. on 22-12-2022
          if ($application_type== 4) { 
-          
+
+			//added application_dashboard in session [laxmi - 31/05/23]
+          $this->Session->write('application_dashboard','ro');
+
 		// to fetch chemist is alredy registerd or new chemist added by laxmi on 22-12-22
 		 $this->loadModel('DmiChemistRegistrations');	
 		 $chemistdetails = $this->DmiChemistRegistrations->find('all', array('conditions'=>array('chemist_id IS'=>$customer_id)))->first();

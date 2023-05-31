@@ -138,7 +138,7 @@ class PaymentverificationsController extends AppController{
 			$this->loadModel('DmiApplWithRoMappings');
 			$find_office_email_id = $this->DmiApplWithRoMappings->getOfficeDetails($customer_id);
 			$office_incharge_id = $find_office_email_id[$field_name];
-
+           
 			//if appl is for lab (domestic/export), No 'SO' involded as per new scenario
 			//to check appl type and get RO in-charge id to allocate
 			//applied on 21-09-2021 by Amol
@@ -197,6 +197,9 @@ class PaymentverificationsController extends AppController{
 			$pao_user_id = $this->DmiPaoDetails->find('all',array('fields'=>'pao_user_id', 'conditions'=>array('id IS'=>$pao_id['pao_id'])))->first();
 			$pao_user_email_id = $this->DmiUsers->find('all',array('fields'=>'email', 'conditions'=>array('id IS'=>$pao_user_id['pao_user_id'])))->first();
 
+            //find  RO office by ro_email_id for pop-up msg by laxmi B [31-05-2023]
+			  $ro_office = $this->$office_table->find('all', ['fields'=>array('ro_office'), 'conditions'=>array($field_name => $office_incharge_id)])->first();
+			  
 
 			// Save payment details by applicant
 			if (null!==($this->request->getData('payment_verificatin_action'))) {
@@ -338,7 +341,7 @@ class PaymentverificationsController extends AppController{
 							$this->DmiSmsEmailTemplates->sendMessage(52,$customer_id); #RO
 
 							$this->Customfunctions->saveActionPoint('Payment Confirmed','Success'); #Action
-							$message = 'Payment Confirmed Successfully';
+							$message = 'Payment Confirmed Successfully. And Now application in '.$ro_office['ro_office'].' Office with email id '.base64_decode($office_incharge_id).' ';
 							$message_theme = 'success';
 							$redirect_to = $redirect_url;
 						}

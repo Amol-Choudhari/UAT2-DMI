@@ -1,7 +1,8 @@
 
 <?php ?>
 <div class="card-header alert alert-dark">
-	<h3 class="card-title"><strong>Recent Comments</strong></h3>
+	<!-- change label from Recent comments to Recent Internal Communications- [Laxmi:- 31-05-2023] -->
+	<h3 class="card-title"><strong>Recent Internal Communications</strong></h3>
 
 	<!--<div class="card-tools">
 	  <span data-toggle="tooltip" title="3 New Messages" class="badge badge-primary">3</span>

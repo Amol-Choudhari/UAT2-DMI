@@ -3,20 +3,35 @@ $(document).ready(function(){
   
   //datepicker added by laxmi on 28-12-2022
   // The Calender
+  $('#sheduleFrom').datepicker({
+    setDate: new Date(),
+    autoclose: true,
+    startDate:'+0d',
+    format: 'dd/mm/yyyy',
+  })
+  .on('changeDate', function (selected) {
+    startDate = new Date(selected.date.valueOf());
+    startDate.setDate(startDate.getDate(new Date(selected.date.valueOf())));
+   
+    $('#sheduleTo').datepicker('setStartDate', startDate);
+});
+
+
   $('#sheduleTo').datepicker({
     
     autoclose: true,
     setDate: new Date(),
     startDate:'+0d',
-    format: 'dd/mm/yyyy'
-  });
+    format: 'dd/mm/yyyy',
+    
+  })
+  .on('changeDate', function (selected) { 
+    FromEndDate = new Date(selected.date.valueOf());
+    FromEndDate.setDate(FromEndDate.getDate(new Date(selected.date.valueOf())));
+    $('#sheduleFrom').datepicker('setEndDate', FromEndDate);
+});
 
-  $('#sheduleFrom').datepicker({
-    setDate: new Date(),
-    autoclose: true,
-    startDate:'+0d',
-    format: 'dd/mm/yyyy'
-  });
+
 
 	$('#btnSubmit').on('click', function() {
     var roOffice = $('#roOffice').val();

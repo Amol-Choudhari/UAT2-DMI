@@ -100,6 +100,13 @@
 						<a href="#" class="float-right mr-3 tras-to-ro" title="This is a single officer posted office, so you have option to transfer the application to ro office">Transfer<sup class="fa fa-share"></sup></a>					
 					<?php }*/ ?>
 
+
+
+						<!-- check if training completed at ro then proceeds at RAL no appeared show added by  laxmi on 04-01-2023 -->
+						<?php if($_SESSION['application_type'] == 4 && $is_forwordedtoral == 'yes' && empty($_SESSION['trainingCompleteAtRo'])){
+                       echo "<p class =' text-white'><b><strong class=' bg-red'>Please Note: Application is in Process with RAL.</strong></b></p>";
+                     	 } ?>
+
 					<a href="<?php echo $download_application_pdf;?>" target="blank" class="float-right fa fa-download mr-3 text-danger" title="Download Pdf Version Form"><span class="fa fa-file-powerpoint-o text-danger"></span></a>
 				</div>
 			</div>
