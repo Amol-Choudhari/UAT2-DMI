@@ -600,7 +600,7 @@ class CustomfunctionsComponent extends Component {
 		$Dmi_final_submit_tb = $Dmi_flow_wise_tables_list->find('all',array('conditions'=>array('application_type IS'=>$application_type)))->first();
 		$Dmi_final_submit = TableRegistry::getTableLocator()->get($Dmi_final_submit_tb[$field_name]);
 		$final_submit_deatil = $Dmi_final_submit->find('all', array('conditions'=>array('customer_id IS'=>$customer_id,$grantDateCondition),'order'=>'id DESC'))->first();
-
+    
 		if (!empty($final_submit_deatil)) {
 			$final_submit_deatils = $final_submit_deatil;
 		} else {

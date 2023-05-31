@@ -345,7 +345,7 @@ class ApplicationController extends AppController{
 		$firm_type_text = $this->Customfunctions->firmTypeText($customer_id);
 		$final_submit_details = $this->Customfunctions->finalSubmitDetails($customer_id,'application_form');
 		$this->set('final_submit_details',$final_submit_details);
-
+		
 		$section_details = $this->DmiCommonScrutinyFlowDetails->currentSectionDetails($application_type,$office_type,$firm_type,$form_type,$section_id);
 
 		// get all section all details
@@ -393,7 +393,7 @@ class ApplicationController extends AppController{
 		} else {
 			$final_submit_status = 'no_final_submit';
 		}
-
+       
 		$this->set('final_submit_status',$final_submit_status);
 
 		//commented on 13-04-2023 for change request appl
@@ -561,6 +561,7 @@ class ApplicationController extends AppController{
 					} elseif ($authRegFirm=='yes') {
 						$redirect_to = '../authprocessedoldapp/home';
 					} else {
+						
 						$redirect_to = '../applicationformspdfs/'.$section_details['forms_pdf'];
 					}
 
@@ -769,6 +770,7 @@ class ApplicationController extends AppController{
 			$this->set('selectedSections',$selectedSections);
 
 			$payment_table = $this->DmiFlowWiseTablesLists->getFlowWiseTableDetails($application_type,'payment');
+			
 			$this->loadModel($payment_table);
 
 			// if return value 1 (all forms saved), return value 2 (all forms approved), return value 0 (all forms not saved or approved)
@@ -835,7 +837,7 @@ class ApplicationController extends AppController{
 
 			// Fetch submitted Payment Details and show // Done By pravin 13/10/2017
 			$this->Paymentdetails->applicantPaymentDetails($customer_id,$firm_details['district'],$payment_table);
-
+              
 			$this->loadModel('DmiApplicationCharges');
 			$this->loadModel('MCommodity');
 			$this->loadModel('MCommodityCategory');
@@ -982,6 +984,12 @@ class ApplicationController extends AppController{
 						$message_theme = 'success';
 						$redirect_to = '../applicationformspdfs/'.$section_details['forms_pdf'];
 
+						//if application type 4 rediirect to chemist home after final submit-Laxmi[30-05-23]
+                        $appl_type = $this->Session->read('application_type');
+						if(!empty($appl_type) && $appl_type == 4){
+							$redirect_to = '../chemist/home';
+						}
+
 						$this->viewBuilder()->setVar('message', $message);
 						$this->viewBuilder()->setVar('message_theme', $message_theme);
 						$this->viewBuilder()->setVar('redirect_to', $redirect_to);
@@ -1098,11 +1106,19 @@ class ApplicationController extends AppController{
 		$all_section_status = $this->Customfunctions->formStatusValue($allSectionDetails,$customer_id);
 
 		$final_submit_call_result =  $this->Customfunctions->applicationFinalSubmitCall($customer_id,$all_section_status);
-
+         
 		if ($final_submit_call_result == true) {
+			
 			$message = $firm_type_text.' - Final submitted successfully ';
 			$message_theme = 'success';
 			$redirect_to = '../applicationformspdfs/'.$section_details['forms_pdf'];
+
+			  //After final submitted redirect to home not pdf added by laxmi B. on 30-05-2023
+			   $application_type = $this->Session->read('application_type');
+			   if(!empty($application_type) && $application_type == 4){
+			     $redirect_to = '../chemist/home';
+			    }
+
 		} else {
 			$message = $firm_type_text.' - All Sections not filled, Please fill all Section and then Final Submit ';
 			$message_theme = 'failed';

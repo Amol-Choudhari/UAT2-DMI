@@ -362,7 +362,8 @@ class ChemistController extends AppController {
 
 								$chemist_id = 'CHM/'.date('y').'/1001';
 							}
-
+                             //set email to add email id in success msg by laxmi B. on 30-05-23
+                             $email = $this->request->getData('email');
 
 							$htmlEncoded_dob= htmlentities($this->Customfunctions->changeDateFormat($this->request->getData('dob')), ENT_QUOTES);
 							$htmlEncoded_email = htmlentities(base64_encode($this->request->getData('email')), ENT_QUOTES); //for email encoding
@@ -443,7 +444,8 @@ class ChemistController extends AppController {
 								$this->DmiSmsEmailTemplates->sendMessage(66,$chemist_id); #Packer
 								$this->DmiSmsEmailTemplates->sendMessage(67,$chemist_id); #Chemist
 
-								$message = 'You have registered Chemist <strong>"'.$htmlEncoded_chemistFirstname.' '.$htmlEncoded_chemistLastname.'"</strong> with chemist ID is <strong>"'.$chemist_id.'"</strong> .<br>An email has been sent to you and your chemist to set your login password. <br> <strong>Now chemist need to login and complete profile verification.';
+								// added email id and change success pop-up msg by laxmi B on 30-05-2023
+								$message = 'You have registered Chemist <strong>"'.$htmlEncoded_chemistFirstname.' '.$htmlEncoded_chemistLastname.'"</strong> with chemist ID is <strong>"'.$chemist_id.'"</strong> .<br>An email has been sent to you and your chemist. The chemist shall set login password. <br> <strong>Now chemist need to login and complete profile verification and chemist email is "'.$email.'".';
 								$message_theme = 'success';
 								$redirect_to = '../customers/secondary_home';
 

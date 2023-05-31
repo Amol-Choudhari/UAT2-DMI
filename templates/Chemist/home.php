@@ -5,7 +5,7 @@
 				<div class="alert alert-info alert-dismissible">
 					<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
 					<h5><i class="icon fas fa-info"></i> Please Note !</h5>
-					<p>Your application for registration has been saved and finally submitted, to check status please click on "Registration Status" button. Thankyou</p>
+					<p class="blink_me ">Your application for registration has been saved and finally submitted, to check status please click on "Registration Status" button. Thankyou</p>
 				</div>
 			</div>
 <!-- added withdraw or rejected application condition with anding by Laxmi on 29-05-2023  -->
@@ -15,7 +15,7 @@
 				<div class="alert alert-info alert-dismissible">
 					<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
 					<h5><i class="icon fas fa-info"></i> Please Note !</h5>
-					<p>Your application for registration has been successfully verified. Thankyou</p>
+					<p class="blink_me ">Your application for registration has been successfully verified. Thankyou</p>
 				</div>
 			</div>
 <!-- added withdraw or rejected application condition with anding by Laxmi on 29-05-2023  -->
@@ -25,7 +25,7 @@
 			<div class="alert alert-info alert-dismissible">
 				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
 				<h5><i class="icon fas fa-info"></i> Please Note !</h5>
-				<p class="">You need to register your application as a chemist on online system, so please click "Register Application" button to fill your details and apply. Thankyou</p>
+				<p class="blink_me ">You need to register your application as a chemist on online system, so please click "Register Application" button to fill your details and apply. Thankyou</p>
 			</div>
 		</div>
 <!-- added withdraw or rejected application condition to view application reject status by Laxmi on 29-05-2023  -->
@@ -34,7 +34,7 @@
 			<div class="alert alert-info alert-dismissible">
 				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
 				<h5><i class="icon fas fa-info"></i> Please Note !</h5>
-				<p class="">Your application as a chemist has been Rejected/Withdrawn, so it is no longer in processing. Thankyou</p>
+				<p class=" blink_me ">Your application as a chemist has been Rejected/Withdrawn, so it is no longer in processing. Thankyou</p>
 			</div>
 		</div>
 		<?php } ?>
