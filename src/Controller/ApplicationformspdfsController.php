@@ -3766,7 +3766,7 @@ class ApplicationformspdfsController extends AppController{
 				}
 				
 				
-				//added new function to genrate training completed pdf at ro on 02-01-2023 by laxmi B.
+				//added new function to generate training completed pdf at ro on 02-01-2023 by laxmi B.
 				public function chemistTrainingCompPdfRo($id = null){
 
 				$this->loadModel('DmiFirms');	
@@ -3879,9 +3879,9 @@ class ApplicationformspdfsController extends AppController{
 				$file_path = $_SERVER["DOCUMENT_ROOT"].$file_path;
 				//to preview application
 				$this->callTcpdf($all_data_pdf,'F',$customer_id,'chemist',$file_path);//with save mode
-				$this->callTcpdf($all_data_pdf,'I',$customer_id,'chemist',$file_path);//on with preview mode
+				//$this->callTcpdf($all_data_pdf,'I',$customer_id,'chemist',$file_path);//on with preview mode
 
-				$this->redirect('/dashboard/home');
+				$this->redirect('/chemist/listOfChemistApplRalToRo');
 
 
 				} 
@@ -3992,7 +3992,7 @@ class ApplicationformspdfsController extends AppController{
 				}
   
   
-               			//chemist training schedule letter at RO side added by laxmi on 10-1-2023	 
+            //chemist training schedule letter at RO side added by laxmi on 10-1-2023	 
 			public function trainingScheduleLetterFromRo(){
 
 			$this->loadModel('DmiFirms');		
@@ -4117,9 +4117,9 @@ class ApplicationformspdfsController extends AppController{
 			$file_path = $_SERVER["DOCUMENT_ROOT"].$file_path;
 			//to preview application
 			$this->callTcpdf($all_data_pdf,'F',$customer_id,'chemist',$file_path);//with save mode
-			$this->callTcpdf($all_data_pdf,'I',$customer_id,'chemist',$file_path);//on with preview mode
+			//$this->callTcpdf($all_data_pdf,'I',$customer_id,'chemist',$file_path);//on with preview mode
 
-			$this->redirect('/dashboard/home');
+			$this->redirect('/chemist/listOfChemistApplRalToRo');
 			}
 
 }	
