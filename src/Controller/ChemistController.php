@@ -338,42 +338,65 @@ class ChemistController extends AppController {
 		if ($this->request->is('post')) {
 
 			//applied condition to check all post data for !empty validation on server side //on 21/10/2017 by Amol
-			if (!empty($this->request->getData('email')) && !empty($this->request->getData('mobile')) && !empty($this->request->getData('dob'))) {
+		if (!empty($this->request->getData('email')) && !empty($this->request->getData('mobile')) && !empty($this->request->getData('dob'))) {
 
-				$usersData = $this->request->getData();
+			$usersData = $this->request->getData();
 
-				$checkEmailExist =  $this->DmiChemistRegistrations->find('all', array('fields' => 'email', 'conditions' => array('email IS' => base64_encode($usersData['email']))))->first();
-				$checkMobileExist =  $this->DmiChemistRegistrations->find('all', array('fields' => 'mobile', 'conditions' => array('mobile IS' => $usersData['mobile'])))->first();
+			$checkEmailExist =  $this->DmiChemistRegistrations->find('all', array('fields' => 'email', 'conditions' => array('email IS' => base64_encode($usersData['email']))))->first();
+			$checkMobileExist =  $this->DmiChemistRegistrations->find('all', array('fields' => 'mobile', 'conditions' => array('mobile IS' => $usersData['mobile'])))->first();
 
-				if ($this->request->getData('chemist_fname') !="" && $this->request->getData('chemist_lname') !="" && $this->request->getData('email') !="" && $this->request->getData('mobile') !="" && $this->request->getData('dob') !="") {
+			if ($this->request->getData('chemist_fname') !="" && $this->request->getData('chemist_lname') !="" && $this->request->getData('email') !="" && $this->request->getData('mobile') !="" && $this->request->getData('dob') !="") {
 
-					if ($checkEmailExist == null) {
+				if ($checkEmailExist == null) {
 
-						if ($checkMobileExist == null) {
+					if ($checkMobileExist == null) {
 
-							$last_registered_record	= $this->DmiChemistRegistrations->find('all', array('fields'=>'chemist_id','order'=>'id desc'))->first();
+						$last_registered_record	= $this->DmiChemistRegistrations->find('all', array('fields'=>'chemist_id','order'=>'id desc'))->first();
 
-							if ($last_registered_record != null) {
+						if ($last_registered_record != null) {
 
-								$last_registered_id = substr($last_registered_record['chemist_id'],-4) + 1;
-								$chemist_id = 'CHM/'.date('y').'/'.$last_registered_id;
+							$last_registered_id = substr($last_registered_record['chemist_id'],-4) + 1;
+							$chemist_id = 'CHM/'.date('y').'/'.$last_registered_id;
 
-							} else {
+						} else {
 
-								$chemist_id = 'CHM/'.date('y').'/1001';
-							}
-                             //set email to add email id in success msg by laxmi B. on 30-05-23
-                             $email = $this->request->getData('email');
+							$chemist_id = 'CHM/'.date('y').'/1001';
+						}
+							//set email to add email id in success msg by laxmi B. on 30-05-23
+							$email = $this->request->getData('email');
 
-							$htmlEncoded_dob= htmlentities($this->Customfunctions->changeDateFormat($this->request->getData('dob')), ENT_QUOTES);
-							$htmlEncoded_email = htmlentities(base64_encode($this->request->getData('email')), ENT_QUOTES); //for email encoding
-							$htmlEncoded_mobile = htmlentities($this->request->getData('mobile'), ENT_QUOTES);
-							$htmlEncoded_chemistFirstname = htmlentities($this->request->getData('chemist_fname'), ENT_QUOTES);
-							$htmlEncoded_chemistLastname = htmlentities($this->request->getData('chemist_lname'), ENT_QUOTES);
+						$htmlEncoded_dob= htmlentities($this->Customfunctions->changeDateFormat($this->request->getData('dob')), ENT_QUOTES);
+						$htmlEncoded_email = htmlentities(base64_encode($this->request->getData('email')), ENT_QUOTES); //for email encoding
+						$htmlEncoded_mobile = htmlentities($this->request->getData('mobile'), ENT_QUOTES);
+						$htmlEncoded_chemistFirstname = htmlentities($this->request->getData('chemist_fname'), ENT_QUOTES);
+						$htmlEncoded_chemistLastname = htmlentities($this->request->getData('chemist_lname'), ENT_QUOTES);
 
-							$certificationType = explode('/',(string) $username); #For Deprecations
-                              
-							$DmiChemistRegistrationsEntity = $this->DmiChemistRegistrations->newEntity(array(
+						$certificationType = explode('/',(string) $username); #For Deprecations
+							
+						$DmiChemistRegistrationsEntity = $this->DmiChemistRegistrations->newEntity(array(
+
+							'chemist_fname'=>$htmlEncoded_chemistFirstname,
+							'chemist_lname'=>$htmlEncoded_chemistLastname,
+							'chemist_id'=>$chemist_id,
+							'email'=>$htmlEncoded_email,
+							'password'=>'91c8559eb34ab5e1ab86f9e80d9753c59b7da0d0e025ec8e7785f19e7852ca428587cdb4f02b5c67d1220ca5bb440b5592cd76b1c13878d7f10a1e568014f4dc', //Agmark123@
+						//	'password'=>'3c9909afec25354d551dae21590bb26e38d53f2173b8d3dc3eee4c047e7ab1c1eb8b85103e3be7ba613b31bb5c9c36214dc9f14a42fd7a2fdb84856bca5c44c2', // 123
+							//chemist training alredy completed or not status added in db by laxmi bhadade on 12-12-22
+							'is_training_completed'=>$this->request->getData('is_training_completed'),
+							'mobile'=>base64_encode($htmlEncoded_mobile),
+							'dob'=>$htmlEncoded_dob,
+							'created_by'=>$username,
+							'usertype'=>$certificationType[1],
+							'created'=>date('Y-m-d H:i:s'),
+							'modified'=>date('Y-m-d H:i:s'),
+							
+						));
+							
+						
+						if ($this->DmiChemistRegistrations->save($DmiChemistRegistrationsEntity)) {
+
+							//Save Chemist Logs
+							$DmiChemistLogsEntity = $this->DmiChemistLogs->newEntity(array(
 
 								'chemist_fname'=>$htmlEncoded_chemistFirstname,
 								'chemist_lname'=>$htmlEncoded_chemistLastname,
@@ -381,105 +404,75 @@ class ChemistController extends AppController {
 								'email'=>$htmlEncoded_email,
 								'password'=>'91c8559eb34ab5e1ab86f9e80d9753c59b7da0d0e025ec8e7785f19e7852ca428587cdb4f02b5c67d1220ca5bb440b5592cd76b1c13878d7f10a1e568014f4dc', //Agmark123@
 							//	'password'=>'3c9909afec25354d551dae21590bb26e38d53f2173b8d3dc3eee4c047e7ab1c1eb8b85103e3be7ba613b31bb5c9c36214dc9f14a42fd7a2fdb84856bca5c44c2', // 123
-								//chemist training alredy completed or not status added in db by laxmi bhadade on 12-12-22
-								'is_training_completed'=>$this->request->getData('is_training_completed'),
 								'mobile'=>base64_encode($htmlEncoded_mobile),
 								'dob'=>$htmlEncoded_dob,
 								'created_by'=>$username,
 								'usertype'=>$certificationType[1],
+								//chemist training alredy completed or not status added in db by laxmi bhadade on 12-12-22
+								'is_training_completed'=>$this->request->getData('is_training_completed'),											   
 								'created'=>date('Y-m-d H:i:s'),
-								'modified'=>date('Y-m-d H:i:s'),
-								
+								'modified'=>date('Y-m-d H:i:s')
 							));
-                              
-                           
-							if ($this->DmiChemistRegistrations->save($DmiChemistRegistrationsEntity)) {
 
-								//Save Chemist Logs
-								$DmiChemistLogsEntity = $this->DmiChemistLogs->newEntity(array(
+							$this->DmiChemistLogs->save($DmiChemistLogsEntity);
 
-									'chemist_fname'=>$htmlEncoded_chemistFirstname,
-									'chemist_lname'=>$htmlEncoded_chemistLastname,
-									'chemist_id'=>$chemist_id,
-									'email'=>$htmlEncoded_email,
-									'password'=>'91c8559eb34ab5e1ab86f9e80d9753c59b7da0d0e025ec8e7785f19e7852ca428587cdb4f02b5c67d1220ca5bb440b5592cd76b1c13878d7f10a1e568014f4dc', //Agmark123@
-								//	'password'=>'3c9909afec25354d551dae21590bb26e38d53f2173b8d3dc3eee4c047e7ab1c1eb8b85103e3be7ba613b31bb5c9c36214dc9f14a42fd7a2fdb84856bca5c44c2', // 123
-									'mobile'=>base64_encode($htmlEncoded_mobile),
-									'dob'=>$htmlEncoded_dob,
-									'created_by'=>$username,
-									'usertype'=>$certificationType[1],
-									//chemist training alredy completed or not status added in db by laxmi bhadade on 12-12-22
-									'is_training_completed'=>$this->request->getData('is_training_completed'),											   
-									'created'=>date('Y-m-d H:i:s'),
-									'modified'=>date('Y-m-d H:i:s')
-								));
+							$this->set('new_customer_id',$chemist_id);
+							$this->set('htmlencodedemail',base64_decode($htmlEncoded_email)); //for email encoding
+							$this->set('htmlencodedchemist_fname',$htmlEncoded_chemistFirstname);
+							$this->set('htmlencodedchemist_lname',$htmlEncoded_chemistLastname);
 
-								$this->DmiChemistLogs->save($DmiChemistLogsEntity);
+							//called function to send link for reset password on registered email//on 13-02-2018 by Amol
+							//In below condition the #Customer ID is passed to fetch the newly created Customer ID on Forgot Password - Akash[20-03-2023]
+							$this->Authentication->forgotPasswordLib('DmiChemistRegistrations', $htmlEncoded_email,$chemist_id);
 
-								$this->set('new_customer_id',$chemist_id);
-								$this->set('htmlencodedemail',base64_decode($htmlEncoded_email)); //for email encoding
-								$this->set('htmlencodedchemist_fname',$htmlEncoded_chemistFirstname);
-								$this->set('htmlencodedchemist_lname',$htmlEncoded_chemistLastname);
+							//Save Chemist Allotment Entry
+							$DmiChemistAllotmentsEntity = $this->DmiChemistAllotments->newEntity(array(
 
-								//called function to send link for reset password on registered email//on 13-02-2018 by Amol
-								//In below condition the #Customer ID is passed to fetch the newly created Customer ID on Forgot Password - Akash[20-03-2023]
-								$this->Authentication->forgotPasswordLib('DmiChemistRegistrations', $htmlEncoded_email,$chemist_id);
+								'chemist_id'=>$chemist_id,
+								'customer_id'=>$username,
+								'created_by'=>$username,
+								'usertype'=>$certificationType[1],
+								'status'=>1,
+								'incharge'=>'no',
+								'created'=> date('Y-m-d H:i:s'),
+								'modified'=>date('Y-m-d H:i:s')
+							));
 
-								//Save Chemist Allotment Entry
-								$DmiChemistAllotmentsEntity = $this->DmiChemistAllotments->newEntity(array(
+							$this->DmiChemistAllotments->save($DmiChemistAllotmentsEntity);
 
-									'chemist_id'=>$chemist_id,
-									'customer_id'=>$username,
-									'created_by'=>$username,
-									'usertype'=>$certificationType[1],
-									'status'=>1,
-									'incharge'=>'no',
-									'created'=> date('Y-m-d H:i:s'),
-									'modified'=>date('Y-m-d H:i:s')
-								));
+							#SMS: Chemist Registration
+							$this->DmiSmsEmailTemplates->sendMessage(66,$chemist_id); #Packer
+							$this->DmiSmsEmailTemplates->sendMessage(67,$chemist_id); #Chemist
 
-								$this->DmiChemistAllotments->save($DmiChemistAllotmentsEntity);
-
-								#SMS: Chemist Registration
-								$this->DmiSmsEmailTemplates->sendMessage(66,$chemist_id); #Packer
-								$this->DmiSmsEmailTemplates->sendMessage(67,$chemist_id); #Chemist
-
-								// added email id and change success pop-up msg by laxmi B on 30-05-2023
-								$message = 'You have registered Chemist <strong>"'.$htmlEncoded_chemistFirstname.' '.$htmlEncoded_chemistLastname.'"</strong> with chemist ID is <strong>"'.$chemist_id.'"</strong> .<br>An email has been sent to you and your chemist. The chemist shall set login password. <br> <strong>Now chemist need to login and complete profile verification and chemist email is "'.$email.'".';
-								$message_theme = 'success';
-								$redirect_to = '../customers/secondary_home';
-
-							} else {
-
-								$message = 'Your chemist details are not saved please check again';
-								$message_theme = 'warning';
-								$redirect_to = 'chemist_registration';
-							}
+							// added email id and change success pop-up msg by laxmi B on 30-05-2023
+							$message = 'You have registered Chemist <strong>"'.$htmlEncoded_chemistFirstname.' '.$htmlEncoded_chemistLastname.'"</strong> with chemist ID is <strong>"'.$chemist_id.'"</strong> .<br>An email has been sent to you and your chemist. The chemist shall set login password. <br> <strong>Now chemist need to login and complete profile verification and chemist email is "'.$email.'".';
+							$message_theme = 'success';
+							$redirect_to = '../customers/secondary_home';
 
 						} else {
 
-							$present_mobile = 'mobile number';
-							$already_present = 'yes';
+							$message = 'Your chemist details are not saved please check again';
+							$message_theme = 'warning';
+							$redirect_to = 'chemist_registration';
 						}
 
 					} else {
 
-						$present_email = 'email id';
+						$present_mobile = 'mobile number';
 						$already_present = 'yes';
-					}
-
-					if ($already_present == 'yes') {
-
-						$message = 'This '.$present_email.' '.$present_mobile.' is already registered with us.';
-						$message_theme = 'failed';
-						$redirect_to = '../customers/secondary_home';
 					}
 
 				} else {
 
-					$message = 'Please enter all details. Do not leave any field empty!!';
-					$message_theme = 'warning';
-					$redirect_to = 'chemist_registration';
+					$present_email = 'email id';
+					$already_present = 'yes';
+				}
+
+				if ($already_present == 'yes') {
+
+					$message = 'This '.$present_email.' '.$present_mobile.' is already registered with us.';
+					$message_theme = 'failed';
+					$redirect_to = '../customers/secondary_home';
 				}
 
 			} else {
@@ -488,7 +481,14 @@ class ChemistController extends AppController {
 				$message_theme = 'warning';
 				$redirect_to = 'chemist_registration';
 			}
+
+		} else {
+
+			$message = 'Please enter all details. Do not leave any field empty!!';
+			$message_theme = 'warning';
+			$redirect_to = 'chemist_registration';
 		}
+	}
 
 		// set variables to show popup messages from view file
 		$this->set('message',$message);

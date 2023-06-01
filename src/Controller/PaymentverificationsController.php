@@ -200,6 +200,12 @@ class PaymentverificationsController extends AppController{
             //find  RO office by ro_email_id for pop-up msg by laxmi B [31-05-2023]
 			  $ro_office = $this->$office_table->find('all', ['fields'=>array('ro_office'), 'conditions'=>array($field_name => $office_incharge_id)])->first();
 			  
+			  // for export application and application type 4 only Mumbai Ro office include [laxmi 1-06-23]
+			 
+             if($export_unit == 'yes' && $appl_type == 4){
+				$ro_office = $this->$office_table->find('all', ['fields'=>array('ro_office'), 'conditions'=>array($field_name => $office_incharge_id, 'ro_office'=>'Mumbai')])->first();
+			 }
+             
 
 			// Save payment details by applicant
 			if (null!==($this->request->getData('payment_verificatin_action'))) {
