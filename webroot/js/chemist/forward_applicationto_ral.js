@@ -11,8 +11,8 @@ $(document).ready(function(){
   })
   .on('changeDate', function (selected) {
     startDate = new Date(selected.date.valueOf());
-    startDate.setDate(startDate.getDate(new Date(selected.date.valueOf())));
-   
+    //startDate.setDate(startDate.getDate(new Date(selected.date.valueOf())));
+    startDate.setDate(startDate.getDate() + 1);    
     $('#sheduleTo').datepicker('setStartDate', startDate);
 });
 
@@ -23,13 +23,16 @@ $(document).ready(function(){
     setDate: new Date(),
     startDate:'+0d',
     format: 'dd/mm/yyyy',
+ 
     
   })
   .on('changeDate', function (selected) { 
     FromEndDate = new Date(selected.date.valueOf());
     FromEndDate.setDate(FromEndDate.getDate(new Date(selected.date.valueOf())));
+   
     $('#sheduleFrom').datepicker('setEndDate', FromEndDate);
 });
+
 
 
 
