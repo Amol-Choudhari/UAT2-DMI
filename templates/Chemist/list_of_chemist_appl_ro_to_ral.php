@@ -4,7 +4,7 @@
        <hr/>
     </div>
 <div class="row">
- <table class="table table-bordered">
+ <table class="table table-bordered ro_to_ral">
   <thead>
     <tr>
       <th scope="col">#</th>
@@ -49,3 +49,4 @@
 </div>
 	
 </div>
+<?php echo $this->Html->script('chemist/forward_applicationto_ral');?>

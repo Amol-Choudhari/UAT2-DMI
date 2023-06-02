@@ -5,7 +5,7 @@
        <hr/>
     </div>
 <div class="row">
- <table class="table table-bordered">
+ <table class="table table-bordered ral_to_ro">
   <thead>
     <tr>
       <th scope="col">#</th>
@@ -51,7 +51,9 @@
 
           <?php }elseif(empty($isTrainingComplete[$i]) && !empty($is_trainingScheduleRO[$i]) && $is_trainingScheduleRO[$i] == 1  && $reschedule_status[$i] != 'confirm') {?>
 
-                <a href="<?php echo $this->getRequest()->getAttribute('webroot')."chemist/trainingScheduleAtRo/".$list['id'];?>" class=" btn btn-success">Confirm Dates</a>
+                 <a class="btn btn-success text-white trainingScheduleConfirm" id ="triningDatesConfirm">Confirm Dates</a><br> <br>
+
+                <a href="<?php echo $this->getRequest()->getAttribute('webroot')."chemist/trainingScheduleAtRo/".$list['id'];?>" class=" btn btn-success">Reschedule Training Dates</a>
 
         <?php }elseif(empty($isTrainingComplete[$i]) && $is_trainingScheduleRO[$i] == 1 && $reschedule_status[$i] == 'confirm'){?>
             

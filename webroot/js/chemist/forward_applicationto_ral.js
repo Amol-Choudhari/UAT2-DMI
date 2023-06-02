@@ -1,15 +1,16 @@
 // file created by laxmi on 23-12-22
 $(document).ready(function(){
-  
+  $('.ro_to_ral').DataTable();
   //datepicker added by laxmi on 28-12-2022
   // The Calender
+  
   $('#sheduleFrom').datepicker({
     setDate: new Date(),
     autoclose: true,
     startDate:'+0d',
     format: 'dd/mm/yyyy',
   })
-  .on('changeDate', function (selected) {
+  .on('changeDate', function (selected) { 
     startDate = new Date(selected.date.valueOf());
     //startDate.setDate(startDate.getDate(new Date(selected.date.valueOf())));
     startDate.setDate(startDate.getDate() + 1);    

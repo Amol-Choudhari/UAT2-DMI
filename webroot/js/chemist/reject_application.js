@@ -1,7 +1,7 @@
 //Create new file for reject chemist application at ro side  added by laxmi Bhadade on 16-05-2023 for chemist_training module
 
 $('document').ready(function(){
-   
+   $('.ral_to_ro').DataTable();
 var span = document.getElementsByClassName("close")[0];
 
 var reject_id = document.getElementsByClassName("rejectModel");
