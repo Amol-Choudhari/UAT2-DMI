@@ -40,7 +40,7 @@ $(document).ready(function(){
     var roOffice = $('#roOffice').val();
      var scheduleDateFrom = $('#sheduleFrom').val();
       var scheduleDateTo= $('#sheduleTo').val();
-     // alert(roOffice);
+     
     
     if(roOffice == ""  || roOffice == null){
      
@@ -80,7 +80,7 @@ jQuery(document).ready(function($) {
 });
 
 
-//for confirm dates open quitely reschedule form and set values
+//for confirm dates open quickly reschedule form and set values
 $(document).ready(function(){
   
   var ConfirmClickYes = window.localStorage.getItem('confirmClick');
