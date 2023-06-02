@@ -1189,7 +1189,7 @@ class ChemistController extends AppController {
 			$ro_schedule_letter[$i] = $ro_schedule_training['ro_schedule_letter'];
             $reschedule_status[$i] = $ro_schedule_training['reshedule_status'];
 			}
-               if(!empty($list['appliaction_type'])){
+            if(!empty($list['appliaction_type'])){
                $this->loadModel('DmiApplicationTypes');
 			   $application_type = $this->DmiApplicationTypes->find('all',array( 'conditions'=>['id IS'=>$list['appliaction_type']]))->first();
 			  $appl_type[$i] = $application_type['application_type'];
