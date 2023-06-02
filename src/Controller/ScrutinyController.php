@@ -212,9 +212,11 @@ class ScrutinyController extends AppController{
 		
 		 if(!empty($isforwardedtoral['is_forwordedtoral'])){
             $this->set('is_forwordedtoral', $isforwardedtoral['is_forwordedtoral']);
+			$this->Session->write('is_forwordedtoral',$isforwardedtoral['is_forwordedtoral']);
 		 }else{
 		 	    $isforwardedtoral = 'no';
-		 	  $this->set('is_forwordedtoral', $isforwardedtoral);
+		 	    $this->set('is_forwordedtoral', $isforwardedtoral);
+			    $this->Session->write('is_forwordedtoral',$isforwardedtoral);
 		 }
 
 		 //to check and add variable in session if trainingCompleteAtRo added by laxmi on 04-01-2023

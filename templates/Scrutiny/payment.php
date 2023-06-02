@@ -48,7 +48,8 @@
 																	</ul>
 															</td>
 														</tr>
-													<?php $i=$i+1; } } ?>
+													<?php $i=$i+1; } } 
+												     } ?>
                                                      <!--in chemist training approval  hide commodity details added by laxmi on 21-12-2022-->
 													<?php if(!empty($firm_details['packaging_materials']) && $_SESSION['application_type'] != 4){
 																	$sr_no = 1;

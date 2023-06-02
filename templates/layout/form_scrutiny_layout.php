@@ -103,7 +103,7 @@
 
 
 						<!-- check if training completed at ro then proceeds at RAL no appeared show added by  laxmi on 04-01-2023 -->
-						<?php if($_SESSION['application_type'] == 4 && $is_forwordedtoral == 'yes' && empty($_SESSION['trainingCompleteAtRo'])){
+						<?php if($_SESSION['application_type'] == 4 && $_SESSION['is_forwordedtoral'] == 'yes' && empty($_SESSION['trainingCompleteAtRo'])){
                        echo "<p class =' text-white'><b><strong class=' bg-red'>Please Note: Application is in Process with RAL.</strong></b></p>";
                      	 } ?>
 
