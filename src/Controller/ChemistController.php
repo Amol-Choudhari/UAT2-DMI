@@ -1168,8 +1168,8 @@ class ChemistController extends AppController {
 			$ral_offices[$i] = $this->DmiRoOffices->find('list',array('valueField'=>'ro_office', 'conditions'=>array('id IS'=>$list['ral_office_id'])))->first();
 
 			//training complete or not
-			$trainingComplete = $this->DmiChemistTrainingAtRo->find('all', array('fields'=>array('training_completed', 'pdf_file')))->where(array('chemist_id IS'=>$list['chemist_id']))->last();
-           
+			$trainingComplete = $this->DmiChemistTrainingAtRo->find('all', array('fields'=>array('training_completed', 'pdf_file')))->where(array('chemist_id IS'=>$list['chemist_id']))->first();
+          
 			if(!empty($trainingComplete)){
 			$isTainingCompleted[$i] = $trainingComplete['training_completed'];
 			$pdf_file[$i]  = $trainingComplete['pdf_file'];
@@ -1205,7 +1205,7 @@ class ChemistController extends AppController {
 
              //check application is final granted
 			
-           
+          
              $this->set('grant_approval_pdf',$status);
            
 			$this->set('ro_schedule_letter',$ro_schedule_letter);
@@ -1437,11 +1437,8 @@ class ChemistController extends AppController {
 
 			$from = date('d-m-Y',strtotime(str_replace('/','-',$reqData['shedule_from'])));
 			$to   = date('d-m-Y',strtotime(str_replace('/','-',$reqData['shedule_to'])));
-			//print_r($to);exit;
+			
 			if($from < $to){
-
-
-
 			$this->loadModel('DmiChemistRoToRalLogs');
 			$rescheduleDateData = $this->DmiChemistRoToRalLogs->newEntity( array('chemist_id' => $reqData['chemist_id'],
 			'chemist_first_name' => $reqData['chemist_first_name'],
