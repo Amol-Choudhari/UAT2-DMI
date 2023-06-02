@@ -1168,8 +1168,8 @@ class ChemistController extends AppController {
 			$ral_offices[$i] = $this->DmiRoOffices->find('list',array('valueField'=>'ro_office', 'conditions'=>array('id IS'=>$list['ral_office_id'])))->first();
 
 			//training complete or not
-			$trainingComplete = $this->DmiChemistTrainingAtRo->find('all', array('fields'=>array('training_completed', 'pdf_file')))->where(array('chemist_id IS'=>$list['chemist_id']))->first();
-
+			$trainingComplete = $this->DmiChemistTrainingAtRo->find('all', array('fields'=>array('training_completed', 'pdf_file')))->where(array('chemist_id IS'=>$list['chemist_id']))->last();
+           
 			if(!empty($trainingComplete)){
 			$isTainingCompleted[$i] = $trainingComplete['training_completed'];
 			$pdf_file[$i]  = $trainingComplete['pdf_file'];

@@ -4,6 +4,8 @@ $(document).ready(function(){
   //datepicker added by laxmi on 28-12-2022
   // The Calender
   
+
+
   $('#sheduleFrom').datepicker({
     setDate: new Date(),
     autoclose: true,
@@ -33,9 +35,6 @@ $(document).ready(function(){
    
     $('#sheduleFrom').datepicker('setEndDate', FromEndDate);
 });
-
-
-
 
 	$('#btnSubmit').on('click', function() {
     var roOffice = $('#roOffice').val();
@@ -81,11 +80,13 @@ jQuery(document).ready(function($) {
 });
 
 
-// $(document).ready( function(){
-// $('#sheduleTo').focusin(function(){
-// var scheduleF = $('#sheduleFrom').val();
-// var date = new Date();
-// var toDate =  date.getMonth();
-// alert(toDate);
-// });
-// });
+//for confirm dates open quitely reschedule form and set values
+$(document).ready(function(){
+  
+  var ConfirmClickYes = window.localStorage.getItem('confirmClick');
+  if(ConfirmClickYes == 'yes'){
+    window.localStorage.removeItem('confirmClick');
+   $('.submitReschedule')[0].click();
+  }
+
+});

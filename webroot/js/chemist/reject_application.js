@@ -76,4 +76,13 @@ $.ajax({
    }
   });
 
+
+  // for confirm button click automatacally reschedule button click
+
+  $('#triningDatesConfirm').click(function(e){
+       e.preventDefault();
+      window.localStorage.setItem('confirmClick','yes');
+      $('#RescheduleTrainingDates')[0].click();
+  });
+
 });

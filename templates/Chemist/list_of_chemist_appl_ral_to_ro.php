@@ -22,8 +22,8 @@
   <tbody>
     
       <?php $i = 0; 
-      if(!empty($listOfChemistApp)){  
-      foreach ($listOfChemistApp as $key => $list) {?>
+      if(!empty($listOfChemistApp)){ 
+      foreach ($listOfChemistApp as $key => $list) {?> 
       	<tr>
       <th scope="row"><?php echo $i+1; ?></th>
       	 <td><?php echo $list['chemist_id'];?></td>
@@ -44,16 +44,15 @@
          <?php } ?>
          <td>
           <a href="<?php echo $list['pdf_file'] ;?>" target="_blank" type="application/pdf" rel="alternate">RAL Relieving Letter</a> | 
- 
+
            <?php if(empty($isTrainingComplete[$i]) && empty($is_trainingScheduleRO[$i]) && $is_trainingScheduleRO[$i] == '' ){ ?>
          
             <a href="<?php echo $this->getRequest()->getAttribute('webroot')."chemist/trainingScheduleAtRo/".$list['id'];?>" class=" btn btn-success">Training Schedule At RO</a>
 
-          <?php }elseif(empty($isTrainingComplete[$i]) && !empty($is_trainingScheduleRO[$i]) && $is_trainingScheduleRO[$i] == 1  && $reschedule_status[$i] != 'confirm') {?>
+          <?php }elseif(!empty($is_trainingScheduleRO[$i]) && $is_trainingScheduleRO[$i] == 1  && (empty($reschedule_status[$i]) && $reschedule_status[$i] != 'confirm')) {?>
 
                  <a class="btn btn-success text-white trainingScheduleConfirm" id ="triningDatesConfirm">Confirm Dates</a><br> <br>
-
-                <a href="<?php echo $this->getRequest()->getAttribute('webroot')."chemist/trainingScheduleAtRo/".$list['id'];?>" class=" btn btn-success">Reschedule Training Dates</a>
+                 <a href="<?php echo $this->getRequest()->getAttribute('webroot')."chemist/trainingScheduleAtRo/".$list['id'];?>" class=" btn btn-success" id ="RescheduleTrainingDates">Reschedule Training Dates</a>
 
         <?php }elseif(empty($isTrainingComplete[$i]) && $is_trainingScheduleRO[$i] == 1 && $reschedule_status[$i] == 'confirm'){?>
             

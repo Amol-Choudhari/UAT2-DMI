@@ -120,7 +120,7 @@
             <button type="submit" value="submit" id="submit" class="form-control btn btn-success">Schedule
            </button>
            <?php }else{?>
-            <button type="submit" value="submit" id="submit" class="form-control btn btn-success">Confirm Dates
+            <button type="submit" value="submit" id="submitReschedule " class="form-control btn btn-success submitReschedule">Reschedule Dates
            </button>
            <?php } ?>
           </div>
