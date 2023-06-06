@@ -1218,6 +1218,8 @@ class CustomersController extends AppController {
 		$export_unit_status = $this->Customfunctions->checkApplicantExportUnit($customer_id);
 		$this->set('export_unit_status',$export_unit_status);
 
+		// to remove error in another menus to set export_status in session and fetch it otherside from session[laxmi-06-06-23]
+		$this->Session->write('export_unit_status', $export_unit_status);
 		//Set Granr Date Condition
 		$grantDateCondition = $this->Customfunctions->returnGrantDateCondition($customer_id);
 

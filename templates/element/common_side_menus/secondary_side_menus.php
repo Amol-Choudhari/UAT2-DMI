@@ -84,7 +84,9 @@
 
 								<!-- condition added by Shankhpal Shende on 08/11/2022 When user login with export lab, then it show on left menu. -->
 								<!-- Added new conditions to check inprocess appl, to hide/show specific menus only on 28-04-2023 by Amol -->
-								<?php if(($split_user_name[1] == 3 && $export_unit_status == "yes" && $IsApproved=='yes') && ((!empty($InprocessMsg) && $InprocessApplId==8) || empty($InprocessMsg))) { ?> 
+
+							    <!-- to remove error in another menus to fetch & set export_status from session [laxmi-06-06-23] -->
+								<?php if(($split_user_name[1] == 3 && $_SESSION['export_unit_status'] == "yes" && $IsApproved=='yes') && ((!empty($InprocessMsg) && $InprocessApplId==8) || empty($InprocessMsg))) { ?> 
 
 									<li class="nav-item">
 										<a href="<?php echo $this->request->getAttribute("webroot");?>application/application-type/8" class="nav-link">
