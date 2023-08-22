@@ -421,18 +421,27 @@ class MisgradingController extends AppController{
 
 		$userName = $this->Session->read('username');
 		$conn = ConnectionManager::get('default');
+				
+		$userOffice = $this->DmiUsers->find('all',array('fields'=>array('posted_ro_office'),'conditions'=>array('email IS'=>$userName)))->first();
+		$userPostedOffice = $userOffice['posted_ro_office'];
 		
-		$userPostedOffice = $this->DmiUsers->getPostedOffId($_SESSION['username']);
+		$office_type = $this->DmiRoOffices->getOfficeDetails($userName);
+		$roDistricts = $this->DmiRoOffices->find('list',array('valueField'=>array('id'),'conditions'=>array('ro_email_id IS'=>$userName)))->toArray();
 
-		//pr($userName); exit;
-		$roDistricts = $this->DmiRoOffices->find('list', array('fields' => array('id'), 'conditions' => array('ro_email_id' => $userName)))->toArray();
-
-		
-		if (!empty($roDistricts)) {
-			$districtlist = $this->DmiDistricts->find('list', array('fields' => array('id'), 'conditions' => array('ro_id IN' => $roDistricts)))->toArray();
-		} else {
-			$districtlist = $this->DmiDistricts->find('list', array('fields' => array('id'), 'conditions' => array('ro_id IS' => $userPostedOffice)))->toArray();
+		if ($office_type[1] == 'SO') {
+			$conditionA = array('so_id IN'=>$roDistricts);
+			$conditionB = array('so_id IN'=>$userPostedOffice); 
+		}else{
+			$conditionA = array('ro_id IN'=>$roDistricts);
+			$conditionB = array('ro_id IN'=>$userPostedOffice); 
 		}
+
+		if (!empty($roDistricts)) {
+			$districtlist = $this->DmiDistricts->find('list',array('valueField'=>array('id'),'conditions'=>$conditionA))->toArray();
+		} else {
+			$districtlist = $this->DmiDistricts->find('list',array('valueField'=>array('id'),'conditions'=>$conditionB))->toArray();
+		}
+
 
 		$list = array();
 		foreach ($districtlist as $each) {

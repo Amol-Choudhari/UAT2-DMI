@@ -23,6 +23,7 @@ class CustomersController extends AppController {
 		$this->loadComponent('Authentication');
 		$this->loadComponent('Mastertablecontent');
 		$this->loadComponent('Randomfunctions');
+		$this->loadComponent('SmsEmail');
 		//Set Helpers
 		$this->viewBuilder()->setHelpers(['Form', 'Html', 'Time']);
 	}
@@ -197,7 +198,7 @@ class CustomersController extends AppController {
 
 							//created/updated/added on 25-06-2021 for multiple logged in check security updates, by Amol
 							}elseif($login_result == 5){
-								
+
 								$already_loggedin_msg = 'yes';
 							}
 
@@ -237,7 +238,7 @@ class CustomersController extends AppController {
 
 							//created/updated/added on 25-06-2021 for multiple logged in check security updates, by Amol
 							}elseif($login_result == 5){
-								
+
 								$already_loggedin_msg = 'yes';
 							}
 
@@ -706,10 +707,10 @@ class CustomersController extends AppController {
 					}
 
 					$newpassdata = $this->request->getData('new_password');
-					
+
 					// calling reset password library function
 					$reset_pass_result = $this->Authentication->resetPasswordLib($table, $username, $newpassdata, $randsalt,$postdata);
-					
+
 					if ($reset_pass_result == 1) {
 
 						$this->Customfunctions->saveActionPoint('Reset Password (Email Not Matched)','Failed',$user_id); #Action
@@ -744,7 +745,7 @@ class CustomersController extends AppController {
 						exit;
 
 					} else {
-						
+
 						$this->Customfunctions->saveActionPoint('Reset Password','Success',$user_id); #Action
 						//update link key table status to 1 for successfully
 						$this->DmiApplicantsResetpassKeys->updateKeySuccess($user_id, $key_id);
@@ -815,9 +816,9 @@ class CustomersController extends AppController {
 				if($countspecialchar == 2){
 
 					$check_valid_record = $this->$table->find('all', array('conditions' => array('email IS' => base64_encode($emailforrecovery), 'chemist_id IS' => $username)))->first();
-				
+
 				} else {
-						
+
 					$check_valid_record = $this->$table->find('all', array('conditions' => array('email IS' => base64_encode($emailforrecovery), 'customer_id IS' => $username)))->first();
 				}
 
@@ -866,7 +867,7 @@ class CustomersController extends AppController {
 	//Forgot Password method ends
 
 
- 
+
 	// Method to view and update primary customer profile
 	public function customerProfile() {
 
@@ -926,7 +927,7 @@ class CustomersController extends AppController {
 		//get personal details masked by custom function to show in secure mode //applied on 12-10-2017 by Amol
 		$customer_data['mobile'] = $this->Customfunctions->getMaskedValue(base64_decode($customer_data['mobile']), 'mobile'); //This is addded on 27-04-2021 for base64decoding by AKASH
 		$customer_data['email'] = $this->Customfunctions->getMaskedValue(base64_decode($customer_data['email']), 'email');
-		
+
 
 
 		$this->set('customer_data', $customer_data);
@@ -1130,7 +1131,7 @@ class CustomersController extends AppController {
 
 						#SMS: Customer Profile Update
 						$this->DmiSmsEmailTemplates->sendMessage(2,$customer_id);
-					
+
 						//Added this call to save the user action log on 01-03-2022
 						$this->Customfunctions->saveActionPoint('Profile Update','Success');
 						$message = 'Your details are updated successfully';
@@ -1138,7 +1139,7 @@ class CustomersController extends AppController {
 						$redirect_to = 'customer_profile';
 
 					} else {
-						
+
 						//Added this call to save the user action log on 01-03-2022
 						$this->Customfunctions->saveActionPoint('Profile Update','Failed');
 						$message = 'Your details are not saved please check again';
@@ -1147,7 +1148,7 @@ class CustomersController extends AppController {
 					}
 
 				} else {
-					
+
 					//Added this call to save the user action log on 01-03-2022
 					$this->Customfunctions->saveActionPoint('Profile Update','Failed');
 					$this->set('return_error_msg','Please check some fields are not entered');
@@ -1156,7 +1157,7 @@ class CustomersController extends AppController {
 				}
 
 			} else {
-				
+
 				//Added this call to save the user action log on 01-03-2022
 				$this->Customfunctions->saveActionPoint('Profile Update','Failed');
 				$message = 'This email id is already exist. Please provide another email id to update. Thankyou.';
@@ -1214,11 +1215,11 @@ class CustomersController extends AppController {
 		$this->loadModel('DmiSurrenderFinalSubmits');
 		$this->loadModel('DmiAdvPaymentDetails');
 
-	
+
 		$commoditiesDetails = $this->Customfunctions->commodityNames($customer_id);
 		$this->set('commoditiesDetails',$commoditiesDetails);
 
-		// to get export unit added by shankhpal shende on 08/11/2022 
+		// to get export unit added by shankhpal shende on 08/11/2022
 		$export_unit_status = $this->Customfunctions->checkApplicantExportUnit($customer_id);
 		$this->set('export_unit_status',$export_unit_status);
 
@@ -1227,7 +1228,7 @@ class CustomersController extends AppController {
 
 		//Get commodities is used by current login applicant - For Surrender (SOC) - Akash [11-05-2023]
 		$firmDetails = $this->DmiFirms->firmDetails($customer_id);
-		
+
 
 		//// For Applications PDFs on Dashboard /////
 
@@ -1241,7 +1242,7 @@ class CustomersController extends AppController {
 			$renewal_application_pdfs = $this->DmiRenewalApplicationPdfRecords->find('all', array('conditions' => array('customer_id IS' => $customer_id, $grantDateCondition)))->toArray();
 			$this->set('renewal_application_pdfs', $renewal_application_pdfs);
 
-			#Change/Modification (3) /Application PDF/ - Amol [13-04-2023] 
+			#Change/Modification (3) /Application PDF/ - Amol [13-04-2023]
 			$this->loadModel('DmiChangePdfRecords');
 			$appl_change_records = $this->DmiChangePdfRecords->find('all', array('conditions' => array('customer_id IS' => $customer_id)))->toArray();
 			$this->set('appl_change_records', $appl_change_records);
@@ -1260,22 +1261,22 @@ class CustomersController extends AppController {
 			$this->loadModel('DmiAdpPdfRecords');
 			$appl_adp_pdfs_records = $this->DmiAdpPdfRecords->find('all', array('conditions' => array('customer_id IS' => $customer_id)))->toArray();
 			$this->set('appl_adp_pdfs_records', $appl_adp_pdfs_records);
-				
-			#Surrender Application @ SOC (9) /Application PDF/ -  Akash [14-04-2023] 
+
+			#Surrender Application @ SOC (9) /Application PDF/ -  Akash [14-04-2023]
 			$this->loadModel('DmiSurrenderPdfRecords');
 			$soc_pdfs_records = $this->DmiSurrenderPdfRecords->find('all', array('conditions' => array('customer_id IS' => $customer_id)))->toArray();
 			$this->set('soc_pdfs_records', $soc_pdfs_records);
 
-			#Suspension of Certificate @  SPN - PDF - Akash [02-06-2023] 
+			#Suspension of Certificate @  SPN - PDF - Akash [02-06-2023]
 			$this->loadModel('DmiMmrSuspensions');
 			$currentDate = date('Y-m-d H:i:s'); // Get the current date and time
 			$suspension_record = $this->DmiMmrSuspensions->find('all')->where(['customer_id IS' => $customer_id,'to_date >=' => $currentDate])->order('id DESC')->first();
-			$this->set('suspension_record', $suspension_record);	
-		
-			#Cancellation of Certificate @  CAN - PDF - Akash [02-06-2023] 
+			$this->set('suspension_record', $suspension_record);
+
+			#Cancellation of Certificate @  CAN - PDF - Akash [02-06-2023]
 			$this->loadModel('DmiMmrCancelledFirms');
 			$cancelled_record = $this->DmiMmrCancelledFirms->find('all')->where(['customer_id IS' => $customer_id])->order('id DESC')->first();
-			$this->set('cancelled_record', $cancelled_record);	
+			$this->set('cancelled_record', $cancelled_record);
 
 			if(!empty($suspension_record) || !empty($cancelled_record)){
 				#Misgrading Details
@@ -1283,12 +1284,12 @@ class CustomersController extends AppController {
 				$misgrading_details = $this->DmiMmrActionFinalSubmits->detailsForPdf($customer_id);
 				$this->set('misgrading_details', $misgrading_details);
 			}
-	
+
 		//================================================================//
-		
+
 		//// Grant PDFs for Applications ////
 
-	
+
 			#Change/Modification (3) /GRANT PDF/ - Amol [13-04-2023]
 			$this->loadModel('DmiChangeGrantCertificatesPdfs');
 			$appl_change_grant_pdfs = $this->DmiChangeGrantCertificatesPdfs->find('all', array('conditions' => array('customer_id IS' => $customer_id)))->toArray();
@@ -1309,17 +1310,17 @@ class CustomersController extends AppController {
 			$appl_adp_grant_pdfs = $this->DmiAdpGrantCertificatePdfs->find('all', array('conditions' => array('customer_id IS' => $customer_id)))->toArray();
 			$this->set('appl_adp_grant_pdfs', $appl_adp_grant_pdfs);
 
-			#Surrender Application @ SOC (9) /GRANT PDF/ - Akash [14-04-2023] 
+			#Surrender Application @ SOC (9) /GRANT PDF/ - Akash [14-04-2023]
 			$this->loadModel('DmiSurrenderGrantCertificatePdfs');
 			$surrender_grant_certificate = $this->DmiSurrenderGrantCertificatePdfs->find('all')->where(['customer_id IS' => $customer_id])->order('id desc')->first();
 			$this->set('surrender_grant_certificate', $surrender_grant_certificate);
-			
-			#Suspension Application @ SPN  /GRANT PDF/ - Akash [14-04-2023] 
+
+			#Suspension Application @ SPN  /GRANT PDF/ - Akash [14-04-2023]
 			$this->loadModel('DmiMmrSuspendedFirmsLogs');
 			$suspension_grant_certificate = $this->DmiMmrSuspendedFirmsLogs->find('all')->where(['customer_id IS' => $customer_id])->order('id desc')->first();
 			$this->set('suspension_grant_certificate', $suspension_grant_certificate);
-			
-			#Cancellation Application @ CAN  /GRANT PDF/ - Akash [14-04-2023] 
+
+			#Cancellation Application @ CAN  /GRANT PDF/ - Akash [14-04-2023]
 			$this->loadModel('DmiMmrCancelledFirms');
 			$cancelletion_grant_certificate = $this->DmiMmrCancelledFirms->find('all')->where(['customer_id IS' => $customer_id])->order('id desc')->first();
 			$this->set('cancelletion_grant_certificate', $cancelletion_grant_certificate);
@@ -1335,7 +1336,7 @@ class CustomersController extends AppController {
 		} else {
 			$this->set('advance_payment_status',$checkIfAdvancePayment['payment_confirmation']);
 		}
-		
+
 
 		//// Final Sumbit Statuses Entries for All Applications ////
 
@@ -1484,8 +1485,8 @@ class CustomersController extends AppController {
 
 
 
-		//// For Rejected / Suspension / Surrender / Showcause Notices  by Akash//// 	
-			
+		//// For Rejected / Suspension / Surrender / Showcause Notices  by Akash////
+
 			//To check if the application is rejected or junked and set the custom message - Akash[14-11-2022]
 			$is_appl_rejected =  $this->Customfunctions->isApplicationRejected($customer_id);
 			$this->set('is_appl_rejected',$is_appl_rejected);
@@ -1498,7 +1499,7 @@ class CustomersController extends AppController {
 			$this->loadModel('DmiMmrActionFinalSubmits');
 			$actionSubmitted = $this->DmiMmrActionFinalSubmits->find('all')->where(['customer_id IS' => $customer_id])->order('id desc')->first();
 			$this->set('actionSubmitted', $actionSubmitted);
-		
+
 
 			$conn = ConnectionManager::get('default');
 
@@ -1507,8 +1508,8 @@ class CustomersController extends AppController {
 										FROM dmi_mmr_showcause_logs AS dsl
 										INNER JOIN dmi_mmr_showcause_notice_pdfs AS dsnp ON dsnp.customer_id = dsl.customer_id
 										WHERE dsl.customer_id='$customer_id'")->fetchAll('assoc');
-		
-			
+
+
 
 			$lastRecord = null;
 
@@ -1516,19 +1517,19 @@ class CustomersController extends AppController {
 				$lastRecord = $showCauseNotice[$i];
 				break;
 			}
-			
+
 			if ($lastRecord !== null) {
 				$this->set('showCauseNotice',$lastRecord);
 			}else{
 				$this->set('showCauseNotice',null);
 			}
-			
-	
+
+
 
 		//check if the applicant is commented on the showcause notice.
 		$this->loadModel('DmiMmrShowcauseLogs');
 		$showCauseComment = $this->DmiMmrShowcauseLogs->find()->select(['sample_code'])->where(['customer_id' => $customer_id])->order('id DESC')->first();
-		
+
 
 		if(!empty($showCauseComment)){
 
@@ -1536,29 +1537,29 @@ class CustomersController extends AppController {
 			$this->loadModel('DmiMmrShowcauseComments');
 			$showcause_comments = $this->DmiMmrShowcauseComments->find('all',array('conditions'=>array('sample_code IS'=>$showCauseComment['sample_code'],'OR'=>array('comment_by IS'=>$customer_id,'comment_to IS'=>$showCauseComment['by_user'])),'order'=>'id'))->toArray();
 			$comments_result = array_merge($showcause_comments);
-			$comments_result = Hash::sort($comments_result, '{n}.created', 'desc');	
+			$comments_result = Hash::sort($comments_result, '{n}.created', 'desc');
 			$this->set('showcause_comments',$comments_result);
-		
+
 		}else{
 			$this->set('showcause_comments',null);
 		}
 
 
-		// Comment: Added as per suggestion: 
-		// Suggestion: One Copy of inspection report needs to be sent to 
+		// Comment: Added as per suggestion:
+		// Suggestion: One Copy of inspection report needs to be sent to
 		// packer for information and compliance of shortcomings after submission by inspection Officer.
 		// Author: Shankhpal Shende
 		// Date:17/05/2023
 		$this->loadModel('DmiRtiReportPdfRecords');
 
 		$fetch_max_pdf_id = $this->DmiRtiReportPdfRecords->find('list', array('valueField' => 'id', 'conditions' => array('customer_id IS' => $customer_id)))->toArray();
-		 
+
 		$approved_routine_inspection_pdf = [];
 		if(!empty($fetch_max_pdf_id)){  //added !empty condition on 19/05/2023 by shankhpal
-			
+
 			$approved_routine_inspection_pdf = $this->DmiRtiReportPdfRecords->find('all', array('conditions' => array('id IS' => max($fetch_max_pdf_id))))->toArray();
 		}
-	
+
 
 		$this->set('approved_routine_inspection_pdf', $approved_routine_inspection_pdf);
 
@@ -1567,7 +1568,7 @@ class CustomersController extends AppController {
 		$this->loadModel('DmiOldApplEsignCertLogs');
 		$checkOldCertEsigned = $this->DmiOldApplEsignCertLogs->find('all',array('conditions'=>array('customer_id IS'=>$customer_id)))->first();
 		$this->set('checkOldCertEsigned', $checkOldCertEsigned);
-		
+
 	}
 
 
@@ -1775,8 +1776,8 @@ class CustomersController extends AppController {
 		}
 
 	}
-	
-	
+
+
 	//below functions are for testing purpose for email encoding process
 
 	//function to check the string is already base64 encoded
@@ -1798,24 +1799,24 @@ class CustomersController extends AppController {
 
 
 
-	//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>    
+	//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 	// created by shankhpal shende for list of documents list on 09/08/2022
 	public function documentCheckList()
 	{
 		$this->viewBuilder()->setLayout('document_check_list_layout');
 		$this->loadModel('DmiDocCheckLists');
-		
+
 		$form_type = ['CA Non Bevo','CA Bevo','Printing Press','Laboratory','15 Digit Code','E code'];
 		$this->set('form_type', $form_type);
 		$comm_array = [];
 		$i = 0;
-		foreach($form_type as $eachformtype){ 
+		foreach($form_type as $eachformtype){
 			$get_doc =  $this->DmiDocCheckLists->find('all')->select(['releted_document'])->where(['form_type'=>$eachformtype])->order('releted_document ASC')->toArray();
 			$doc_array[$i] = $get_doc;
 			$i++;
 		}
 		$this->set('doc_array', $doc_array);
-		
+
 	}
 
 	public function showCommodities()
@@ -1824,12 +1825,12 @@ class CustomersController extends AppController {
 		$this->loadModel('MCommodityCategory');
 		$this->loadModel('MCommodity');
 		$conn = ConnectionManager::get('default');
-		
-			
-		
+
+
+
 		$commodity_cat =  $this->MCommodityCategory->find('all')->select(['category_code','category_name'])->where(['display' => 'Y'])->order('category_name ASC')->toArray();
 		$this->set('commodity_cat', $commodity_cat);
-		
+
 		$comm_array = [];
 		$i = 0;
 		foreach($commodity_cat as $eachcat){
@@ -1837,9 +1838,9 @@ class CustomersController extends AppController {
 				$comm_array[$i] = $get_comm;
 				$i++;
 		}
-		
+
 		$this->set('comm_array', $comm_array);
-		
+
 	}
 
 	// customer_information function added by Laxmi Bhadade on 18-11-22
@@ -1857,7 +1858,7 @@ class CustomersController extends AppController {
 		$this->loadModel('MCommodityCategory');
 		$this->loadModel('DmiGrantCertificatesPdfs');
 		$this->loadModel('DmiPackingTypes');
-		
+
 
 		$conn = ConnectionManager::get('default');
 
@@ -1893,15 +1894,15 @@ class CustomersController extends AppController {
 								</tr>
 							</tbody>
 						</table>";
-					
+
 					echo $result;
 
 				}else{
 					echo $result = "<p class = 'text-danger' id = 'danger-id'>This Customer Id is not valid</p>";
 				}
-						
+
 				exit; // This is added Intensionally
-					
+
 			}elseif($this->request->getdata('name') == 'firm'){
 
 				$customer_id = $this->request->getdata('id');
@@ -1913,24 +1914,24 @@ class CustomersController extends AppController {
 				$cancellation_record = $this->DmiMmrCancelledFirms->find('all')->where(['customer_id IS' => $customer_id])->order('id DESC')->first();
 				if (empty($cancellation_record)) {
 
-					#Suspension of Certificate @  SPN - PDF - Akash [02-06-2023] 
+					#Suspension of Certificate @  SPN - PDF - Akash [02-06-2023]
 					$currentDate = date('Y-m-d H:i:s'); // Get the current date and time
-					$suspension_record = $this->DmiMmrSuspensions->find('all')->where(['customer_id IS' => $customer_id,'to_date >=' => $currentDate])->order('id DESC')->first();	
+					$suspension_record = $this->DmiMmrSuspensions->find('all')->where(['customer_id IS' => $customer_id,'to_date >=' => $currentDate])->order('id DESC')->first();
 					if (empty($suspension_record)) {
-						
+
 						//This Code is added to this function to avoid the customer ids if the firm is surrendered For SOC - Akash [12-05-2023]
 						$isSurrender = $this->Customfunctions->isApplicationSurrendered($customer_id);
 						if (empty($isSurrender)) {
-						
+
 							$firm_data = $this->DmiFirms->find('all')->where(array('customer_id IS' => $customer_id))->first();
 
 							//if commodity is one then select packaging type
 							if(!empty($firm_data->commodity) && $firm_data->commodity > 1) {
-							
+
 								$commodity = $this->MCommodityCategory->find('all',array('fields'=>array('category_name')))->where(array('category_code IS'=> $firm_data->commodity))->first();
-								if(!empty ($commodity->category_name)) { 
+								if(!empty ($commodity->category_name)) {
 									$commodity = $commodity->category_name;
-								} else { 
+								} else {
 									$commodity = "Not found ";
 								}
 
@@ -1946,7 +1947,7 @@ class CustomersController extends AppController {
 										}else{
 											$commodity = "Not found ";
 										}
-									} 
+									}
 								}
 							}
 
@@ -1956,7 +1957,7 @@ class CustomersController extends AppController {
 								$uptoDate = $this->Customfunctions->getCertificateValidUptoDate($customer_id, $grant_date);
 								$date =  date('d-m-Y', strtotime("$uptoDate +1 Months"));
 							}
-							
+
 							//added by laxmi on 27-12-2022
 							$status = "";
 							if(!empty($date)){
@@ -1970,13 +1971,13 @@ class CustomersController extends AppController {
 								}else{
 									$status = "Invalid";
 								}
-							
-								
+
+
 								if ($firm_data  !=null) {
-							
+
 									$result .= "<tr><td><b>Name:</b></td><td>".$firm_data->firm_name."</td></tr>";
 									$result .= "<tr><td><b>Commodity:</b></td><td>".$commodity."</td></tr>";
-									
+
 									//added by laxmi on 27-12-2022
 									if(!empty($status && !empty($uptoDate))){
 										$result .= "<tr><td><b>Status:</b></td><td>".$status."</td></tr>";
@@ -2010,7 +2011,7 @@ class CustomersController extends AppController {
 				exit; // This is added Intensionally
 
 			}else{
-				
+
 				$result = "<tr><td></td><td>This Customer Id you have searched is not valid</td></tr>";
 				echo $result;
 				exit; // This is added Intensionally
@@ -2058,21 +2059,21 @@ class CustomersController extends AppController {
 					$cancellation_record = $this->Customfunctions->isApplicationCancelled($grantdata['customer_id']);
 					if (empty($cancellation_record)) {
 
-						#Suspension of Certificate @  SPN - PDF - Akash [02-06-2023] 
+						#Suspension of Certificate @  SPN - PDF - Akash [02-06-2023]
 						$suspension_record = $this->Customfunctions->isApplicationSuspended($grantdata['customer_id']);
 						if (empty($suspension_record)) {
-						
+
 							//This Code is added to this function to avoid the customer ids if the firm is surrendered For SOC - Akash [12-05-2023]
 							$isSurrender = $this->Customfunctions->isApplicationSurrendered($grantdata['customer_id']);
 							if (empty($isSurrender)) {
-							
+
 								$uptoDate = $this->Customfunctions->getCertificateValidUptoDate($grantdata['customer_id'], $grantdata['date']);
 								$date =  date('d-m-Y', strtotime("$uptoDate +1 Months"));
 								$date =date('Y-m-d', strtotime($date));
 								$current_date = date('Y-m-d', strtotime($current_date));
-							
+
 								if($date > $current_date){
-									
+
 									$customerId[$i] = $grantdata['customer_id'];
 									$firmData = $this->DmiFirms->find('all')->where(array('delete_status IS'=> NULL, 'customer_id'=>$customerId[$i]))->order(array('firm_name'=> 'asc'))->first();
 									if(!empty($firmData)){
@@ -2085,36 +2086,36 @@ class CustomersController extends AppController {
 										$result.= "<td>".$date = $date."</td></tr>";
 										echo $result;
 									}
-						
+
 									$i=$i+1;
 								}else{
 									$result= "<p>Records not found..</p>";
 									echo $result;
 								}
-							} 
-						} 
+							}
+						}
 					}
 				}
-				
+
 				exit; // This is intensionally added.
 			}
 		}
 	}
 
-	// This function added by Shankhpal shende 
+	// This function added by Shankhpal shende
 	// on date 24/08/2022
 	// for Attach PP/LAB
 
 	// for own laboratory update
-	// Name of person: Shankhpal Shende [Date:02/05/2023] 
+	// Name of person: Shankhpal Shende [Date:02/05/2023]
 	// Description : Applying Own Lab Logic in existing code
 	// Author : Shankhpal Shende
 	// Date : 02/05/2023
 	// For Module : attached PP/Lab
 
 	public function attachePpLab() {
-		
-		//load modals 
+
+		//load modals
 		$this->loadModel('DmiFirms');
 		$this->loadModel('DmiReplicaAllotmentDetails');
 		$this->loadModel('DmiCaPpLabMapings');
@@ -2137,7 +2138,7 @@ class CustomersController extends AppController {
 		//to get list of authorized laboratory
 		$lab_list = $this->DmiFirms->find('all',array('keyField'=>'id','valueField'=>'firm_name','joins'=>array(array('table' => 'dmi_grant_certificates_pdfs','alias' => 'dmigcp','type' => 'INNER','conditions' => array('dmigcp.customer_id = DmiFirms.customer_id'))),
 		'conditions'=>array('Dmifirms.customer_id like'=>'%'.'/3/'.'%','delete_status IS NULL'),'order'=>array('Dmifirms.firm_name asc')))->toArray();
-		
+
 		// added for
 		// When attaching the printing press and laboratory, they must display some identifying information such as address and ID. added by shankhpal on 22/02/2023
 		$i=0;
@@ -2145,7 +2146,7 @@ class CustomersController extends AppController {
 
 			$app_id = $lab_list_value['customer_id'];
 			$get_office_record = $this->DmiApplWithRoMappings->getOfficeDetails($app_id);
-			
+
 			// Check if $get_office_record is not null before accessing its values
 			if ($get_office_record !== null) {
 				$office_type = $get_office_record['office_type'];
@@ -2156,7 +2157,7 @@ class CustomersController extends AppController {
 			}
 			$i++;
 		}
-		
+
 		$printers_list = $this->DmiFirms->find('all',array('keyField'=>'id','valueField'=>'firm_name','joins'=>array(array('table' => 'dmi_grant_certificates_pdfs','alias' => 'dmigcp','type' => 'INNER','conditions' => array('dmigcp.customer_id = DmiFirms.customer_id'))),
 		'conditions'=>array('Dmifirms.customer_id like'=>'%'.'/2/'.'%','delete_status IS NULL'),'order'=>array('Dmifirms.firm_name asc')))->toArray();
 
@@ -2167,9 +2168,9 @@ class CustomersController extends AppController {
 		foreach ($printers_list as $printers_list) {
 			// concate firm name street address and customer id
 			$app_id = $printers_list['customer_id'];
-		
+
 			$get_office_record = $this->DmiApplWithRoMappings->getOfficeDetails($app_id);
-		
+
 			$office_type = $get_office_record['office_type'];
 			$ro_office = $get_office_record['ro_office'];
 
@@ -2177,31 +2178,31 @@ class CustomersController extends AppController {
 			$printing_data[$id] = $printers_list['firm_name'].", #"."Address: ".$printers_list['street_address'].", #"."Applicant ID: ".$printers_list['customer_id'].", #"."Office: ".$ro_office.", #"."Office Type: ".$office_type;
 			$i++;
 		}
-				
+
 		$attached_list =  $this->DmiCaPpLabMapings->find('all')->select(['id','customer_id','pp_id','lab_id','map_type'])->where(array('customer_id IS' => $customer_id,'delete_status IS' => null,'is_own_lab IS'=>null))->toArray();
-		
+
 		// own lab start
 		// data from laboratory profile form
 		$fetch_laboratory_last_id = $this->DmiCustomerLaboratoryDetails->find('list',array('valueField'=>'id','conditions'=>array('customer_id IS'=>$customer_id)))->toArray();
-		
+
 		// to fetch own laboratory details name
 		$fetch_laboratory_detail_data = $this->DmiCustomerLaboratoryDetails->find('all',array('conditions'=>array('id'=>max($fetch_laboratory_last_id))))->toArray();
-	 	
+
 		foreach($fetch_laboratory_detail_data as $own_lab_value) {
-				$id = $own_lab_value['id'].'/'.'Own'; 
+				$id = $own_lab_value['id'].'/'.'Own';
 				$own_lab_data[$id] = $own_lab_value['laboratory_name'];
 				$laboratory_type = $own_lab_value['laboratory_type'];
 		}
 
 		//to fetch laboratory type name
 		$fetch_laboratory_type = $this->DmiLaboratoryTypes->find('all',array('fields'=>'laboratory_type','conditions'=>array('id IS'=>$laboratory_type, 'OR'=>array('delete_status IS NULL','delete_status ='=>'no'))))->first();
-		
+
 		$laboratory_type_name = '';
 		if(!empty($fetch_laboratory_type)){
 			$laboratory_type_name = $fetch_laboratory_type['laboratory_type'];
 		}
-	
-		
+
+
 		$this->set('laboratory_type_name',$laboratory_type_name);
 
 		$attached_own_lab =  $this->DmiCaMappingOwnLabDetails->find('all')->select(['id','own_lab_id','map_type','lab_name'])->where(array('ca_id IS' => $customer_id,'delete_status IS' => null))->toArray();
@@ -2215,9 +2216,9 @@ class CustomersController extends AppController {
 			$ownlabresultArray[$i]['own_lab_name'] = $eachlab['own_lab_name'];
 			$i++;
 		}
-		
+
 		$is_own_lab_attached =  $this->DmiCaPpLabMapings->find('all')->where(array('customer_id IS' => $customer_id,'delete_status IS' => null,'is_own_lab IS'=>'yes'))->toArray();
-		
+
 		$is_own_lab = '';
 		if(!empty($is_own_lab_attached)){
 			foreach ($is_own_lab_attached as $each_value) {
@@ -2228,17 +2229,17 @@ class CustomersController extends AppController {
 		$list_record_with_delete_null_own_lab = $this->DmiCaMappingOwnLabDetails->find('list', array('conditions'=>array('ca_id IS'=>$customer_id,'delete_status IS NULL')))->toArray();
 
 		$list_record_with_delete_null = $this->DmiCaPpLabMapings->find('list', array('conditions'=>array('customer_id IS'=>$customer_id,'delete_status IS NULL')))->toArray();
-	
+
 		$last_record_with_delete_null = [];
 		if(!empty($list_record_with_delete_null)){
 
 			$last_record_with_delete_null= $this->DmiCaPpLabMapings->find('all', array('conditions'=>array('id'=>max($list_record_with_delete_null))))->toArray();
 		}
-       
+
 		$resultArray_ca_pp = [];
 		$j=0;
 		foreach ($last_record_with_delete_null as $each_value) {
-			
+
 			$resultArray_ca_pp['id'] = $each_value['id'];
 			$resultArray_ca_pp['pp_id'] = $each_value['pp_id'];
 			$resultArray_ca_pp['lab_id'] = $each_value['lab_id'];
@@ -2253,52 +2254,52 @@ class CustomersController extends AppController {
 
 			$last_record_with_delete_null_own = $this->DmiCaMappingOwnLabDetails->find('all', array('conditions'=>array('id'=>max($list_record_with_delete_null_own_lab))))->toArray();
 		}
-		
+
 		$resultArray_own_lab = [];
 		$i=0;
 		foreach ($last_record_with_delete_null_own as $each_value) {
-			
+
 			$resultArray_own_lab[$i]['id'] = $each_value['id'];
 			$resultArray_own_lab[$i]['lab_name'] = $each_value['lab_name'];
 			$i++;
 		}
-		
+
 		$resultArr =  $this->DmiCaPpLabMapings->find('list')->where(array('customer_id IS' => $customer_id,'delete_status IS' => null))->toList();
 
 		//this array is used for display printing press and laboratory on view
 		$result = [];
 		$i = 0;
-	
+
 		foreach($attached_list as $eachlist){
-			
+
 			$result[$i]['id'] = $eachlist['id'];
 			$result[$i]['type'] = $eachlist['map_type'];
 			$result[$i]['pp_id'] = $eachlist['pp_id'];
 			$result[$i]['lab_id'] = $eachlist['lab_id'];
-			
+
 			if(!empty($eachlist['pp_id'])){
 				$result[$i]['p_name'] = $printing_data[$eachlist['pp_id']];
 			}
-					
+
 			if(!empty($eachlist['lab_id'])){
 				if (strpos($eachlist['lab_id'], "/Own") !== false) {
-					
+
 					$own_lab_id = $eachlist['lab_id'];
 					$lab_data = $this->DmiCaMappingOwnLabDetails->find()->where(['own_lab_id' => $own_lab_id])->order(['id' => 'DESC'])->toArray();
-				
+
 					$result[$i]['lab_name'] = $own_lab_data[$eachlist['lab_id']];
 				}else{
 					$result[$i]['l_name'] = $lab_data[$eachlist['lab_id']];
 				}
-			
-				
+
+
 			}
 			$i++;
 		}
-	
+
 		//fetch last reocrds from table, if empty set default value
 		$dataArray = $this->DmiReplicaAllotmentDetails->getSectionData($customer_id);
-	
+
 		//to show selected lab in list
 		if (!empty($dataArray)) {
 			$selected_lab = $dataArray[0]['grading_lab'];
@@ -2309,27 +2310,27 @@ class CustomersController extends AppController {
 
 		//to save post data
 		if(null != $this->request->getData('save')) {
-			
+
 			$postData = $this->request->getData();
 			// pr($postData);die;
 			$maptype = $postData['maptype'];
-			
+
 			$customer_id = $this->Session->read('username');
 			$get_data_pp_id = $this->request->getData('pp_id');
 			$get_data_lab_id = $this->request->getData('lab_id');
 			$get_data_maptype = $this->request->getData('maptype');
-			
+
 			$current_ip = $this->getRequest()->clientIp();
 			if ($current_ip == '::1') {
 				$current_ip = '127.0.0.1';
 			}
-			
+
 			if($maptype == "lab"){
-						
+
 				$lab_id = $postData['lab_id'];
 				// // to check if customer are already exist but is lab is deleted.
 				$check_customer_record_is_exist = $this->DmiCaPpLabMapings->find('all')->where(array('customer_id IS' => $customer_id,'map_type IN' => $maptype,'delete_status IS NULL'))->first();
-		
+
 				if(!empty($check_customer_record_is_exist)){
 					//	if lab is already exists then this condition stop adding new lab
 					$message = 'Packer can attach only one laboratory.';
@@ -2354,11 +2355,11 @@ class CustomersController extends AppController {
 						'created'=>date('Y-m-d H:i:s'),
 						'status'=>'Success']
 					);
-					
-					$this->DmiCaPpLabActionLogs->save($DmiCaPpLabActionLogsEntity);	
+
+					$this->DmiCaPpLabActionLogs->save($DmiCaPpLabActionLogsEntity);
 
 					if ($this->DmiCaPpLabMapings->save($DmiCaPpLabMapings) && $maptype == 'lab' ) {
-			
+
 						$message = 'Laboratory Attached successfully';
 						$message_theme = 'success';
 						$redirect_to = 'attache_pp_lab';
@@ -2384,7 +2385,7 @@ class CustomersController extends AppController {
 						'created'=>date('Y-m-d H:i:s'),
 						'modified'=>date('Y-m-d H:i:s'),
 					));
-		
+
 					//Save pp Logs Status
 					$DmiCaPpLabActionLogsEntity = $this->DmiCaPpLabActionLogs->newEntity(
 						['customer_id'=>$customer_id,
@@ -2393,8 +2394,8 @@ class CustomersController extends AppController {
 						'created'=>date('Y-m-d H:i:s'),
 						'status'=>'Success']
 					);
-			
-					$this->DmiCaPpLabActionLogs->save($DmiCaPpLabActionLogsEntity);	
+
+					$this->DmiCaPpLabActionLogs->save($DmiCaPpLabActionLogsEntity);
 					if ($this->DmiCaPpLabMapings->save($DmiCaPpLabMapings) && $maptype == 'pp' ) {
 						$message = 'Printing Press Attached successfully';
 						$message_theme = 'success';
@@ -2402,25 +2403,25 @@ class CustomersController extends AppController {
 					}
 				}
 			}elseif($maptype == "wonlab"){
-				
+
 				$won_id = $postData['won_id']; // for own laboratory
 				$won_lab_name = $postData['won_lab_name']; // for own laboratory name
-				
+
 				if($maptype == 'wonlab'){
 						$lab_id = $postData['won_id'];
 						$maptype = 'lab';
 				}
-									
+
 				// // to check if customer are already exist but is lab is deleted.
 				$check_customer_record_is_exist = $this->DmiCaPpLabMapings->find('all')->where(array('customer_id IS' => $customer_id,'map_type IN' => $maptype,'delete_status IS NULL'))->first();
-				
+
 				if(!empty($check_customer_record_is_exist)){
 					//	if lab is already exists then this condition stop adding new lab
 					$message = 'Packer can attach only one laboratory.';
 					$message_theme = 'failed';
 					$redirect_to = 'attache_pp_lab';
 				}else{
-							
+
 					$DmiCaMappingOwnLabDetails = $this->DmiCaMappingOwnLabDetails->newEntity(array(
 
 						'own_lab_id'=>$lab_id,
@@ -2432,7 +2433,7 @@ class CustomersController extends AppController {
 					));
 
 					$this->DmiCaMappingOwnLabDetails->save($DmiCaMappingOwnLabDetails);
-						
+
 					$DmiCaPpLabMapings = $this->DmiCaPpLabMapings->newEntity(array(
 						'customer_id'=>$customer_id,
 						'lab_id'=>$lab_id,
@@ -2441,7 +2442,7 @@ class CustomersController extends AppController {
 						'created'=>date('Y-m-d H:i:s'),
 						'modified'=>date('Y-m-d H:i:s'),
 					));
-					$this->DmiCaPpLabMapings->save($DmiCaPpLabMapings);	
+					$this->DmiCaPpLabMapings->save($DmiCaPpLabMapings);
 					//Save laboratory Logs Status
 					$DmiCaPpLabActionLogsEntity = $this->DmiCaPpLabActionLogs->newEntity([
 						'customer_id'=>$customer_id,
@@ -2450,8 +2451,8 @@ class CustomersController extends AppController {
 						'created'=>date('Y-m-d H:i:s'),
 						'status'=>'Success'
 					]);
-							
-					$this->DmiCaPpLabActionLogs->save($DmiCaPpLabActionLogsEntity);	
+
+					$this->DmiCaPpLabActionLogs->save($DmiCaPpLabActionLogsEntity);
 					if ($this->DmiCaPpLabMapings->save($DmiCaPpLabMapings) && $maptype == 'lab' ) {
 						$message = 'Laboratory Attached successfully';
 						$message_theme = 'success';
@@ -2460,7 +2461,7 @@ class CustomersController extends AppController {
 				}
 			}
 		}
-		    
+
 		// set variables to show popup messages from view file
 		$this->set('message',$message);
 		$this->set('message_theme',$message_theme);

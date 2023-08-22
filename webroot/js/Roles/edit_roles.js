@@ -311,7 +311,7 @@ $(document).ready(function() {
 			if(mo_renewal_allocated_running_application_list == '' || mo_renewal_allocated_running_application_list == null) { mo_renewal_allocated_running_application_list = null; }
 
 			if(mo_allocated_running_application_list != null || mo_renewal_allocated_running_application_list != null) {
-				/*
+				/* This is commented and replace by Jquery Confirm below - Akash [27-07-2023]
 				if (!alert('Currently this id '+user_id+' has some applications assigned. The role of Scrutiny Officer cannot be removed unless all the applications assigned are re-allocated. List of all  such applications is shown below')) {
 
 					$(this).prop('checked',true);
@@ -348,7 +348,16 @@ $(document).ready(function() {
 			if(io_renewal_allocated_running_application_list == '' || io_renewal_allocated_running_application_list == null) { io_renewal_allocated_running_application_list = null; }
 
 			if(io_allocated_running_application_list != null || io_renewal_allocated_running_application_list != null) {
-				
+			
+				/* This is commented and replace by Jquery Confirm below - Akash [27-07-2023]
+
+					if (!alert('Currently this id '+user_id+' has some applications assigned. The role of Inspection officer cannot be removed unless all the applications assigned are re-allocated. List of all  such applications is shown below')) {
+
+						$(this).prop('checked',true);
+						$("#io_allocated_list").show();
+					}
+				*/
+
 				$.alert({
 					columnClass : 'l',
 					content: 'Currently this id <b>'+atob(user_id)+'</b> has some applications assigned. The role of Inspection officer cannot be removed unless all the applications assigned are re-allocated. List of all  such applications is shown below',
@@ -376,6 +385,14 @@ $(document).ready(function() {
 
 				if (ho_mo_allocated_running_application_list != null) {
 
+					/* This is commented and replace by Jquery Confirm below - Akash [27-07-2023]
+					if (!alert('Currently this id '+user_id+' has some applications assigned. The role of HO Scrutiny Officer cannot be removed unless all the applications assigned are re-allocated. List of all  such applications is shown below')) {
+
+						$(this).prop('checked',true);
+						$("#ho_mo_allocated_list").show();
+					}
+					*/
+
 					$.alert({
 						columnClass : 'l',
 						content: 'Currently this id <b>'+atob(user_id)+'</b> has some applications assigned. The role of HO Scrutiny Officer cannot be removed unless all the applications assigned are re-allocated. List of all  such applications is shown below',
@@ -392,7 +409,7 @@ $(document).ready(function() {
 
 		});
 
-});
+	});
 
 
 

@@ -14,6 +14,16 @@
 			<label class="col-form-label">Subject <span class="cRed">*</span></label>
 			<?php echo $this->Form->control('email_subject', array('type'=>'text', 'id'=>'email_subject','class'=>'form-control', 'value'=>$record_details['email_subject'], 'label'=>false,'placeholder'=>'Enter Subject Here')); ?>
 			<span id="error_email_subject" class="error invalid-feedback"></span>
+			<div>
+				<label class="col-form-label">For Module <span class="cRed">*</span></label>
+				<?php echo $this->Form->control('for_module', array('type'=>'select', 'id'=>'for_module','value'=>$selected_for_module, 'options'=>$for_module,'label'=>false,'readonly'=>true,'class'=>'form-control rOnly')); ?>
+			</div>
+
+			<div>
+				<label class="col-form-label">Template ID </label>
+				<?php echo $this->Form->control('template_id', array('type'=>'text', 'id'=>'template_id', 'value'=>$record_details['template_id'],'class'=>'form-control', 'label'=>false, 'placeholder'=>'Enter template id Here')); ?>
+				<span id="error_template_id" class="error invalid-feedback"></span>
+			</div>
 		</div>
 		<div class="col-md-6 mt-3">
 			<label class="col-form-label">Email Message <span class="cRed">*</span></label>
@@ -21,7 +31,7 @@
 			<span id="error_email_message" class="error invalid-feedback"></span>
 		</div>
 
-		<div class="col-md-12">
+		<div class="col-md-12 mt-2">
 			<label class="badge badge-success">Send To :
 				<?php
 					$options=array('dmi'=>'DMI','lmis'=>'LMIS');

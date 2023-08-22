@@ -837,13 +837,13 @@ class MastertablecontentComponent extends Component {
 	//add/edit SMS/Email Templates Master
 	public function addEditMessageTemplateMaster($postData,$record_id=null){
 
-		$DmiSmsEmailTemplates = TableRegistry::getTableLocator()->get('DmiSmsEmailTemplates');
-
+	
 		// html encoding
 		$sms_message = htmlentities($postData['sms_message'], ENT_QUOTES);
 		$email_message = htmlentities($postData['email_message'], ENT_QUOTES);
 		$email_subject = htmlentities($postData['email_subject'], ENT_QUOTES);
 		$description = htmlentities($postData['description'], ENT_QUOTES);
+		$template_id = htmlentities($postData['template_id'], ENT_QUOTES);
 
 		$i=0;
 		//Current selected values from edit page for DMI
@@ -901,31 +901,50 @@ class MastertablecontentComponent extends Component {
 
 		$destination_values = implode(',',$destination);
 
+
+
 		//save array
-		$data_array = array('sms_message'=>$sms_message,
-							'email_message'=>$email_message,
-							'email_subject'=>$email_subject,
-							'destination'=>$destination_values,
-							'user_email_id'=>$this->Session->read('username'),
-							'user_once_no'=>$this->Session->read('once_card_no'),
-							'status'=>'active',
-							'description'=>$description,
-							'template_for'=>$postData['template_for'],
-							'created'=>date('Y-m-d H:i:s'));
+		$data_array = array(
+
+			'sms_message'=>$sms_message,
+			'email_message'=>$email_message,
+			'email_subject'=>$email_subject,
+			'destination'=>$destination_values,
+			'user_email_id'=>$this->Session->read('username'),
+			'user_once_no'=>$this->Session->read('once_card_no'),
+			'status'=>'active',
+			'description'=>$description,
+			'template_for'=>$postData['template_for'],
+			'created'=>date('Y-m-d H:i:s'),
+			'template_id' => $postData['template_id']
+		);
 
 		//edit array
 		if ($record_id != null) {
 
-			$data_array = array('id'=>$record_id,
-								'sms_message'=>$sms_message,
-								'email_message'=>$email_message,
-								'email_subject'=>$email_subject,
-								'destination'=>$destination_values,
-								'user_email_id'=>$this->Session->read('username'),
-								'user_once_no'=>$this->Session->read('once_card_no'),
-								'description'=>$description,
-								'template_for'=>$postData['template_for'],
-								'modified'=>date('Y-m-d H:i:s'));
+			$data_array = array(
+
+				'id'=>$record_id,
+				'sms_message'=>$sms_message,
+				'email_message'=>$email_message,
+				'email_subject'=>$email_subject,
+				'destination'=>$destination_values,
+				'user_email_id'=>$this->Session->read('username'),
+				'user_once_no'=>$this->Session->read('once_card_no'),
+				'description'=>$description,
+				'template_for'=>$postData['template_for'],
+				'modified'=>date('Y-m-d H:i:s'),
+				'template_id'=>$template_id
+			);
+		}
+
+		//Check module for which the template will be used
+		if ($_SESSION['edit_optional_param'] == 'General Templates' || $postData['for_module'] == 1) {
+			$DmiSmsEmailTemplates = TableRegistry::getTableLocator()->get('DmiSmsEmailTemplates');
+		} elseif ($_SESSION['edit_optional_param'] == 'Chemist Templates' || $postData['for_module'] == 2) {
+			$DmiSmsEmailTemplates = TableRegistry::getTableLocator()->get('DmiChemistSmsTemplates');
+		} elseif ($_SESSION['edit_optional_param'] == 'Misgrading Templates' || $postData['for_module'] == 3) {
+			$DmiSmsEmailTemplates = TableRegistry::getTableLocator()->get('DmiMmrSmsTemplates');
 		}
 
 		$DmiSmsEmailTemplatesEntity = $DmiSmsEmailTemplates->newEntity($data_array);

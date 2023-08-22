@@ -1238,7 +1238,7 @@
                                       'ro_so_officer_name','ro_so_oic_name','account_ddo_name','head_office_name','ro_incharge_name','sample_code','sample_registration_date',
                                       'source_user_role','destination_user_role','source_officer','destination_officer','replica_commodities','chemist_id','source_office',
 									  'destination_office','application_type','packer_name','dummy','dst_user','sample_code','sample_flow','src_user','dst_usr_role','dst_office',
-									  'src_usr_role','src_office','ral','oic','customer_name','cal_ral']
+									  'src_usr_role','src_office','ral','oic','customer_name','cal_ral','certfication_type','time_period']
 
 			var sms_message = $('#sms_message').val();
 			

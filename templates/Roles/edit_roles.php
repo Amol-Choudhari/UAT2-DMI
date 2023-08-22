@@ -32,7 +32,7 @@
 											<?php echo $this->Form->control('Show Roles', array('type'=>'submit', 'id'=>'show_roles_btn', 'name'=>'show_roles', 'label'=>false,'class'=>'btn btn-info')); ?>
 										</div>
 									</div>
-									
+
 									<div class="col-md-12" id="user_division"></div>
 
 									<div class="clearfix"></div>
@@ -205,7 +205,7 @@
 																echo $this->Form->control('renewal_verification', array('type'=>'checkbox', 'checked'=>false, 'label'=>' Renewal Scrutiny',));
 															} 
 
-															#Allocation AMA
+															#Renewal Allocation
 															if ($each_role['renewal_allocation']=='yes') {
 																echo $this->Form->control('renewal_allocation', array('type'=>'checkbox', 'checked'=>true, 'label'=>' Renewal Allocation', ));
 															} else {
@@ -301,7 +301,7 @@
 																echo $this->Form->control('site_inspection_pp', array('type'=>'checkbox', 'checked'=>false, 'label'=>' Site Inspection(P.P)','id'=>'site_inspection_pp'));
 															} 
 
-															#SO Grant PP
+															#Inspection PP
 															if ($each_role['so_grant_pp']=='yes') {
 																echo $this->Form->control('so_grant_pp', array('type'=>'checkbox', 'checked'=>true, 'label'=>' SO Grant(P.P)','id'=>'so_grant_pp'));
 															} else {

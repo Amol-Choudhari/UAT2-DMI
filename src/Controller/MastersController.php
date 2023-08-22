@@ -9,6 +9,7 @@ use App\Network\Request\Request;
 use App\Network\Response\Response;
 use Cake\Datasource\ConnectionManager;
 use phpDocumentor\Reflection\Types\This;
+use Cake\ORM\TableRegistry;
 
 class MastersController extends AppController {
 
@@ -324,6 +325,53 @@ class MastersController extends AppController {
 			$crush_refine_years = $this->DmiCrushingRefiningPeriods->find('all',array('order' => array('id' => 'asc'),'conditions'=>array('delete_status IS NULL')))->toArray();
 
 			$this->set(compact('ca_business_years','masterId','pp_business_years','crush_refine_years'));
+
+		//For PAO/DDO
+		} elseif ($masterId=='11') {
+
+			$this->loadModel('DmiTemplatesModelList');
+			$templateModels = $this->DmiTemplatesModelList->find('all',array('order' => array('id' => 'asc')))->toArray();
+			
+			$template_records = array();
+
+			foreach ($templateModels as $value) {
+				// Load the model dynamically using the table name
+				$model = $this->loadModel($value['template_table_name']);
+
+				// Fetch records from the dynamically loaded model
+				$records = $model->find('all', array(
+					'order' => array('id' => 'asc'),
+					'conditions' => array('OR' => array('delete_status IS NULL', 'delete_status =' => 'no'))
+				))->toArray();
+
+				$template_records[] = $records;
+			}
+
+				
+			$all_records = [];
+
+			foreach ($template_records as $subarray) {
+
+				foreach ($subarray as $each) {
+					
+					$table = TableRegistry::getTableLocator()->get($each->getSource());
+					$tableName = $table->getTable();
+
+					$all_records[] = [
+
+						'id' => $each->id,
+						'email_subject' => $each->email_subject,
+						'user_email_id' => $each->user_email_id,
+						'sms_message' => $each->sms_message,
+						'status' => $each->status,
+						'template_for' => $each->template_for,
+						'template_id'=> $each->template_id,
+						'table_name' => $tableName
+					];
+				}
+			}
+			
+
 
 		//For PAO/DDO
 		} elseif ($masterId=='12') {
@@ -676,7 +724,7 @@ class MastersController extends AppController {
 
 	// EDIT FETCH AND REDIRECT (To Fetch Record Id Redirect To Edit Common Function)
 	public function editfetchAndRedirect($record_id,$optional_param=null) {
-
+	
 		$this->autoRender = false;
 		$this->Session->write('record_id',$record_id);
 
@@ -815,6 +863,26 @@ class MastersController extends AppController {
 
 			//added on NOV16 for edit template form ID
 			$form_id = 'edit_sms_template';
+			
+			$for_module = $this->Session->read('edit_optional_param');
+
+			if ($for_module == 'General Templates') {
+				$masterTable = 'DmiSmsEmailTemplates';
+				$selected_for_module = 1;
+			} elseif ($for_module == 'Chemist Templates') {
+				$masterTable = 'DmiChemistSmsTemplates';
+				$selected_for_module = 2;
+			} elseif ($for_module == 'Misgrading Templates') {
+				$masterTable = 'DmiMmrSmsTemplates';
+				$selected_for_module = 3;
+			}
+			
+			$this->loadModel($masterTable);
+			$record_details = $this->$masterTable->find('all',array('conditions'=>array('id IS'=>$record_id)))->first();
+
+			$this->loadModel('DmiTemplatesModelList');
+			$for_module = $this->DmiTemplatesModelList->find('list',array('keyField'=>'id','valueField'=>'for_module','order'=>'id'))->toArray();
+
 			//Existed values from table
 			$existed_destination_values = $record_details['destination'];
 		
@@ -822,9 +890,10 @@ class MastersController extends AppController {
 				$existed_destination_array = array();
 			} else {
 				$existed_destination_array = explode(',',(string) $existed_destination_values); #For Deprecations
+				$existed_destination_values = $record_details['destination'];
 			}
 
-			$this->set(compact('existed_destination_array'));
+			$this->set(compact('existed_destination_array','for_module','selected_for_module'));
 
 		// For PAO/DDO
 		} elseif ($masterId=='12') {
@@ -1586,20 +1655,38 @@ class MastersController extends AppController {
 
 
 	//get records id and redirct to change status
-	public function changeTemplateStatusRedirect($id) {
-
+	public function changeTemplateStatusRedirect($id,$extra_parameter=null) {
+		
 		$this->Session->write('record_id',$id);
+		$this->Session->write('for_module',$extra_parameter);
 		$this->redirect(array('controller'=>'masters','action'=>'change_status_sms_template'));
 
 	}
 
 
 	//to change the status of SMS/Email templates
+	//Modification : This whole function is now modified to handle the multiple SMS template tables and according to that activate and deactivate sms.
+	//Done By : Akash Thakre
+	//Date : 24-07-2023
+	
 	public function changeStatusSmsTemplate() {
 
-		$this->loadModel('DmiSmsEmailTemplates');
+		$for_module = $this->Session->read('for_module');
+		
+		//Check module for which the template will be used
+		if ($for_module == 'General Templates') {
+			$DmiSmsEmailTemplates = 'DmiSmsEmailTemplates';
+		} elseif ($for_module== 'Chemist Templates') {
+			$DmiSmsEmailTemplates = 'DmiChemistSmsTemplates';
+		} elseif ($for_module== 'Misgrading Templates') {
+			$DmiSmsEmailTemplates = 'DmiMmrSmsTemplates';
+		}
+
 		$sms_template_id = $this->Session->read('record_id');
-		$sms_template_values = $this->DmiSmsEmailTemplates->find('all',array('conditions'=>array('id IS'=>$sms_template_id)))->first();
+
+		$this->loadModel($DmiSmsEmailTemplates);
+		
+		$sms_template_values = $this->$DmiSmsEmailTemplates->find('all',array('conditions'=>array('id IS'=>$sms_template_id)))->first();
 
 		if ($sms_template_values['status'] == 'active') {
 			$status = 'disactive';
@@ -1615,13 +1702,13 @@ class MastersController extends AppController {
 			$this->message_theme = 'success';
 		}
 
-		$DmiSmsEmailTemplateEntity = $this->DmiSmsEmailTemplates->newEntity(array(
+		$DmiSmsEmailTemplateEntity = $this->$DmiSmsEmailTemplates->newEntity(array(
 			'id'=>$sms_template_id,
 			'status'=>$status,
 			'modified'=>date('Y-m-d H:i:s')
 		));
 
-		if ($this->DmiSmsEmailTemplates->save($DmiSmsEmailTemplateEntity)) {
+		if ($this->$DmiSmsEmailTemplates->save($DmiSmsEmailTemplateEntity)) {
 
 			$this->redirect_to = 'list-master-records';
 			$this->set('message',$this->message);

@@ -22,7 +22,7 @@ class DevsController extends AppController {
 		$this->loadComponent('Authentication');
 		//Set Helpers
 		$this->viewBuilder()->setHelpers(['Form', 'Html', 'Time']);
-		
+		$this->viewBuilder()->setLayout('devs_layout');
 
 	}
 
@@ -53,10 +53,7 @@ class DevsController extends AppController {
 	
 	//Login Customer function start
     public function login() {
-		//print_r($this->Customfunctions->getCertificateValidUptoDate('153/1/JPR/001','12/03/2019 00:00:00'));
-        //Set the Layout
-        $this->viewBuilder()->setLayout('devs_layout');
-    
+		
         // set variables to show popup messages from view file
         $message = '';
         $message_theme = '';
@@ -210,16 +207,15 @@ class DevsController extends AppController {
 
 
 
-	// Logout 
+	// SMS Test 
 	// Description : This common logout function is created for the user,chemist and customer customer
 	// @Author : Amol Choudhari
 	// #Contributer : Akash Thakre
 	// Date : 19-04-2022
 
-	public function logout() {
+	public function smsTest() {
+	
 		
-		$this->Session->destroy();
-		$this->redirect(array('controller'=>'devs', 'action'=>'login'));
 	}
 
 

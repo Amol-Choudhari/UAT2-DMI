@@ -10,9 +10,9 @@ use Cake\Utility\Hash;
 use Cake\Datasource\ConnectionManager;
 use Cake\Filesystem\File;
 
-class DmiSmsEmailTemplatesTable extends Table{
+class LimsSmsEmailTemplatesTable extends Table{
 
-	var $name = "DmiSmsEmailTemplates";
+	var $name = "LimsSmsEmailTemplates";
 					
 	public $validate = array(
 	

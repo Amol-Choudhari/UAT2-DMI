@@ -46,16 +46,16 @@
 												</div>
 											</div>
 											<div id="export_unit" class="col-sm-6">
-												<div class="form-group row">
-													<label for="inputEmail3" class="col-sm-3 col-form-label">Export Unit ?</label>
+												<div class="form-group row"><!-- The below label is changed by DMI on 25-07-2023 done by Akash-->
+													<label for="inputEmail3" class="col-sm-9 col-form-label"> Whether applying for grading & making  under AGMARK for: (please select) </label>
 													<div class="col-sm-9">
 														<div class="icheck-success d-inline">
 															<input type="radio" name="export_unit" checked="" id="radioSuccess1" value="yes">
-															<label for="radioSuccess1">Yes</label>
+															<label for="radioSuccess1">Export</label>
 														</div>
 														<div class="icheck-success d-inline">
 															<input type="radio" name="export_unit" id="radioSuccess2" value="no" checked>
-															<label for="radioSuccess2">No</label>
+															<label for="radioSuccess2">Domestic</label>
 														</div>
 														<span id="error_export_unit" class="error invalid-feedback"></span>
 													</div>

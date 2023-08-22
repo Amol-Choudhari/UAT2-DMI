@@ -1716,14 +1716,8 @@ class DashboardController extends AppController{
 							'io_scheduled_date'=>$ro_scheduled_date
 
 						));
+						
 						$this->DmiRtiAllocationsLog->save($DmiRtiAllocationsLogEntity);
-					
-					#SMS: Rutin Inspection   // commented by shankhpal shende on 09/12/2022
-					//$this->DmiSmsEmailTemplates->sendMessage($msg_id,$customer_id);
-					// }
-
-
-
 					}
 			
 				//update current position table
@@ -1745,7 +1739,7 @@ class DashboardController extends AppController{
 				if($this->DmiIoAllocationLogs->save($allocation_logs_entity)){
 					
 					#SMS: Rutin Inspection   // commented by shankhpal shende on 09/12/2022
-					//$this->DmiSmsEmailTemplates->sendMessage($msg_id,$customer_id); 
+					$this->DmiSmsEmailTemplates->sendMessage($msg_id,$customer_id); 
 				}
 
 			
@@ -3128,14 +3122,7 @@ class DashboardController extends AppController{
 					));
 					$this->DmiRtiAllocationsLog->save($DmiRtiAllocationsLogEntity);
 				
-				#SMS: Rutin Inspection   // commented by shankhpal shende on 09/12/2022
-				//$this->DmiSmsEmailTemplates->sendMessage($msg_id,$customer_id);
-				// }
-
-
-
-					
-			
+				
 				//update current position table
 				$this->$current_position_table->currentUserUpdate($customer_id,$io_user_id,$next_level);
 
@@ -3155,7 +3142,7 @@ class DashboardController extends AppController{
 				if($this->DmiIoAllocationLogs->save($allocation_logs_entity)){
 					
 					#SMS: Rutin Inspection   // commented by shankhpal shende on 09/12/2022
-					//$this->DmiSmsEmailTemplates->sendMessage($msg_id,$customer_id); 
+					$this->DmiSmsEmailTemplates->sendMessage($msg_id,$customer_id); 
 				}
 
 			

@@ -3,7 +3,7 @@
     position: fixed;
     height: 100%;
     width: 100%;
-    backdrop-filter: blur(2px);
+    backdrop-filter: blur(1px);
     z-index: 9999;
 	/*-webkit-filter: blur(2px) grayscale(90%);;
     -moz-filter: blur(2px) grayscale(90%);;*/

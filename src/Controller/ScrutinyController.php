@@ -39,12 +39,12 @@ class ScrutinyController extends AppController{
 			//check if user have inspection/scrutiny role
 			$user_access = $this->DmiUserRoles->find('all',array('conditions'=>array('user_email_id IS'=>$this->Session->read('username'))))->first();
 
-			if($user_access['super_admin'] == 'yes' || 
-				$user_access['dy_ama'] == 'yes' || 
-				$user_access['jt_ama'] == 'yes' || 
-				$user_access['ama'] == 'yes' || 
+			if($user_access['super_admin'] == 'yes' ||
+				$user_access['dy_ama'] == 'yes' ||
+				$user_access['jt_ama'] == 'yes' ||
+				$user_access['ama'] == 'yes' ||
 				$user_access['form_verification_home'] == 'yes'){
-				
+
 				//proceed
 				}else{
 
@@ -84,7 +84,7 @@ class ScrutinyController extends AppController{
 			$customer_id_result = $this->DmiFirms->find('all',array('fields'=>'customer_id', 'conditions'=>array('id IS'=>$id)))->first();
 			$customer_id = $customer_id_result['customer_id'];
 		}
-		
+
 		$this->Session->write('customer_id',$customer_id);
 		$this->Session->write('application_mode',$mode);
 		$this->Session->write('fromHoLevel',$fromHoLevel);
@@ -126,9 +126,10 @@ class ScrutinyController extends AppController{
 		$application_type = $this->Session->read('application_type');
 		$this->set('application_type',$application_type);
 
+
 		$document_lists = $this->Mastertablecontent->allDocumentsList();
 		$this->set('document_lists',$document_lists);
-		
+
 		//added conditions for chemist flow,
 		//on 30-09-2021 by Amol
 		if($application_type != 4){
@@ -154,7 +155,7 @@ class ScrutinyController extends AppController{
 		//commented above code and added below one for change module
 		//on 13-04-2023 by Amol
 		if($application_type == 3){
-			
+
 			$this->changeApplication();
 			$this->loadModel('DmiChangeSelectedFields');
 			$selectedfields = $this->DmiChangeSelectedFields->selectedChangeFields();
@@ -188,13 +189,13 @@ class ScrutinyController extends AppController{
 
 		$this->Session->write('application_type',$application_type);
 		 //added appl type 4  for chemist training by laxmi B. on 22-12-2022
-         if ($application_type== 4) { 
+         if ($application_type== 4) {
 
 			//added application_dashboard in session [laxmi - 31/05/23]
           $this->Session->write('application_dashboard','ro');
 
 		// to fetch chemist is alredy registerd or new chemist added by laxmi on 22-12-22
-		 $this->loadModel('DmiChemistRegistrations');	
+		 $this->loadModel('DmiChemistRegistrations');
 		 $chemistdetails = $this->DmiChemistRegistrations->find('all', array('conditions'=>array('chemist_id IS'=>$customer_id)))->first();
 
 		//set in session variable for chemist training completed or not
@@ -205,11 +206,11 @@ class ScrutinyController extends AppController{
              // set packer id in session
            $this->Session->write('packer_id', $chemistdetails['created_by']);
 		 }
-         
+
 		 // set application is forwarded to RAL or not added by laxmi on 22-12-22
-           $this->loadModel('DmiChemistRoToRalLogs');	
+           $this->loadModel('DmiChemistRoToRalLogs');
 		 $isforwardedtoral = $this->DmiChemistRoToRalLogs->find('all', array('fields'=>'is_forwordedtoral', 'conditions'=>array('chemist_id IS'=>$customer_id , 'is_forwordedtoral IS NOT'=>NULL)))->first();
-		
+
 		 if(!empty($isforwardedtoral['is_forwordedtoral'])){
             $this->set('is_forwordedtoral', $isforwardedtoral['is_forwordedtoral']);
 			$this->Session->write('is_forwordedtoral',$isforwardedtoral['is_forwordedtoral']);
@@ -220,9 +221,9 @@ class ScrutinyController extends AppController{
 		 }
 
 		 //to check and add variable in session if trainingCompleteAtRo added by laxmi on 04-01-2023
-		 $this->loadModel('DmiChemistTrainingAtRo');	
+		 $this->loadModel('DmiChemistTrainingAtRo');
 		 $trainingCompleteAtRo = $this->DmiChemistTrainingAtRo->find('all', array('fields'=>'training_completed', 'conditions'=>array('chemist_id IS'=>$customer_id , 'training_completed IS'=>1)))->first();
-		
+
 		 if(!empty($trainingCompleteAtRo)){
 		 	$this->Session->write('trainingCompleteAtRo',$trainingCompleteAtRo['training_completed']);
             $this->set('trainingCompleteAtRo', $trainingCompleteAtRo['training_completed']);
@@ -247,7 +248,7 @@ class ScrutinyController extends AppController{
 		 //export_unit field set in session by laxmi on 09-01-2023
 
         $this->Session->write('export_unit', $export_unit_status);
-																													 
+
 		$added_directors_details = $this->DmiAllDirectorsDetails->allDirectorsDetail($customer_id);
 		$this->set('added_directors_details',$added_directors_details);
 
@@ -302,13 +303,15 @@ class ScrutinyController extends AppController{
 		$rushing_refining_period = $this->Mastertablecontent->allCrushingRefiningValue();
 		$this->set('rushing_refining_period',$rushing_refining_period);
 		$firm_details = $this->DmiFirms->firmDetails($customer_id);
-
-
 		$this->set('firm_details',$firm_details);
+
+		
+	
+
 
 		//added this method call on 13-04-2023 to commoity and packing types details
 		$this->Randomfunctions->getCommodityDetails($firm_details,$firm_type);
-																					   
+
 		$Dmi_flow_wise_tables_list = TableRegistry::getTableLocator()->get('DmiFlowWiseTablesLists');
 		$Dmi_final_submit_tb = $Dmi_flow_wise_tables_list->find('all',array('conditions'=>array('application_type IS'=>$application_type)))->first();
 
@@ -323,7 +326,7 @@ class ScrutinyController extends AppController{
 
 		// get current section all details
 		$section_details = $this->DmiCommonScrutinyFlowDetails->currentSectionDetails($application_type,$office_type,$firm_type,$form_type,$section_id);
-		
+
 		// get all section all details
 		$allSectionDetails = $this->DmiCommonScrutinyFlowDetails->allSectionList($application_type,$office_type,$firm_type,$form_type);
 
@@ -478,7 +481,7 @@ class ScrutinyController extends AppController{
 
 			$result = $this->Communication->singleWindowReferredback($this->request->getData(),$allSectionDetails);
 			if($result == 1)
-			{	
+			{
 				$this->Customfunctions->saveActionPoint('Reffered Back Comment Saved', 'Success'); #Action
 				$message =$firm_type_text.' - '.ucwords(str_replace('_',' ',$section_details['section_name']))." Section, Reffered back comments to applicant saved successfully";
 				$message_theme = "success";
@@ -504,7 +507,7 @@ class ScrutinyController extends AppController{
 			$result = $this->Romoioapplicantcommunicationactions->referredBackTo($customer_id,$section_model,$section_form_details[0],$this->request->getData('reffered_back_comment'),$this->request->getData('rb_comment_ul'),'Level3ToApplicant');
 
 			if($result == 1)
-			{	
+			{
 				$this->Customfunctions->saveActionPoint('Reffered Back Comment Saved', 'Success'); #Action
 				$message =$firm_type_text.' - '.ucwords(str_replace('_',' ',$section_details['section_name']))." Section, Reffered back comments to applicant saved successfully";
 				$message_theme = "success";
@@ -582,7 +585,7 @@ class ScrutinyController extends AppController{
 				$redirect_to = "../dashboard/home";
 
 			}elseif($result == 2){
-				
+
 				//This below action call is added t save the action log for the user by AKASH on 18-08-2022
 				$this->Customfunctions->saveActionPoint('Application Reffered Back to Applicant', 'Failed');
 				$message = $firm_type_text." - Reffered back are not saved, Please save Referred back on Atleast one Section and then Final Submit";
@@ -652,7 +655,7 @@ class ScrutinyController extends AppController{
 				if((($export_unit_status == 'yes' || $NablDate != null) && $firm_type == 3 ) || ($firm_type == 3 && $export_unit_status == 'yes' && $application_type == 8)){
 
 					$this->Romoioapplicantcommunicationactions->ifApplicationIsExport($customer_id,$application_type);
-					
+
 					$this->DmiSmsEmailTemplates->sendMessage(20,$customer_id); #SMS: RO forwarded to HO
 					$this->Customfunctions->saveActionPoint('All Section Scrutinized', 'Success'); #Action
 					$message = $firm_type_text." - All sections scrutinized and forwarded to HO successfully";
@@ -723,7 +726,7 @@ class ScrutinyController extends AppController{
 
 				#SMS: RO forwarded to HO
 				$this->DmiSmsEmailTemplates->sendMessage(20,$customer_id);
-				
+
 				$this->Customfunctions->saveActionPoint('Application Forwarded', 'Success'); #Action
 				$message = $firm_type_text.' Forwarded to '.$forward_to_btn.' successfully';
 				$message_theme = "success";
@@ -835,20 +838,20 @@ class ScrutinyController extends AppController{
 
 			 // customer id is changed to packer id to whoes create the chemist added by laxmi B. on 21-12-22
              if($application_type == 4){
-               $DmiChemistRegistrations = TableRegistry::getTableLocator()->get('DmiChemistRegistrations');	
+               $DmiChemistRegistrations = TableRegistry::getTableLocator()->get('DmiChemistRegistrations');
 			   $chemist_created_by = $DmiChemistRegistrations->find('list', array('valueField'=>'created_by', 'conditions'=>array('chemist_id IS'=>$customer_id)))->first();
 			   if(!empty($chemist_created_by)){
                     $customer_id = $chemist_created_by;
 			   }
 
-             }				   
+             }
 			$firm_detail = $this->DmiChangeFirms->sectionFormDetails($customer_id);
 			$firm_details = $firm_detail[0];
 			$this->set('firm_details',$firm_details);
 			 // revert back customer id to chemist id added by laxmi B. on 21-12-22
             if($application_type == 4){
             	 $customer_id = $_SESSION['customer_id'];
-            }																					  
+            }
 
 			// Fetch submitted Payment Details and show // Done By pravin 13/10/2017
 			$this->Paymentdetails->applicantPaymentDetails($customer_id,$firm_details['district'],$payment_table);
@@ -873,10 +876,10 @@ class ScrutinyController extends AppController{
 					elseif (!empty($getChangeDetails['packing_types'])) {
 						$firm_details['packaging_materials'] = $getChangeDetails['packing_types'];
 					}
-				} 
+				}
 
 			}
-																	  
+
 			$sub_commodity_array = explode(',',$firm_details['sub_commodity']);
             //to hide commodities from application type 4 in checmist flow apply condition on or section by laxmi Bhadade on date 21-12-22
 			if(!empty($firm_details['sub_commodity']) && $application_type != 4){
@@ -900,7 +903,7 @@ class ScrutinyController extends AppController{
 				$this->set('sub_commodity_data',$sub_commodity_data);
 			}
 
-			//to hide firm details from application type 4 in checmist flow apply condition on or section by laxmi Bhadade on date 21-12-22									 
+			//to hide firm details from application type 4 in checmist flow apply condition on or section by laxmi Bhadade on date 21-12-22
 			if(!empty($firm_details['packaging_materials']) && $application_type != 4){
 
 				$packaging_materials = explode(',',$firm_details['packaging_materials']);
@@ -1003,7 +1006,7 @@ class ScrutinyController extends AppController{
 		$section_id = $section_id - 1;
 		$section_model = $allSectionDetails[$section_id]['section_model'];
 		$this->loadModel($section_model);
-		
+
 		$this->DmiChemistComments->id = $id;
 		$entity = $this->DmiChemistComments->get($id);
 		$this->DmiChemistComments->delete($entity);
@@ -1011,9 +1014,9 @@ class ScrutinyController extends AppController{
 		$this->$section_model->updateAll(
 			array('form_status' => "saved",'ro_current_comment_to'=>'both'),
 			array('customer_id'=>$customer_id,'is_latest'=>'1')
-		);						
+		);
 
-		$this->redirect('/scrutiny/form-scrutiny');				
+		$this->redirect('/scrutiny/form-scrutiny');
 	}
 
 

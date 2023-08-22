@@ -57,16 +57,16 @@
 											</div>
 										</div>
 										<div id="export_unit" class="col-sm-6">
-											<div class="form-group row">
-											<label for="inputEmail3" class="col-sm-3 col-form-label">Export Unit ?</label>
+											<div class="form-group row"> <!-- The below label is changed by DMI on 25-07-2023 done by Akash-->
+											<label for="inputEmail3" class="col-sm-9 col-form-label">   Whether applying for grading & making  under AGMARK for: (please select)</label>
 												<div class="col-sm-9">
 													<div class="icheck-success d-inline">
 														<input type="radio" name="export_unit" checked="" id="radioSuccess1" value="yes">
-														<label for="radioSuccess1">Yes</label>
+														<label for="radioSuccess1">Export</label>
 													</div>
 													<div class="icheck-success d-inline">
 														<input type="radio" name="export_unit" id="radioSuccess2" value="no" checked>
-														<label for="radioSuccess2">No</label>
+														<label for="radioSuccess2">Domestic</label>
 													</div>
 													<span id="error_export_unit" class="error invalid-feedback"></span>
 												</div>
@@ -76,8 +76,7 @@
 								</div>
 							</div>
 
-							<!-- provision to select the sponsored CA for printing press 
-							Done by Pravin Bhakare 18-10-2020 -->
+							<!-- provision to select the sponsored CA for printing press Done by Pravin Bhakare 18-10-2020 -->
 							<div id="sponsored_press_by_ca" class="dnone card-primary">
 								<div class="card-header bg-success"><h3 class="card-title"><i class="fas fa-certificate"></i> Sponsored Printing Press</h3></div>
 								<div class="form-horizontal">
@@ -369,11 +368,11 @@
 	</section>
 </div>
 <?php # Hidden Values , Elements and Scripts
-	echo $this->element('old_applications_elements/inforamtion_input_previous_renewals_dates'); 
+	echo $this->element('old_applications_elements/inforamtion_input_previous_renewals_dates');
 	echo $this->Html->script('../multipleselect/js/bootstrap.min.js');
 	echo $this->Html->script('../multipleselect/css/bootstrap-multiselect.css');
 	echo $this->Html->script('../multipleselect/js/bootstrap-multiselect.js');
-	echo $this->Html->script('authprocessedoldapp/add_firm/add_firm'); 
+	echo $this->Html->script('authprocessedoldapp/add_firm/add_firm');
 
 	if (!empty($return_error_msg)) {
 		echo $this->Form->control('return_error_msg', array('type'=>'hidden', 'id'=>'return_error_msg', 'value'=>$return_error_msg));
@@ -382,16 +381,16 @@
 	if (!empty($duplicate_certification_no_msg)) {
 		echo $this->Form->control('duplicate_certification_no_msg', array('type'=>'hidden', 'id'=>'duplicate_certification_no_msg', 'value'=>$duplicate_certification_no_msg));
 		echo $this->Html->script('forms/duplicate_certification_no_msg');
-	}else{ 
+	}else{
 		echo $this->Html->script('forms/duplicate_certification_no_msg_else');
-	} 
+	}
 	
-	if(isset($toastTheme)) { 
+	if(isset($toastTheme)) {
 		echo $this->Form->control('toastTheme', array('type'=>'hidden', 'id'=>'toastTheme', 'value'=>$toastTheme));
 		echo $this->Html->script('forms/toastTheme');
-	}else{ 
+	}else{
 		echo $this->Html->script('forms/toastTheme_else');
-	} 
+	}
 	
-	echo $this->Html->script('forms/bsCustomFileInput'); 
+	echo $this->Html->script('forms/bsCustomFileInput');
 ?>

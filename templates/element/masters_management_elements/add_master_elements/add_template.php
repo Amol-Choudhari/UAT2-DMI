@@ -13,17 +13,40 @@
 		</div>
 
 		<div class="col-md-6 mt-2">
-			<label class="col-form-label">Subject </label>
-			<?php echo $this->Form->control('email_subject', array('type'=>'text', 'id'=>'email_subject', 'class'=>'form-control', 'label'=>false, 'placeholder'=>'Enter Subject Here')); ?>
-			<span id="error_email_subject" class="error invalid-feedback"></span>
+			<div>
+				<label class="col-form-label">Subject </label>
+				<?php echo $this->Form->control('email_subject', array('type'=>'text', 'id'=>'email_subject', 'class'=>'form-control', 'label'=>false, 'placeholder'=>'Enter Subject Here')); ?>
+				<span id="error_email_subject" class="error invalid-feedback"></span>
+			</div>
+
+			<div>
+				<label class="col-form-label">For Module </label>
+				<select name="for_module" id="for_module" class="form-control">
+					<option value="0">Select</option>
+					<option value="1">General Templates</option>
+					<option value="2">Chemist Approval & Training</option>
+					<option value="3">Management of Misgrading</option>
+				</select>
+				<span id="error_for_module" class="error invalid-feedback"></span>
+			</div>
+
+			<div>
+				<label class="col-form-label">Template ID </label>
+				<?php echo $this->Form->control('template_id', array('type'=>'text', 'id'=>'template_id', 'class'=>'form-control', 'label'=>false, 'placeholder'=>'Enter template id Here')); ?>
+				<span id="error_template_id" class="error invalid-feedback"></span>
+			</div>
 		</div>
+
+		
 
 		<div class="col-md-6 mt-2">
 			<label class="col-form-label">Email Message </label>
 			<?php echo $this->Form->control('email_message', array('type'=>'textarea', 'class'=>'form-control','id'=>'email_message',  'label'=>false, 'placeholder'=>'Enter Email Message Here')); ?>
 		</div>
 
-		<div class="col-md-12">
+		
+
+		<div class="col-md-12 mt-2">
 			<label class="badge badge-info">Send To :
 			<?php
 				$options = array('dmi'=>'DMI','lmis'=>'LIMS');

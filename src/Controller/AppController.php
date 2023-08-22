@@ -49,22 +49,24 @@ class AppController extends Controller
 		if(!isset($_SESSION)){ session_start();  }
 
 
-        $this->loadComponent('RequestHandler',['enableBeforeRedirect' => false,]);
-        $this->loadComponent('Flash');
-				$this->loadComponent('Beforepageload');
-				$this->loadComponent('Createcaptcha');
-				$this->loadComponent('Customfunctions');
-				$this->loadComponent('Authentication');
-        $this->Session = $this->getRequest()->getSession();
+		$this->loadComponent('RequestHandler',['enableBeforeRedirect' => false,]);
+		$this->loadComponent('Flash');
+		$this->loadComponent('Beforepageload');
+		$this->loadComponent('Createcaptcha');
+		$this->loadComponent('Customfunctions');
+		$this->loadComponent('Authentication');
+		$this->loadComponent('SmsEmail');
+
+		$this->Session = $this->getRequest()->getSession();
 
 		//Load Model
 		$this->loadModel('DmiSmsEmailTemplates');
 
-        /*
-         * Enable the following component for recommended CakePHP form protection settings.
-         * see https://book.cakephp.org/4/en/controllers/components/form-protection.html
-         */
-        //$this->loadComponent('FormProtection');
+		/*
+			* Enable the following component for recommended CakePHP form protection settings.
+			* see https://book.cakephp.org/4/en/controllers/components/form-protection.html
+			*/
+		//$this->loadComponent('FormProtection');
     }
 
 	//This function is used to disable Cache from browser, No history will be saved on browser
@@ -184,6 +186,7 @@ class AppController extends Controller
 		} else {
 				// nothing
 		}*/
+
 
 
 	}

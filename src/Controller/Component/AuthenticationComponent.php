@@ -3,6 +3,7 @@
 namespace app\Controller\Component;
 use Cake\Controller\Component;
 use Cake\ORM\TableRegistry;
+use App\Controller\CustomersController;
 
 class AuthenticationComponent extends Component {
 
@@ -139,7 +140,10 @@ class AuthenticationComponent extends Component {
 					//added by AMOL on 16-04-2021 for reset password by fro sha512 hashing
 					$this->forgotPasswordLib($table_name,$emailforrecovery);//for email encoding
 					$sms_text = 'Your password has been expired, The link to reset password is sent on email id.'.base64_decode($emailforrecovery).', Please contact the concerned office. AGMARK';
-					$this->sendSms(144,$mobile_no,$sms_text,1107161673478221041);
+					$CustomersController = new CustomersController;
+					$CustomersController->SmsEmail->sendSms(144,$mobile_no,$sms_text,1107161673478221041,'DmiGeneralSentSmsLogs'); //For Forgot Password SMS
+					$CustomersController->SmsEmail->sendEmail(144,$sms_text,$emailforrecovery,'Forgot Password Link',1107161673478221041,'DmiGeneralSentEmailLogs'); //For Forgot Password EMAIL
+					
 					return 4;
 				}
 
@@ -350,12 +354,11 @@ class AuthenticationComponent extends Component {
 
 						#SMS: Password Set
 						$sms_text = 'Hello '.$passUser.', your password has been set successfully AGMARK.';
-						$this->sendSms(146,$mobile_no,$sms_text,1107160801193314481);
-
-						#Email: Set Password
-						$email_message = 'Hello '.$passUser.', your password has been set successfully AGMARK.';
 						$email_id = $userDetails['email'];
-						$this->sendEmail($email_id,$email_message,'Change Password',1107160801193314481,'Password Changed');
+					
+						$CustomersController = new CustomersController;
+						$CustomersController->SmsEmail->sendSms('Change Password',$mobile_no,$sms_text,1107160801193314481,'DmiGeneralSentSmsLogs'); //For Change Password SMS
+						$CustomersController->SmsEmail->sendEmail('Change Password',$sms_text,$email_id,'Password Changed Successfully',1107161673478221041,'DmiGeneralSentEmailLogs'); //For Forgot Password EMAIL
 					
 					} else {
 						return 1;
@@ -492,12 +495,11 @@ class AuthenticationComponent extends Component {
 
 					#SMS: Password Set
 					$sms_text = 'Hello '.$passUser.', your password has been set successfully AGMARK.';
-					$this->sendSms(146,$mobile_no,$sms_text,1107160801193314481);
-
-					#Email: Set Password
-					$email_message = 'Hello '.$passUser.', your password has been set successfully AGMARK.';
 					$email_id = $Dmitable_id['email'];
-					$this->sendEmail($email_id,$email_message,'Change Password',1107160801193314481,'Password Changed');
+
+					$CustomersController = new CustomersController;
+					$CustomersController->SmsEmail->sendSms('Reset Password',$mobile_no,$sms_text,1107160801193314481,'DmiGeneralSentSmsLogs'); //For Change Password SMS
+					$CustomersController->SmsEmail->sendEmail('Reset Password',$sms_text,$email_id,'Password Changed Successfully',1107160801193314481,'DmiGeneralSentEmailLogs'); //For Change Password EMAIL
 
 				} else {
 					return 1;
@@ -599,7 +601,10 @@ class AuthenticationComponent extends Component {
 					$user_data_query = $table->find('all', array('conditions'=> array('email' => $username)))->first();
 					$mobile_no = $user_data_query['phone'];
 					$sms_text = 'Your password has been expired, the link to reset password is sent on email id '.base64_decode($emailforrecovery).'. AGMARK';
-					$this->sendSms(145,$mobile_no,$sms_text,1107161673473567580);
+					
+					$CustomersController = new CustomersController;
+					$CustomersController->SmsEmail->sendSms('Forgot Password',$mobile_no,$sms_text,1107161673473567580,'DmiGeneralSentSmsLogs'); //For Forgot Password SMS
+					$CustomersController->SmsEmail->sendEmail('Forgot Password',$sms_text,$emailforrecovery,'Forgot Password Link',1107161673473567580,'DmiGeneralSentEmailLogs'); //For Forgot Password EMAIL
 					return 4;
 				}
 
@@ -617,105 +622,6 @@ class AuthenticationComponent extends Component {
 	}
 	
 
-
-
-	// Send Sms
-	// Description : ----
-	// @AUTHOR : Amol Chaudhari (c)
-	// #CONTRIBUTER : Akash Thakre (u) (m) 
-	// DATE : 27-04-2021
-
-    public function sendSms($message_id,$mobile_no,$sms_text,$template_id){
-		
-        if(!empty($mobile_no)){
-
-			#### code to send sms starts here ####
-			/*
-			// Initialize the sender variable
-			$sender=urlencode("AGMARK");
-			$uname="aqcms.sms";
-			$pass="Y%26nF4b%237q";
-			$send=urlencode("AGMARK");
-            $dest='91'.base64_decode($mobile_no);
-			$msg=urlencode($sms_text);
-
-			// Initialize the URL variable
-			$URL="https://smsgw.sms.gov.in/failsafe/MLink";
-			// Create and initialize a new cURL resource
-			$ch = curl_init();
-			// Set URL to URL variable
-			curl_setopt($ch, CURLOPT_URL,$URL);
-			// Set URL HTTPS post to 1
-			curl_setopt($ch, CURLOPT_POST, true);
-			// Set URL HTTPS post field values
-			curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-
-			$entity_id = '1101424110000041576'; //updated on 18-11-2020
-
-			// if message lenght is greater than 160 character then add one more parameter "concat=1" (Done by pravin 07-03-2018)
-			if(strlen($msg) <= 160 ){
-				curl_setopt($ch, CURLOPT_POSTFIELDS,"username=$uname&pin=$pass&signature=$send&mnumber=$dest&message=$msg&dlt_entity_id=$entity_id&dlt_template_id=$template_id");
-			}else{
-				curl_setopt($ch, CURLOPT_POSTFIELDS,"username=$uname&pin=$pass&signature=$send&mnumber=$dest&message=$msg&concat=1&dlt_entity_id=$entity_id&dlt_template_id=$template_id");
-			}
-
-			// Set URL return value to True to return the transfer as a string
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-			// The URL session is executed and passed to the browser
-			$curl_output =curl_exec($ch);
-			
-			#### code to send sms ends here ####
-			*/
-			#SMS LOGS
-			$DmiSentSmsLogs = TableRegistry::getTableLocator()->get('DmiSentSmsLogs');
-            $DmiSentSmsLogs->saveLog($message_id,$mobile_no,$sms_text,$template_id);
-         
-        }
-    }
-
-
-
-	// Send Email
-	// Description : ----
-	// @AUTHOR : Amol Chaudhari (c)
-	// #CONTRIBUTER : Akash Thakre (u) (m) 
-	// DATE : 27-04-2021
-
-	public function sendEmail($email_id,$email_message,$message_id,$template_id,$email_subject){
-				
-		//To send Email on list of Email ids.
-		if (!empty($email_id)) {
-
-			//email format to send on mail with content from master
-			$email_format = 'Dear Sir/Madam' . "\r\n\r\n" .$email_message. "\r\n\r\n" .
-			'Thanks & Regards,' . "\r\n" .
-			'Directorate of Marketing & Inspection,' . "\r\n" .
-			'Ministry of Agriculture and Farmers Welfare,' . "\r\n" .
-			'Government of India.';
-
-			$to = base64_decode($email_id);
-			$subject = $email_subject;
-			$txt = $email_format;
-			$headers = "From: dmiqc@nic.in";
-
-			//mail($to,$subject,$txt,$headers);
-			//commented above line and added below code with new email setting on 17-03-2023
-			//require_once(ROOT . DS .'vendor' . DS . 'phpmailer' . DS . 'mail.php');
-			//$from = "dmiqc@nic.in";
-			//send_mail($from, $to, $subject, $txt);
-			
-			$DmiSentEmailLogs = TableRegistry::getTableLocator()->get('DmiSentEmailLogs');
-			$DmiSentEmailLogs->saveLog($message_id,$email_id,$email_message,$template_id);
-
-		}
-	}
-
-
-
-
-
-	
 	// Browser Login Status
 	// Description : Created new function for valided multiple browser login
 	// @AUTHOR : Pravin Bhakare (c)
