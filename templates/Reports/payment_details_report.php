@@ -37,59 +37,41 @@
 									<div class="col-sm-3">
                     					<div class="form-group">
 											<!-- all lables are uncommented by shreeya-->
-											<label>Report For</label> 
-											<?php //print_r($value);exit;
-											// $report_for_array_val = array_values($report_for_array);
-											// $report_for_array_key = array_keys($report_for_array);
+											<label>Application Type</label> 
+											<?php 
 
-											echo $this->Form->control('report_for', ['type' => 'select','options' => $application_array , 
+												echo $this->Form->control('report_for', ['type' => 'select','options' => $application_array , 
 												'label' => false,
 												'id' => 'report_for',
 												'empty' => 'All',
 												'class' => 'form-control form-control-sm'
-											]);
+												]);
 
-											//echo //$this->form->input('report_for', array('type'=>'select', 'options'=>report_for_array, 'label'=>false, 'id'=>'report_for', 'escape'=>false, 'class'=>'form-control form-control-sm')); ?>
-											<!-- <select  name ="report_for" class="form-control form-control-sm"> -->
-											<!-- <option value=0>All</option> -->
+											?> 
 											
-											<!-- <?php //foreach ($report_for_array as $key => $value) {
-												
-												//echo '<option value='.$key.'>'.$value.' </option>';
-											//}
-											
-											?> -->
-											</select>
 
 										</div>
 								  	</div>
+									
 									<div class="col-sm-3" id="office_all">
-                    					<div class="form-group">
-											 <label>Certificate Type</label> 
-											<?php echo $this->form->input('application_type', array('type'=>'select', 'options'=>$all_application_type, 'label'=>false, 'empty'=>'All', 'escape'=>false, 'class'=>'form-control form-control-sm search_field')); ?>
-									  	</div>
-								  	</div>
-									<div class="col-sm-3">
-                    					<div class="form-group">
-											 <label>Office</label> 
-											<?php echo $this->form->input('office', array('type'=>'select', /*'value'=>$search_office,*/ 'options'=>$all_ro_office, 'label'=>false, 'id'=>'office', 'empty'=>'All', 'escape'=>false, 'class'=>'form-control form-control-sm search_field')); ?>
-									  	</div>
-								  	</div>
-									<div class="col-sm-3">
-                    					<div class="form-group">
-											 <label>State</label>
-											<?php echo $this->form->input('state', array('type'=>'select', 'options'=>$all_states, 'label'=>false, 'id'=>'state', 'empty'=>'All', 'escape'=>false, 'class'=>'form-control form-control-sm search_field')); ?>
-									  	</div>
-								  	</div>
-								</div>
+										<div class="form-group">
+											<label>Certificate Type</label> 
+											<?php
+											echo $this->form->input(	
+												'application_type',
+												array(
+													'type' => 'select',
+													'options' => $all_certificate_type,
+													'label' => false,
+													'empty' => 'All',
+													'escape' => false,
+													'class' => 'form-control form-control-sm search_field'
+												)
+											);
+											?>
+										</div>
+									</div>
 
-								<div class="row report-filter ro_report-filter pt-2">
-									<div class="col-sm-3">
-                    					<div class="form-group">
-											<label>District</label>
-											<?php echo $this->form->input('district', array('type'=>'select', 'label'=>false, 'id'=>'district',  'empty'=>'All', 'escape'=>false, 'class'=>'form-control form-control-sm search_field')); ?>
-									  	</div>
-								  	</div>
 									<div class="col-sm-3">
                     					<div class="form-group">
 											<label>From Date</label>
@@ -102,12 +84,54 @@
 											<?php echo $this->form->input('to_date', array('type'=>'text', /*'value'=>$search_to_date,*/'label'=>false, 'id'=>'todate', 'empty'=>'select', 'escape'=>false, 'class'=>'form-control form-control-sm search_field', 'placeholder'=>'To Date')); ?>
 										</div>
 								  	</div>
-									<div class="col-sm-1">
+
+									  <div class="col-sm-2">
 										<button id="search_btn" type="submit" name="search_logs" class="btn text-light option-menu-btn" value="Search" data-bs-toggle="tooltip" data-bs-placement="top" title="Search">
 											<i class="fas fa-search"></i>
 										</button>
-										<!-- <input style="background:#747474; color:#fff;" id="search_btn" type="submit" name="search_logs" class="form-control" value="Search" > -->
+										
 									</div>
+
+									<!-- <div class="col-sm-3">
+                    					<div class="form-group">
+											 <label>Office</label> 
+											<?php// echo $this->form->input('office', array('type'=>'select', /*'value'=>$search_office,*/ 'options'=>$all_ro_office, 'label'=>false, 'id'=>'office', 'empty'=>'All', 'escape'=>false, 'class'=>'form-control form-control-sm search_field')); ?>
+									  	</div>
+								  	</div>
+									<div class="col-sm-3">
+                    					<div class="form-group">
+											 <label>State</label>
+											<?php// echo $this->form->input('state', array('type'=>'select', 'options'=>$all_states, 'label'=>false, 'id'=>'state', 'empty'=>'All', 'escape'=>false, 'class'=>'form-control form-control-sm search_field')); ?>
+									  	</div>
+								  	</div> -->
+
+								</div>
+
+								<div class="row report-filter ro_report-filter pt-2">
+									<!-- <div class="col-sm-3">
+                    					<div class="form-group">
+											<label>District</label>
+											<?php// echo $this->form->input('district', array('type'=>'select', 'label'=>false, 'id'=>'district',  'empty'=>'All', 'escape'=>false, 'class'=>'form-control form-control-sm search_field')); ?>
+									  	</div>
+								  	</div> -->
+									<!-- <div class="col-sm-3">
+                    					<div class="form-group">
+											<label>From Date</label>
+											<?php// echo $this->form->input('from_date', array('type'=>'text', /*'value'=>$search_from_date,*/'label'=>false, 'id'=>'fromdate', 'empty'=>'select', 'escape'=>false, 'class'=>'form-control form-control-sm search_field', 'placeholder'=>'From Date')); ?>
+										</div>
+								  	</div>
+									<div class="col-sm-3">
+                    					<div class="form-group">
+											<label id="to_date_label">To Date</label> 
+											<?php// echo $this->form->input('to_date', array('type'=>'text', /*'value'=>$search_to_date,*/'label'=>false, 'id'=>'todate', 'empty'=>'select', 'escape'=>false, 'class'=>'form-control form-control-sm search_field', 'placeholder'=>'To Date')); ?>
+										</div>
+								  	</div> -->
+									<!-- <div class="col-sm-1"> -->
+										<!-- <button id="search_btn" type="submit" name="search_logs" class="btn text-light option-menu-btn" value="Search" data-bs-toggle="tooltip" data-bs-placement="top" title="Search">
+											<i class="fas fa-search"></i>
+										</button> -->
+										<!-- <input style="background:#747474; color:#fff;" id="search_btn" type="submit" name="search_logs" class="form-control" value="Search" > -->
+									<!-- </div> -->
 									<div class="col-sm-1">
 										<!-- Call the Downloading Report Button Element (Done by Pravin 13/3/2018) -->
 										<?php // echo $this->element('download_report_excel_format/report_download_button'); ?>
@@ -144,13 +168,17 @@
         		<div class="col-md-12">
 					<div class="mx-5">
 						<?php ?> <span class="badge bg-light shadow">RESULT</span><i class="fas fa-chevron-right px-2 fs80"></i> <?php
-						if(!empty($application_type)) {
-							?>  <span class="badge rounded-pill bg-grad1 shadow">Application Type</span>
-									<i class="fas fa-caret-right"></i>
-									<span class="badge bg-grad2 mr-3 shadow"> <?php echo $all_application_type[$application_type];  $search_value = 'yes'; ?> </span>
-								<?php
+							
+							if(!empty($application_type)) {
+								if (isset($all_application_type[$application_type])) {
+								?>  <span class="badge rounded-pill bg-grad1 shadow">Certificate Type</span>
+										<i class="fas fa-caret-right"></i>
+										<span class="badge bg-grad2 mr-3 shadow"> <?php echo $all_application_type[$application_type];   $search_value = 'yes';?> </span>
+									<?php
+								}
 							}
 							 
+							
 							if(!empty($ro_office)) {
 							?>  <span class="badge rounded-pill bg-grad1 shadow">RO Office</span>
 									<i class="fas fa-caret-right"></i>
@@ -202,7 +230,7 @@
 							<table class="table table-sm rounded" id="payment_details_report_table">
 								<thead class="table-light">
 									<tr class="rounded">
-										<th><span class="table-heading">S.No</span></th>
+										<th><span class="table-heading">Sr.No</span></th>
 										<th><span class="table-heading">Date</span></th>
 										<th><span class="table-heading">Certificate Type</span></th>
 										<th><span class="table-heading">Application Type</span></th>
@@ -218,69 +246,83 @@
 								//add for each loop for show the array of all records by shreeya on [15-06-2023]
 								$k = 0;
 								$j = 0;
+								
 								foreach ($flowwise_table_data as $eachflow) { 
-									if (!empty($firms_details[$j])) { 
+
+									if (!empty($firms_details[$j])) {
+										 
 										?>
 										<!-- <tr>
 											<td colspan="6" class="table-heading bg-dark">New Application Payment Details</td>
 										</tr> -->
 									
-										<?php for ($i = 0; $i < sizeof($firms_details[$j]); $i++) { ?>
-
+										<?php  for ($i = 0; $i < sizeof($firms_details[$j]); $i++) { ?>
+											 
 											<tr id="table_row" class="row-hover border border-light">
-												<td><span class="badge title mb-1 borderless hover-border"><?php echo $k+1; ?></span></td>
-												<td><span class="badge title borderless"><?php $explode_date = explode(' ', $customer_payment_details[$j][$i]['transaction_date']);
+												<td><span class="badge title mb-1 borderless hover-border"><?php  echo $k+1; ?></span></td>
+												<td><span class="badge title borderless"><?php  $explode_date = explode(' ', $customer_payment_details[$j][$i]['created']);
 														echo $explode_date[0]; ?></span></td>
 												<td>
-
 													<!-- commented by shreeya on date [13-06-2023]-->
-												
 													<!-- added if else according to record null or not by shreeya on date [13-06-2023]-->
-													<?php if (!empty($all_application_type[$firms_details[$j][$i]['certification_type']])) { ?>
-														<span class="badge subtitle borderless">
-															<?php echo $all_application_type[$firms_details[$j][$i]['certification_type']];
-														} else { ?>
-														</span>
-														<span class="badge subtitle borderless">
-															<?php echo '--';
-														} ?>
-														</span>
+													<?php if (!empty($all_certificate_type[$firms_details[$j][$i]['certification_type']])) { ?>
+													<span class="badge subtitle borderless">
+														<?php echo $all_certificate_type[$firms_details[$j][$i]['certification_type']];
+													} else { ?>
+													</span>
+													<span class="badge subtitle borderless">
+														<?php echo '--' ;
+														
+													} ?>
+													</span>
+												</td>
+											
+												<td>
+													<?php if (!empty($apl_type_res)) { ?>
+													<span class="badge subtitle borderless">
+														<?php echo $apl_type_res[$j][$i];
+													} else { ?>
+													</span>
+													<span class="badge subtitle borderless">
+														<?php echo $report_for;
+													} ?>
+													</span>
 
 												</td>
-												<td><span class="badge title mb-1 borderless hover-border"><?php if (!empty($apl_type_res)){    echo $apl_type_res[$j][$i];} ?></span></td>
+												<!-- <td>
+												<span class="badge subtitle borderless">
+													<?php// echo $customer_payment_details[$j][$i]['customer_id']; ?>
+												</span>
+												</td> -->
+												
 												<td>
-													<!-- added if else according to record null or not by shreeya on date [13-06-2023]-->
-													<?php if (!empty($all_ro_office[$ro_id[$j][$i]['ro_id']])) { ?>
-														<span class="badge subtitle borderless">
-															<?php echo $all_ro_office[$ro_id[$j][$i]['ro_id']];
-														} else { ?>
-														</span>
-														<span class="badge subtitle borderless">
-															<?php echo '--';
-														} ?>
-														</span>
+												<!-- added if else according to record null or not by shreeya on date [13-06-2023]-->
+												<?php if (!empty($all_ro_office[$ro_id[$j][$i]['ro_id']])) { ?>
+													<span class="badge subtitle borderless">
+														<?php echo $all_ro_office[$ro_id[$j][$i]['ro_id']];
+													} else { ?>
+													</span>
+													<span class="badge subtitle borderless">
+														<?php echo '--';
+													} ?>
+													</span>
 
 												</td>
 												<td class="text-right">
-
 													<!-- commented by shreeya on date [13-06-2023]-->
-												
 													<!-- added if else according to record null or not by shreeya on date [13-06-2023]-->
 													<?php if (!empty($all_states[$firms_details[$j][$i]['state']])) { ?>
-														<span class="badge subtitle borderless">
-															<?php echo $all_states[$firms_details[$j][$i]['state']];
-														} else { ?>
-														</span>
-														<span class="badge subtitle borderless">
-															<?php echo '--';
-														} ?>
-														</span>
-
-
+													<span class="badge subtitle borderless">
+														<?php echo $all_states[$firms_details[$j][$i]['state']];
+													} else { ?>
+													</span>
+													<span class="badge subtitle borderless">
+														<?php echo '--';
+													} ?>
+													</span>
 												</td>
 												<td>
 													<!-- commented by shreeya on date [13-06-2023]-->
-												
 													<!-- added if else according to record null or not by shreeya on date [13-06-2023]-->
 													<?php if (!empty($all_district[$firms_details[$j][$i]['district']])) { ?>
 														<span class="badge subtitle borderless">
@@ -294,7 +336,7 @@
 												</td>
 												<td><span class="badge subtitle borderless"><?php echo number_format($customer_payment_details[$j][$i]['amount_paid'], 2); ?></span></td>				
 											</tr>
-										<?php $k++;}
+										<?php $k++; } 
 									}
 									$j++;
 								}
@@ -302,12 +344,14 @@
 								</tbody>
 							</table>
 							<!-- show total grant added by shreeya on date[21-06-2023]-->
-							<table class="table table-sm rounded" id="payment_details_report_table">
+							<table class="table" id="payment_details_report_table">
 								<tbody class="">
                 					<tr>
 										<td>
-											<span class="badge title borderless">
-												<?php echo $sum_of_all;?>
+											<span class="title borderless">
+												<?php echo $sum_of_all;?><br><br>
+												<?php echo $sum_of_total;?>
+												
 											</span>
 										</td>
 										
