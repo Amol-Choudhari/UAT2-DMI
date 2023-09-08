@@ -222,7 +222,11 @@ class RomoioapplicantcommunicationactionsComponent extends Component {
 
 						return 4;
 
-					}else{
+					}else{	
+
+						if($application_type==11){ // condition added by shankhpal for grant table entry on 06/09/2023
+							$grant_table_entry = $this->Customfunctions->bgrGrantTableEntry($customer_id);
+						}
 
 						$Dmi_final_submit_entity = $Dmi_final_submit->newEntity(array(
 							'customer_id'=>$customer_id,

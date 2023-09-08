@@ -3,7 +3,7 @@
 		$customer_id = $_SESSION['username'];
 
 		//for chemist application use customer id as packer id who register the chemist added by laxmi B. on 15-12-2022
-    if($_SESSION['application_type']==4){
+    if($_SESSION['application_type']==4 || $_SESSION['application_type']==11){ // updated by shankhpal for BGR module
     	 $customer_id = $_SESSION['packer_id'];
     }
    
@@ -15,7 +15,7 @@
 
 	//	$aadhar_auth_msg = 'I hereby state that I have no objection in authenticating myself with Aadhaar based authentication system and consent to providing my Aadhaar number, Biometric and/or One Time Pin (OTP) data for Aadhaar based authentication for the purposes of availing of eSign service/ e-KYC services / both in PAN application from DMI.';
 		//for chemist added condition with application type 4 by laxmi B. on 15-12-2022 																							  
-		if($_SESSION['application_type']==1 || $_SESSION['application_type']==3 || $_SESSION['application_type']==5 || $_SESSION['application_type']==6 || $_SESSION['application_type']==8 || $_SESSION['application_type']==9 || $_SESSION['application_type']==4){
+		if($_SESSION['application_type']==1 || $_SESSION['application_type']==3 || $_SESSION['application_type']==5 || $_SESSION['application_type']==6 || $_SESSION['application_type']==8 || $_SESSION['application_type']==9 || $_SESSION['application_type']==4 || $_SESSION['application_type']==11){
 			if($split_customer_id[1] == 1){
 
 				if($ca_bevo_applicant == 'yes'){

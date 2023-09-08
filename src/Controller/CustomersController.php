@@ -1185,8 +1185,27 @@ class CustomersController extends AppController {
 	//Secondary Home Method
 	public function secondaryHome() {
 
-		$customer_id = $this->Session->read('username');
 
+		$application_type = $this->Session->read('application_type');
+	
+		// The following line of code has been commented out by Shankhpal. on 22/08/2023
+		// This is because when generating the Bianually Grading report,
+		// the customer_id is retrieved from $_SESSION['customer_id'].
+		// However, this approach was causing an error, displaying "Sorry, you are not authorized to view this page.."
+		// To address this, I've implemented a condition to handle the customer_id from the session.
+		
+		// $customer_id = $this->Session->read('username');
+	// ------------------------------------------------------------------------------------------------------------------
+		if(isset($_SESSION['packer_id'])){  // added by shankhpal shende for BGR Module on 22/08/2023
+			$customer_id = $_SESSION['packer_id'];
+		}elseif(isset($_SESSION['customer_id'])){
+			$customer_id = $_SESSION['customer_id'];
+		}elseif(isset($_SESSION['username'])){
+			$customer_id = $this->Session->read('username');
+		}else{
+			$customer_id = null;
+		}
+	// -------------------------------------------------------------------------------------------------------------------
 		if ($customer_id == null) {
 			$this->customAlertPage("Sorry You are not authorized to view this page..");
 		} else {//this else portion added on 10-07-2017 by Amol to allow only logged in Applicant

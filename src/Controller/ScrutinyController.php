@@ -112,7 +112,7 @@ class ScrutinyController extends AppController{
 
 		$customer_id = $this->Customfunctions->checkCustomerIdAvailable($this->Session->read('customer_id'));
 		$this->set('customer_id',$customer_id);
-
+		
 		$oldapplication = $this->Customfunctions->isOldApplication($customer_id);
 		$this->set('oldapplication',$oldapplication);
 
@@ -125,7 +125,7 @@ class ScrutinyController extends AppController{
 
 		$application_type = $this->Session->read('application_type');
 		$this->set('application_type',$application_type);
-
+		
 		$document_lists = $this->Mastertablecontent->allDocumentsList();
 		$this->set('document_lists',$document_lists);
 		
@@ -161,7 +161,7 @@ class ScrutinyController extends AppController{
 			$selectedValues = $selectedfields[0];
 			$this->set('selectedValues',$selectedValues);
 		}
-
+		
 		if($oldapplication == 'yes' && $application_type == 1){
 
 			$this->viewBuilder()->setLayout('old_app_scrutiny_layout');
@@ -228,8 +228,23 @@ class ScrutinyController extends AppController{
             $this->set('trainingCompleteAtRo', $trainingCompleteAtRo['training_completed']);
 		 }
 		}
+		
+		//-----------------------------------------------------------------------------------------------------
+		// This section is added for the BGR module when the application type is set to 11 during a session. At that time, if $_SESSION['packer_id'] is set, then $customer_id will be assigned the value of $_SESSION['packer_id']. Otherwise, $customer_id will be assigned the value of $_SESSION['customer_id'].
+		// written by :- shankhpal shende on 24/08/2023
 
+		if($application_type == 11){
+			if(isset($_SESSION['packer_id'])){
+			$customer_id = $_SESSION['packer_id'];
+			}elseif(isset($_SESSION['customer_id'])){
+				$customer_id = $_SESSION['customer_id'];
+			}else{
+				$customer_id = null;
+			}
 
+		}
+		//----------------------------------------------------------------------------------------------------------
+		
 		if($current_level){
 
 			$back_to_inspection_level = $current_level;
@@ -263,7 +278,7 @@ class ScrutinyController extends AppController{
 
 		$firm_type_text = $this->Customfunctions->firmTypeText($customer_id);
 		$form_type = $this->Customfunctions->checkApplicantFormType($customer_id);
-
+		
 		$final_submit_details = $this->Customfunctions->finalSubmitDetails($customer_id,'application_form');
 		$this->set('final_submit_details',$final_submit_details);
 
@@ -276,7 +291,7 @@ class ScrutinyController extends AppController{
 		if($form_type=='F' && $ca_bevo_applicant=='yes'){
 			$form_type='E';
 		}
-
+		
 		$this->set('form_type',$form_type);
 
 		// check current form section value
@@ -326,7 +341,7 @@ class ScrutinyController extends AppController{
 
 		$final_submit_table_name = $Dmi_flow_wise_tables_list->getFlowWiseTableDetails($application_type,'application_form');
 		$Dmi_final_submit_table = TableRegistry::getTableLocator()->get($final_submit_table_name);
-
+			
 		// get current section all details
 		$section_details = $this->DmiCommonScrutinyFlowDetails->currentSectionDetails($application_type,$office_type,$firm_type,$form_type,$section_id);
 		
@@ -410,7 +425,7 @@ class ScrutinyController extends AppController{
 		$last_record_with_delete_null = $this->Communication->lastRecordWithDeleteNull($section_model,$customer_id);
 
 		$this->Communication->editDeleteOptionForMoRoCommunication($section_model,$customer_id,$current_level,$last_record_with_delete_null);
-
+		
 		//For MO comment
 		if (null!==($this->request->getData('save_edited_mo_comment'))){
 
@@ -430,10 +445,10 @@ class ScrutinyController extends AppController{
 			$redirect_location = '/scrutiny/form-scrutiny';
 			$this->Communication->saveEditedMoComment($section_model,$htmlencoded_comment_by_mo,$mo_comment_ul,$redirect_location);
 		}
-
+		
 		//For RO reply
 		if (null!==($this->request->getData('save_edited_ro_reply'))){
-
+			
 			$htmlencoded_reply_by_ro = $this->request->getData('edited_ro_reply');
 
 			if(!empty($this->request->getData('rr_comment_ul')->getClientFilename())){
@@ -450,11 +465,11 @@ class ScrutinyController extends AppController{
 			$redirect_location = '/scrutiny/form-scrutiny';
 			$this->Communication->saveEditedRoReply($section_model,$htmlencoded_reply_by_ro,$rr_comment_ul,$redirect_location);
 		}
-
+		
 
 		//Start code for Edit/Delete options For RO on Communication with Applicant.
 		if($current_level == 'level_3'){
-
+			
 			$reffered_back_date = $section_form_details[0]['reffered_back_date'];
 			$this->Communication->editDeleteOptionForRoApplicantCommunication($customer_id,$reffered_back_date);
 
@@ -478,7 +493,7 @@ class ScrutinyController extends AppController{
 			}
 		}
 		//End code for Edit/Delete options For RO on Communication with Applicant.
-
+		
 		// Saved referredback comments in chemist flow, Done Akash [30-09-2021]
 		if(null!==($this->request->getData('che_ro_referred_back'))){
 
@@ -626,11 +641,11 @@ class ScrutinyController extends AppController{
 			}
 
 		}elseif (null!== ($this->request->getData('mo_verified'))) { //only done by RO but recorded as level 1 entry
-
+			
 			//called this component to optimized code on 02-04-2018
-
+			
 			$result = $this->Romoioapplicantcommunicationactions->ROScrutinizedATMOLevel($customer_id,$section_model,$section_form_details[0],$allSectionDetails);
-
+			
 			if($result == 1 && $oldapplication=='yes' && ($application_type==1 || $application_type==6)){//added appl type 6 cond. on 23-11-2021
 
 				$this->Romoioapplicantcommunicationactions->ROScrutinizedOldApplication($customer_id);

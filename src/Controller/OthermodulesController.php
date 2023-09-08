@@ -3237,6 +3237,69 @@ class OthermodulesController extends AppController{
 		return array($appl_list,$checkCurPosition,$getOfficerUnderIncharge);
 	}
 
+	//This function are written by shankhpal shende on 07/09/2023
+	// for biannually grading report
+	public function listOfBgrReport(){
+		
+		$this->loadModel('DmiBgrGrantCertificatePdfs');
+		$this->loadModel('DmiFirms');
+		$fetch_all_granted_pdf = $this->DmiBgrGrantCertificatePdfs->find('all',array('fields'=>array('customer_id','id','pdf_file','created','pdf_version','user_email_id'),'order'=>'id DESC'))->toArray();
+			
+		
+		
+		if(!empty($fetch_all_granted_pdf)){
+
+			$appl_array_ca = array();
+			$i=0;
+			foreach ($fetch_all_granted_pdf as $eachrecord) {
+				
+				
+				$customer_id = $eachrecord['customer_id'];
+
+				$firm_details = $this->DmiFirms->firmDetails($customer_id);
+				$firm_name = $firm_details['firm_name'];					
+				$firm_table_id = $firm_details['id'];
+
+				$form_type = $this->Customfunctions->checkApplicantFormType($customer_id);
+				$appl_type_id = 11;
+				$report_form = '../scrutiny/form_scrutiny_fetch_id/'.$firm_table_id.'/view/'.$appl_type_id;
+
+				$split_customer_id = explode('/',(string) $customer_id); #For Deprecations
+				if($split_customer_id[1] == 1){
+					$cert_type = 'CA';
+					
+				}elseif($split_customer_id[1] == 2){
+					$cert_type = 'Printing Press';
+					
+				}elseif($split_customer_id[1] == 3){
+					$cert_type = 'Laboratory';
+					
+				}
+
+				$report_pdf_field = 'pdf_file';
+				$report_pdf = $eachrecord['pdf_file'];
+				$pdf_version = $eachrecord['pdf_version'];
+
+				$firm_details = $this->DmiFirms->firmDetails($customer_id);
+				$firm_name = $firm_details['firm_name'];
+				$firm_table_id = $firm_details['id'];
+
+				$appl_array[$i]['cert_type'] = $cert_type.' - '.$form_type;
+				$appl_array[$i]['customer_id'] = $customer_id.'-'.$form_type;
+				$appl_array[$i]['firm_name'] = $firm_name;
+				$appl_array[$i]['grant_date'] = $eachrecord['created'];
+				$appl_array[$i]['report_form'] = $report_form;
+				$appl_array[$i]['report_pdf'] = $report_pdf;
+				$appl_array[$i]['pdf_version'] = $pdf_version;
+			
+				$i=$i+1;
+			
+			}
+		}
+		
+		$this->set('appl_array',$appl_array);
+		
+	}
 
 	public function markApplRejected(){
 
@@ -3381,6 +3444,8 @@ class OthermodulesController extends AppController{
 	}
 
 
+
+	
 }
 
 ?>

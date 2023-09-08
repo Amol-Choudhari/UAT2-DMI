@@ -204,10 +204,14 @@ class InspectionsController extends AppController{
 		$Dmi_flow_wise_tables_list = TableRegistry::getTableLocator()->get('DmiFlowWiseTablesLists');		
 		
 		$report_final_submit_table = $Dmi_flow_wise_tables_list->getFlowWiseTableDetails($application_type,'inspection_report');
+		
 		$Dmi_report_final_submit_table = TableRegistry::getTableLocator()->get($report_final_submit_table);
-			
+		
 		//added by shankhpal shende on 30/12/2022
 		$Dmi_rti_final_submit_table = TableRegistry::getTableLocator()->get('DmiRtiFinalSubmits');
+	
+		$Dmi_rti_esigned_statuses_table = TableRegistry::getTableLocator()->get('DmiRtiEsignedStatuses'); // line added by shankhpal shende on date 24/08/2023 for  TableRegistry of DmiRtiEsignedStatuses
+		
 
 		$Dmi_allocation_table_name = $Dmi_flow_wise_tables_list->getFlowWiseTableDetails($application_type,'allocation');
 		$Dmi_allocation_table = TableRegistry::getTableLocator()->get($Dmi_allocation_table_name);
@@ -496,19 +500,33 @@ class InspectionsController extends AppController{
 					
 					 // The primary reason for including this condition was
 					 // When there is no more routine inspection flow pending, this is the final step.
-					 // When the application type is 10, we add a record to two tables.
+					 // When the application type is 10, we add a record to three tables.
 					 // 1. dmi_rti_final_reports
-					// 2. dmi_rti_final_submits
-					// Added by shankhpal shende on 30/12/2022
+					 // 2. dmi_rti_final_submits
+					 // 3. dmi_rti_esigned_statuses
+					 // Added by shankhpal shende on 30/12/2022
 					if($application_type == '10' && $form_type = 'RTI'){
 
+						//----------------------------------------------------------------------------------------
+						//Added for updating application_type in Dmi_rti_esigned_statuses_table
+						//added by shankhpal on 24/08/2023
+						$Dmi_firm = TableRegistry::getTableLocator()->get('DmiFirms');
+						//check application type old/new
+						$get_type = $Dmi_firm->find('all',array('conditions'=>array('customer_id IS'=>$customer_id)))->first();
+						if(!empty($$get_type) && $get_type['is_already_granted']=='yes'){
+							$application_type = 'old';
+						}else{
+							$application_type = 'new';
+						}
+						//-----------------------------------------------------------------------------------------
+						
 						$Dmi_report_final_submit_Entity = $Dmi_report_final_submit_table->newEntity(array(
 							'customer_id'=>$customer_id,
 							'status'=>'approved',
 							'current_level'=>'level_3',
 							'created'=>date('Y-m-d H:i:s'),
-							'modified'=>date('Y-m-d H:i:s')				
-						)); 
+							'modified'=>date('Y-m-d H:i:s')
+						));
 			
 						$Dmi_report_final_submit_table->save($Dmi_report_final_submit_Entity);
 						
@@ -517,10 +535,11 @@ class InspectionsController extends AppController{
 							'status'=>'approved',
 							'current_level'=>'level_3',
 							'created'=>date('Y-m-d H:i:s'),
-							'modified'=>date('Y-m-d H:i:s')				
-						)); 
+							'modified'=>date('Y-m-d H:i:s')
+						));
 			
 						$Dmi_rti_final_submit_table->save($Dmi_rti_final_submit_Entity);
+
 						// Uppdated Record of Dmi_rti_esigned_statuses_table added on 24/08/2023 by shankhpal
 						$updateData = array(
 							'application_esigned' => 'yes',
@@ -534,17 +553,16 @@ class InspectionsController extends AppController{
 							$conditions = array('customer_id' => $customer_id);
 
 							$Dmi_rti_esigned_statuses_table->updateAll($updateData, $conditions, array('order' => 'id DESC'));
-
 					
 						   $redirect_url = '../othermodules/routineInspectionList'; // change added by shankhpal shende for rti
 					}
 				
 					
 
-				}else{  
+				}else{
 						$result_message = $this->reportPopupMessage('accepted',2,$section_details,$firm_type_text,$office_type);	
-						$show_message = 'yes'; 
-						} 	
+						$show_message = 'yes';
+						}
 							
 			}else{ 
 					$result_message = $this->reportPopupMessage('accepted',3,$section_details,$firm_type_text,$office_type);	

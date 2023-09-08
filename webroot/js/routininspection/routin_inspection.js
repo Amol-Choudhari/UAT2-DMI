@@ -125,6 +125,10 @@ $(document).ready(function () {
           edit_function();
           delete_function();
           save_function();
+          $("#date_of_packing").datepicker({
+            format: "dd/mm/yyyy",
+            autoclose: true,
+          });
         },
       });
     });
@@ -153,6 +157,10 @@ $(document).ready(function () {
           edit_function();
           delete_function();
           save_function();
+          $("#date_of_packing").datepicker({
+            format: "dd/mm/yyyy",
+            autoclose: true,
+          });
         },
       });
     });
@@ -208,6 +216,10 @@ $(document).ready(function () {
             edit_function();
             delete_function();
             save_function();
+            $("#date_of_packing").datepicker({
+              format: "dd/mm/yyyy",
+              autoclose: true,
+            });
           },
         });
       }

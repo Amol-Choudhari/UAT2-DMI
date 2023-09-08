@@ -10,6 +10,7 @@ class DmiCommonScrutinyFlowDetailsTable extends Table{
 
 		
 	public function currentSectionDetails($application_type,$office_type,$firm_type,$form_type,$section_id){
+		
 	//print_r($application_type."\n".$office_type."\n".$firm_type."\n".$form_type."\n".$section_id); exit;
 		$sectionDetails = $this->find('all',array('conditions'=>array('application_type IS'=>$application_type,'office_type IS'=>$office_type,'firm_type IS'=>$firm_type,
 													  'form_type IS'=>$form_type,'section_id IS'=>$section_id)))->first();	

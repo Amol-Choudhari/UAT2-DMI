@@ -14,6 +14,7 @@
 		$CustomersController = new CustomersController;
 		$grantDateCondition = $CustomersController->Customfunctions->returnGrantDateCondition($customer_id);
 		
+		$customer_id = $_SESSION['packer_id'];
 		//create other model objects
 		$Dmi_firm = TableRegistry::getTableLocator()->get('DmiFirms');
 		$Dmi_flow_wise_tables_list = TableRegistry::getTableLocator()->get('DmiFlowWiseTablesLists');	
@@ -26,6 +27,7 @@
 				
 		//check application type new/old 
 		$get_type = $Dmi_firm->find('all',array('conditions'=>array('customer_id IS'=>$customer_id)))->first();
+	
 		if($get_type['is_already_granted']=='yes'){			
 			$type = 'old';
 		}else{

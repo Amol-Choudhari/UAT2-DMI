@@ -788,7 +788,17 @@ class ChemistController extends AppController {
 		  $this->loadModel('DmiRejectedApplLogs');
 		  $rejectEntry = $this->DmiRejectedApplLogs->find('all')->where(['customer_id IS'=>$chemist_id])->first();
 		  
-              $this->set('rejectEntry', $rejectEntry);								
+      $this->set('rejectEntry', $rejectEntry);
+			
+		// Query added by Shankhpal Shende to check whether the logged-in chemist is an in-charge.
+		// If the chemist is an in-charge, the Bianually Grading Report menu will be displayed;
+		// otherwise, it won't be displayed.
+		// This comment is written on August 22, 2023.
+		$chemist_incharge = $this->DmiChemistAllotments->find('all',array('fields'=>'chemist_id','conditions'=>array('chemist_id IS'=>$_SESSION['username'],'status'=>1,'incharge'=>'yes')))->first();
+		
+		$this->set('rejectEntry', $rejectEntry);
+		$this->set('chemist_incharge', $chemist_incharge);
+			
 	}
 
 
@@ -1624,7 +1634,69 @@ class ChemistController extends AppController {
 				<option value="<?php echo $commodity['commodity_code'];?>"><?php echo $commodity['commodity_name'];?></option>
 		<?php }
 		exit;
-	}	
+	}
+
+	
+	// This function is used to display the mapped CA dropdown.
+	// Added by Shankhpal Shende on August 22, 2023.
+	public function displayMappedCADropdown(){
+		
+		$message = "";
+		$message_theme = "";
+		$redirect_to = "";
+
+		$customer_id = $_SESSION['packer_id'];
+
+		$this->viewBuilder()->setLayout('chemist_home_layout');
+		$this->loadModel('DmiBgrCommodityReports');
+		$CustomersController = new CustomersController;
+
+		$alloted_chemist = $this->DmiChemistAllotments->find('list',array('keyField'=>'customer_id','valueField'=>'customer_id','conditions'=>array('chemist_id IS'=>$_SESSION['username'],'status'=>1,'incharge'=>'yes')))->toArray();
+		$this->set('alloted_chemist', $alloted_chemist);
+	
+		$finacialYears = $CustomersController->Customfunctions->computeBiannualPeriod();
+		$startDate = $finacialYears['startDate'];
+		$endDate = $finacialYears['endDate'];
+
+		$finacialYearsArray[$startDate . ' - ' . $endDate] = $startDate . ' - ' . $endDate;
+		$this->set('finacialYearsArray',$finacialYearsArray);
+		
+		// $reqData = $this->request->getData(); // Get the selected values
+		// pr($reqData);die;
+		if (null!== ($this->request->getData('continue-btn'))) {
+	
+			$packerid = $_POST['packerid'];
+			
+			$financialYear = $_POST['financialYear'];
+		// echo $financialYear;die;
+			if(!empty($packerid) && !empty($financialYear)){
+				 
+				$this->request->getSession()->write('packer_id',$packerid);
+				$this->request->getSession()->write('financialYear',$financialYear);
+				if(isset($_SESSION)){
+					$this->redirect(['controller' => 'application','action' => 'applicationType',11]);
+					$this->redirect(['controller' => 'application','action' => 'applicationForCertificate',11]);
+				}
+			 
+			}else{
+				$message = "Please select both a financial year and a packer ID.";
+				$message_theme = 'warning';
+				$redirect_to = '../chemist/display-mapped-c-a-dropdown';
+				$this->render('/element/message_boxes');
+			}
+			
+		}
+		
+
+		$this->set('message_theme',$message_theme);
+		$this->set('message',$message);
+		$this->set('redirect_to',$redirect_to);
+
+		if ($message != null) {
+			$this->render('/element/message_boxes');
+		}
+		
+	}
 
 
 

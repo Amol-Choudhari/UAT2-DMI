@@ -204,7 +204,7 @@ class ApplicationController extends AppController{
 	
 	// APPLICATION TYPE
 	public function applicationType($id) {
-
+		
 		$this->Session->delete('section_id');
 		$this->Session->delete('paymentforchange');
 		$this->Session->write('application_type',$id);
@@ -232,7 +232,7 @@ class ApplicationController extends AppController{
 		
 		$oldapplication = $this->Customfunctions->isOldApplication($customer_id);
 		$this->set('oldapplication',$oldapplication);
-
+		
 		$authRegFirm = $this->Mastertablecontent->authFirmRegistration($customer_id);
 		$this->set('authRegFirm',$authRegFirm);
 
@@ -257,7 +257,7 @@ class ApplicationController extends AppController{
 		
 		$application_type = $this->Session->read('application_type');
 		$this->set('application_type',$application_type);
-		
+	
 		// check current form section value
 		if (isset($_SESSION['section_id'])) {
 			$section_id = $this->Session->read('section_id');
@@ -265,7 +265,7 @@ class ApplicationController extends AppController{
 			$section_id = 1;
 			$this->Session->write('section_id',$section_id);
 		}
-
+		
 		// For Chemist added the appluicant type 4 and replaced chemist id with customer id , Done By AKASH THAKRE 30-09-2021
 		if ($application_type == 4) {
 
@@ -284,8 +284,29 @@ class ApplicationController extends AppController{
 			$this->Communication->singleWindowCommentHistory($chemist_id);
 			
 		}			
+		
+		// This condition added by shankhpal shende for BGR Module on 06/09/2023
+		if($application_type == 11){
+		
+			
+			if(isset($_SESSION['packer_id'])){
+				$customer_id = $_SESSION['packer_id'];
+			}elseif(isset($_SESSION['customer_id'])){
+				$customer_id = $_SESSION['customer_id'];
+			}else{
+				$customer_id = null;
+			}
 
-
+			$chemistDetails = $this->DmiChemistRegistrations->find('all',array('conditions'=>array('chemist_id IS'=>$_SESSION['username'],'delete_status IS NULL')))->first();
+			
+			$form_type='BGR';
+			$this->loadModel('DmiBgrGrantCertificatePdfs');  
+			//added for checking if application is Granted on 24/11/2022
+			$checkIfgrant = $this->DmiBgrGrantCertificatePdfs->find('all',array('conditions'=>array('customer_id IS'=>$customer_id,'status'=>'Granted'),'order'=>'id DESC'))->first();
+			
+			$this->set('checkIfgrant',$checkIfgrant);
+		}
+		
 		$this->Customfunctions->showOldCertDetailsPopup($customer_id);
 
 	//commented on 13-04-2023 for change request appl
@@ -364,6 +385,11 @@ class ApplicationController extends AppController{
 		if ($application_type == 9) {
 	
 			$form_type='SOC';
+		}
+
+		//For Bianually Grading Report Flow HAVING Application Type [11] - Shankhpal [24-07-2023]
+		if ($application_type == 11) {
+			$form_type='BGR';
 		}
 
 		$this->set('form_type',$form_type);

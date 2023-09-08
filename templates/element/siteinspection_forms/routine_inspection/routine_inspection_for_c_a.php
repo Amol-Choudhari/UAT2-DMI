@@ -1040,6 +1040,9 @@ echo $this->Form->create(null, array('type'=>'file', 'enctype'=>'multipart/form-
             </div>
         </div>
 </section>
+<?php
+
+?>
 <input type="hidden" id="final_submit_status_id" value="<?php echo $final_submit_status; ?>">
 <input type="hidden" id="application_mode" value="<?php echo $_SESSION['application_mode']; ?>">
 <input type="hidden" id="current_level" value="<?php echo $_SESSION['current_level']; ?>">

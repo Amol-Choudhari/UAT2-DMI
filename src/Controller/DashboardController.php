@@ -1738,6 +1738,7 @@ class DashboardController extends AppController{
 					'user_id'=>$user_id,
 					'io_office'=>$io_office,
 					'io_email_id'=>$io_user_id,
+					'created'=>date('Y-m-d H:i:s'), // added field by shankhpal on 29/08/2023
 					'allocation_type'=>$allocation_type
 
 				));
@@ -3147,6 +3148,7 @@ class DashboardController extends AppController{
 					'created'=>date('Y-m-d H:i:s'), // added field by shankhpal on 29/08/2023
 					'user_id'=>$user_id,
 					'io_office'=>$io_office,
+					'created'=>date('Y-m-d H:i:s'), // added field by shankhpal on 29/08/2023
 					'io_email_id'=>$io_user_id,
 					'allocation_type'=>$allocation_type
 

@@ -39,7 +39,7 @@
                           <?php if ($this->getRequest()->getSession()->read('edit_sample_id') != null) {  ?>
                              <tr>
                                <td></td>
-                               <td><?php echo $this->Form->control('commodity_name', array('type'=>'select', 'empty'=>'Select Commodity', 'id'=>'commodity_name','options'=>$section_form_details[3],'value'=>$find_sample_details['commodity_name'], 'label'=>false, 'class'=>'form-control wd120')); ?></td>
+                               <td><?php echo $this->Form->control('commodity_name', array('type'=>'select', 'empty'=>'Select Commodity', 'id'=>'commodity_name','options'=>$section_form_details[3],'value'=>isset($find_sample_details['commodity_name'])?$find_sample_details['commodity_name']:"", 'label'=>false, 'class'=>'form-control wd120')); ?></td>
 	                              <span id="" class="error invalid-feedback"></span>
                                 <td>
                                     <?php echo $this->Form->control('pack_size', array('type'=>'text', 'value'=>isset($find_sample_details['pack_size'])?$find_sample_details['pack_size']:"", 'escape'=>false,  'label'=>false, 'id'=>'pack_size', 'class'=>'form-control input-field')); ?>
@@ -106,7 +106,7 @@
 											</table>
 										</div>
 										
-                    <?php echo $this->Html->script('routininspection/routin_inspection'); ?>
+                    <?php //echo $this->Html->script('routininspection/routin_inspection'); ?>
 								
 				
 					

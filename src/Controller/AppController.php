@@ -103,7 +103,7 @@ class AppController extends Controller
 		// #5- 15-Digit-Code (FDC) / #6- Allotment of E-Code (EC) / #7- Advance Payment (AP)
 		// #8- Approval of Designated Person (ADP) / #9- Surrender of Certificate (SOC)
 		// #10- Routine Inspection (RTI) / #11 - Bi-annually Grading Report (BGR)
-		$this->Session->write('applTypeArray',array('1','2','3','4','5','6','8','9','10'));
+		$this->Session->write('applTypeArray',array('1','2','3','4','5','6','8','9','10','11'));
 
 		//added on 01-10-2021 by Amol
 		//if not in advance payment mode

@@ -1,4 +1,4 @@
-<?php pr($get_office);die; ?>
+<?php  ?>
 <style>
 	h4 {
 		padding: 5px;

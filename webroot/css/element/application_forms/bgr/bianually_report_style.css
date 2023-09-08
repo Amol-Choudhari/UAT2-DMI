@@ -1,0 +1,87 @@
+/* Apply custom width for each th element */
+
+.wdth {
+  width: 150px; 
+}
+.highlight-empty {
+  border: 2px solid red;
+}
+/* Add styles for the error messages */
+.error {
+  color: red;
+  font-size: 12px;
+}
+
+td button {
+    display: block;
+    margin-bottom: 5px; /* Add some vertical spacing between buttons */
+}
+.modal-body {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.form-row {
+  display: flex;
+  align-items: center;
+  margin-right: 20px; /* Adjust the spacing between input fields */
+}
+
+.form-row label {
+  margin-right: 10px; /* Adjust the spacing between label and input field */
+}
+
+.form-control {
+  width: 150px; /* Set the width of the input fields */
+}
+
+/* CSS to display form fields horizontally */
+.modal-body .form-row {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.modal-body .form-group {
+    flex: 0 0 50%; /* Adjust this value to control the width of each field */
+    margin-bottom: 1rem;
+    padding-right: 10px;
+}
+
+
+
+.pagination li:hover{
+    cursor: pointer;
+}
+#update_bgr_details {
+  display: none;
+}
+#period{
+  display: inline;
+  margin-inline: 10px;
+  width: 30%;
+}
+.note {
+  background-color: #f7f7f7;
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin-bottom: 20px;
+}
+#downloadDiv{
+  display: none;
+}
+.table-container {
+  height: 500px;
+  /* Adjust the height as needed */
+  overflow-y: auto;
+  /* Enable vertical scrollbar when needed */
+}
+
+ .downloadButton {
+  
+      float: right;
+      margin: -38px;
+      margin-right: 1px;
+    
+ }
+
+ 

@@ -4,10 +4,12 @@
 namespace App\Controller;
 use Cake\Network\Session\DatabaseSession;
 use App\Network\Request\Request;
-use App\Network\Response\Response;
+// use App\Network\Response\Response;
 use Cake\ORM\TableRegistry;
 use Controller\Dashboard;
 use Cake\Chronos\Chronos;  // Chronos library is use for DateTime by shankhpal on 08/06/2023 
+use Cake\Http\Response; //added by shankhpal on 04/07/2023
+
 
 class AjaxFunctionsController extends AppController{
 	
@@ -21,7 +23,7 @@ class AjaxFunctionsController extends AppController{
 		$this->loadComponent('Communication');
 	}
 
-
+	
 
 	// SHOW COMMODITY DROPDOWN
 	// DESCRIPTION : --
@@ -2618,5 +2620,453 @@ class AjaxFunctionsController extends AppController{
 		return $responce;
 		
 	}
+
+	
+	//created method to get commodity wise replica charge for BGR Module
+	//Added by shankhpal shende on 28/07/2023
+	public function getCommodityWiseCharge(){
+		
+		$this->autoRender = false;
+	
+		$commodity_id = $_POST['commodity_id'];
+		
+		//get charge from table
+		$this->loadModel('DmiReplicaChargesDetails');
+		$this->loadModel('DmiReplicaUnitDetails');
+	
+		$get_charge = $this->DmiReplicaChargesDetails
+    ->find('all', [
+        'conditions' => ['commodity_code' => $commodity_id]
+    ])
+    ->first();
+	
+		if (!empty($get_charge)) {
+   
+			$charge = $get_charge['charges'];
+			$min_qty = $get_charge['min_qty'];
+			$unit = $get_charge['unit'];
+
+			$unit_list = $this->DmiReplicaUnitDetails->find('list',array('keyField'=>'id','valueField'=>'sub_unit','conditions'=>array('unit IS'=>$unit),'order'=>'id asc'))->toArray();
+
+			$result = array('charge'=>$charge,'unit_list'=>$unit_list,'min_qty'=>$min_qty);
+			echo '~'.json_encode($result).'~';
+			
+		} else {
+				echo 'No Charge';
+		}
+		exit;
+	}
+
+	//to get gross quantity and total charges when enter no. of packets
+	public function getGrossQuantityAndTotalCharge() {
+			
+		
+		$this->autoRender = false;
+		$packet_size = $_POST['packet_size'];
+		$sub_unit_id = $_POST['sub_unit_id'];
+		$no_of_packets = $_POST['no_of_packets'];
+	
+		$this->loadModel('DmiReplicaChargesDetails');
+		
+		$commodity_id = $_POST['commodity_id'];
+		
+		$get_charge = $this->DmiReplicaChargesDetails
+    ->find('all', [
+        'conditions' => ['commodity_code' => $commodity_id]
+    ])
+    ->first();
+
+		$label_charge = $get_charge['charges'];
+		
+		//get conversion factor as per sub unit
+		$this->loadModel('DmiReplicaUnitDetails');
+		$get_factor = $this->DmiReplicaUnitDetails->find('all',array('fields'=>'conversion_factor', 'conditions'=>array('id IS'=>$sub_unit_id)))->first();
+		
+		$conversion_factor = $get_factor['conversion_factor'];
+		
+		//get min gross quantity for selected commodity to campair
+		$this->loadModel('DmiReplicaChargesDetails');
+		$get_charge = $this->DmiReplicaChargesDetails->find('all',array('fields'=>'min_qty','conditions'=>array('commodity_code IS'=>$commodity_id)))->first();
+		
+		$min_grpss_qty = $get_charge['min_qty'];
+		
+		$gross_quantity = ($packet_size*$no_of_packets)/$conversion_factor;
+		
+		//if calulated gross qty is more tahn min qty, then get new total, else calculate total with min qty
+		if ($gross_quantity > $min_grpss_qty) {				
+			$total_charges = $gross_quantity*$label_charge;			
+		} else {
+			$total_charges = $min_grpss_qty*$label_charge;
+			$gross_quantity = $min_grpss_qty;
+		}
+		
+		$result = array('gross_quantity'=>$gross_quantity,'total_charges'=>$total_charges);
+		
+		echo '~'.json_encode($result).'~';
+		exit;
+	}
+
+	 // This method will handle the request to add BGR details
+	 // added by shankhpal shende on 02/08/2023
+	function addBgrDetails() {
+
+		
+				
+			$this->autoRender = false;
+			$this->loadModel('DmiBgrCommodityReportsAddmore');
+
+			$financialYear = $_SESSION['financialYear'];
+			$startMonthYear=null;
+			$endMonthYear=null;
+
+			if(isset($financialYear)){
+				$dates = explode(" - ", $financialYear);
+				$startMonthYear = $dates[0];
+				$endMonthYear = $dates[1];
+			}
+		if (empty($_POST['record_id'])) {
+			$data = array(
+					'commodity' => $_POST['commodity'],
+					'lotno' => $_POST['lot_no_tf_no_m_no'],
+					'datesampling' => $_POST['date_of_sampling'],
+					'dateofpacking' => $_POST['date_of_packing'],
+					'grade' => $_POST['grade'],
+					'packetsize' => $_POST['packet_size'],
+					'packetsizeunit' => $_POST['packet_size_unit'],
+					'totalnoofpackets' => $_POST['no_of_packets'],
+					'totalqtyquintal' => $_POST['total_qty_graded_quintal'],
+					'estimatedvalue' => $_POST['estimated_value'],
+					'agmarkreplicafrom' => $_POST['agmark_replica_from'],
+					'agmarkreplicato' => $_POST['agmark_replica_to'],
+					'agmarkreplicatotal' => $_POST['agmark_replica_total'],
+					'replicacharges' => $_POST['replica_charges'],
+					'laboratoryname' => $_POST['laboratory_name'],
+					'reportno' => $_POST['report_no'],
+					'reportdate' => $_POST['report_date'],
+					'remarks' => $_POST['remarks'],
+					'period_from'=>$startMonthYear,
+					'period_to'=>$endMonthYear,
+			);
+
+			// Insert the data into the database using the model
+			$save_bgr_details = $this->DmiBgrCommodityReportsAddmore->saveCommodityWiseReport($data);// call custome method from model
+		}else{
+			$data = array(
+				'record_id' => $_POST['record_id'],
+				'commodity' => $_POST['commodity'],
+				'lotno' => $_POST['lot_no_tf_no_m_no'],
+				'datesampling' => $_POST['date_of_sampling'],
+				'dateofpacking' => $_POST['date_of_packing'],
+				'grade' => $_POST['grade'],
+				'packetsize' => $_POST['packet_size'],
+				'packetsizeunit' => $_POST['packet_size_unit'],
+				'totalnoofpackets' => $_POST['no_of_packets'],
+				'totalqtyquintal' => $_POST['total_qty_graded_quintal'],
+				'estimatedvalue' => $_POST['estimated_value'],
+				'agmarkreplicafrom' => $_POST['agmark_replica_from'],
+				'agmarkreplicato' => $_POST['agmark_replica_to'],
+				'agmarkreplicatotal' => $_POST['agmark_replica_total'],
+				'replicacharges' => $_POST['replica_charges'],
+				'laboratoryname' => $_POST['laboratory_name'],
+				'reportno' => $_POST['report_no'],
+				'reportdate' => $_POST['report_date'],
+				'remarks' => $_POST['remarks'],
+				'period_from'=>$startMonthYear,
+				'period_to'=>$endMonthYear,
+			);
+
+			$save_bgr_details = $this->DmiBgrCommodityReportsAddmore->saveCommodityWiseReport($data); // Call custom method from model
+			// Define a variable to hold the response message
+			$response = "";
+			// Check the result of the update operation
+			if ($save_bgr_details == "updated") {
+					$response = "updated";
+			} elseif($save_bgr_details == "added") {
+					$response = "added";
+			}
+
+			// Echo the response
+			echo $response;
+			exit();
+		}
+			
+
+	} 
+	
+	// else {
+				
+	// 				// Update operation
+	// 				// Ensure that at least one field (other than record_id) is present for update
+	// 				$updateFields = array_diff($requiredFields, ['record_id']);
+	// 				$atLeastOneFieldPresent = false;
+	// 				foreach ($updateFields as $field) {
+	// 						if (isset($_POST[$field]) && !empty($_POST[$field])) {
+	// 								$atLeastOneFieldPresent = true;
+	// 								break;
+	// 						}
+	// 				}
+
+	// 				if (!$atLeastOneFieldPresent) {
+	// 						die('Error: At least one field (other than record_id) must be present for update');
+	// 				}
+					
+					 
+	// 				// Create the data array for update
+	// 				$data = array(
+	// 						'record_id' => $_POST['record_id'],
+	// 						'commodity' => $_POST['ta-commodity-'],
+	// 						'lotno' => $_POST['lot_no_tf_no_m_no'],
+	// 						'datesampling' => $_POST['date_of_sampling'],
+	// 						'dateofpacking' => $_POST['date_of_packing'],
+	// 						'grade' => $_POST['grade'],
+	// 						'packetsize' => $_POST['ta-packet_size-'],
+	// 						'packetsizeunit' => $_POST['ta-packet_size_unit-'],
+	// 						'totalnoofpackets' => $_POST['ta-no_of_packets-'],
+	// 						'totalqtyquintal' => $_POST['total_qty_graded_quintal'],
+	// 						'estimatedvalue' => $_POST['estimated_value'],
+	// 						'agmarkreplicafrom' => $_POST['agmark_replica_from'],
+	// 						'agmarkreplicato' => $_POST['agmark_replica_to'],
+	// 						'agmarkreplicatotal' => $_POST['agmark_replica_total'],
+	// 						'replicacharges' => $_POST['replica_charges'],
+	// 						'laboratoryname' => $_POST['laboratory_name'],
+	// 						'reportno' => $_POST['report_no'],
+	// 						'reportdate' => $_POST['report_date'],
+	// 						'remarks' => $_POST['remarks'],
+	// 				);
+
+	// 			// Update the data in the database using the model
+	// 			$save_bgr_details = $this->DmiBgrCommodityReportsAddmore->saveCommodityWiseReport($data); // Call custom method from model
+
+	// 			// Define a variable to hold the response message
+	// 			$response = "";
+	// 			// Check the result of the update operation
+	// 			if ($save_bgr_details == "updated") {
+	// 					$response = "updated";
+	// 			} elseif($save_bgr_details == "added") {
+	// 					$response = "added";
+	// 			}
+
+	// 			// Echo the response
+	// 			echo $response;
+	// 			exit();
+
+	// 		}
+
+		
+
+	
+	
+		// This method will handle the request to display added data for BGR details
+	 // added by shankhpal shende on 02/08/2023
+	public function addedBgrDetails(){
+
+    $this->autoRender = false;
+    $this->loadModel('DmiBgrCommodityReportsAddmore');
+    $this->loadModel('MCommodity');
+
+    $customer_id = $_SESSION['packer_id'];
+
+    $query = $this->DmiBgrCommodityReportsAddmore->find()
+        ->where([
+            'customer_id' => $customer_id,
+            'delete_status IS NULL' // Records where delete_status is NULL
+        ])
+        ->order(['id' => 'desc']);
+
+    $bgrReportData = $query->toArray();
+
+    foreach ($bgrReportData as &$eachvalue) { // Note the "&" before $eachvalue
+        $commodity_code = $eachvalue['commodity'];
+
+        $result = $this->MCommodity->find()
+            ->select('commodity_name')
+            ->where(['commodity_code' => $commodity_code]);
+
+        $commodityArray = $result->first();
+        $eachvalue['commodity'] = $commodityArray ? $commodityArray->commodity_name : '';
+    }
+
+    // Convert the data to JSON format and echo it to return the response
+    return $this->response->withType('application/json')->withStringBody(json_encode($bgrReportData));
+}
+
+
+	// This method will handle the request to update BGR details
+	 // added by shankhpal shende on 02/08/2023
+	public function editBgrDetails(){
+		
+		$this->autoRender = false;
+		$this->loadModel('DmiBgrCommodityReportsAddmore');
+
+		$updatedData = $this->request->getData();
+		// Assuming the primary key field is 'id'
+    $editbgrid = $updatedData['id'];
+		$this->Session->write('editbgrid',$editbgrid);
+		$bgrReportData = $this->DmiBgrCommodityReportsAddmore->getBgrData($editbgrid);
+		// pr($bgrReportData);die;
+ 		return $this->response->withType('application/json')->withStringBody(json_encode($bgrReportData));
+		$this->render('/element/application_forms/bgr/analysis_table/commodity_wise_reports_form_tbl');
+		
+	}
+
+	// This method will handle the request to delete BGR details
+	 // added by shankhpal shende on 02/08/2023
+	public function deleteBgrDetails() {
+
+		$this->autoRender = false;
+		$this->Session->delete('editbgrid');
+		$this->loadModel('DmiBgrCommodityReportsAddmore');
+		$this->loadModel('DmiBgrCommodityReports');
+
+		//$record_id = $id;
+		$deletedData = $this->request->getData();
+		$delete_id = $deletedData['id'];
+
+		// Retrieve updated table data
+		$bgrReportData = $this->DmiBgrCommodityReportsAddmore->deleteBgrData($delete_id);// call to custome function 
+		
+		echo "success";
+		
+ 		exit();
+		
+		
+	}
+
+	// This method will handle the request to get Total Replica Charges for  BGR Module
+	 // added by shankhpal shende on 02/08/2023
+	public function getTotalReplicaCharge(){
+
+		$this->autoRender = false;
+		$this->loadModel('DmiBgrCommodityReportsAddmore');
+		$CustomersController = new CustomersController;
+
+		if(isset($_SESSION['packer_id'])){
+			$customer_id = $_SESSION['packer_id'];
+		}elseif(isset($_SESSION['customer_id'])){
+			$customer_id = $_SESSION['customer_id'];
+		}else{
+			$customer_id = null;
+		}
+
+		$bgrAddedTableRecords = $CustomersController->Customfunctions->bgrAddedTableRecords($customer_id);
+		$sumReplicaCharges = 0;
+
+		foreach ($bgrAddedTableRecords as $record) {
+			// Check if the 'replicacharges' field is set and not empty
+			if (isset($record->replicacharges) && !empty($record->replicacharges)) {
+					$sumReplicaCharges += $record->replicacharges;
+			}
+		}
+		
+		echo $sumReplicaCharges;
+		exit;
+	}
+
+	// This method will handle the request to get Total Progressive Revenue for  BGR Module
+	// added by shankhpal shende on 02/08/2023
+	public function getTotalProgressiveRevenue(){
+		
+		$this->autoRender = false;
+		$this->loadModel('DmiBgrCommodityReports');
+
+		if(isset($_SESSION['packer_id'])){
+			$customer_id = $_SESSION['packer_id'];
+		}elseif(isset($_SESSION['customer_id'])){
+			$customer_id = $_SESSION['customer_id'];
+		}else{
+			$customer_id = null;
+		}
+
+		$currentPeriodRecord = [];
+		$financialYear = $_SESSION['financialYear'];
+		
+		if(isset($financialYear)){
+			$dates = explode(" - ", $financialYear);
+			$startMonthYear = $dates[0];
+			$endMonthYear = $dates[1];
+
+			$currentPeriodRecord = $this->DmiBgrCommodityReports->find('all', [
+					'conditions' => [
+							'customer_id' => $customer_id,
+							'period_from' => $startMonthYear,
+							'period_to' => $endMonthYear,
+					],
+					'order' => ['id' => 'DESC'], // Order by id in descending order
+			])->first();
+			
+			$total_revenue = '';
+			if(!empty($currentPeriodRecord)){
+				
+				$total_revenue = $currentPeriodRecord['total_revenue'];
+			
+			}
+
+			echo $total_revenue;
+				
+		}
+}
+
+	// This method will handle the request to insert record of Replica Allotment details of BGR report for  BGR Module
+	// added by shankhpal shende on 31/08/2023
+	public function addReplicaAllotmentData(){
+		
+		$this->autoRender = false;
+		$this->loadModel('DmiBgrCommodityReportsAddmore');
+
+		
+		
+		$financialYear = $_SESSION['financialYear'];
+		$startMonthYear=null;
+		$endMonthYear=null;
+
+		if(isset($financialYear)){
+			$dates = explode(" - ", $financialYear);
+			$startMonthYear = $dates[0];
+			$endMonthYear = $dates[1];
+		}
+		
+		// Create the data array for update
+			$data = array(
+					'rpl_commodity' => $_POST['rpl_commodity'],
+					'rpl_lotno' => $_POST['rpl_lotno'],
+					'rpl_datesampling' => $_POST['rpl_datesampling'],
+					'rpl_dateofpacking' => $_POST['rpl_dateofpacking'],
+					'rpl_grade' => $_POST['rpl_grade'],
+					'rpl_packet_size' => $_POST['rpl_packet_size'],
+					'rpl_packet_size_unit' => $_POST['rpl_packet_size_unit'],
+					'rpl_no_of_packets' => $_POST['rpl_no_of_packets'],
+					'rpl_qty_quantal' => $_POST['rpl_qty_quantal'],
+					'rpl_estimatedvalue' => $_POST['rpl_estimatedvalue'],
+					'rpl_alloted_rep_from' => $_POST['rpl_alloted_rep_from'],
+					'rpl_alloted_rep_to' => $_POST['rpl_alloted_rep_to'],
+					'rpl_total_quantity' => $_POST['rpl_total_quantity'],
+					'rpl_replicacharges' => $_POST['rpl_replicacharges'],
+					'rpl_grading_lab' => isset($_POST['rpl_grading_lab'])?$_POST['rpl_grading_lab']:null,
+					'rpl_reportno' => $_POST['rpl_reportno'],
+					'rpl_reportdate' => $_POST['rpl_reportdate'],
+					'rpl_remarks' => $_POST['rpl_remarks'],
+					'period_from'=>$startMonthYear,
+					'period_to'=>$endMonthYear,
+			);
+
+			// Update the data in the database using the model
+			$save_bgr_details = $this->DmiBgrCommodityReportsAddmore->saveReplicaAllotmentData($data); // Call custom method from model
+		
+			// Define a variable to hold the response message
+			$response = "";
+			// Check the result of the update operation
+			if ($save_bgr_details == "updated") {
+					$response = "updated";
+			} elseif($save_bgr_details == "added") {
+					$response = "added";
+			}
+
+			// Echo the response
+			echo $response;
+			exit();
+
+	}
+
+	
 }
 ?>

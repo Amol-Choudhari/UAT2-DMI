@@ -31,6 +31,8 @@
 		<?php echo $this->element('common_side_menus/common_top_left_logo'); ?>
 			<div class="sidebar">
 			  <?php echo $this->element('common_side_menus/common_top_left_profile'); ?>
+				<!-- // adde by shankhpal for splite packer_id -->
+				<?php $split_packer_name = explode('/',$this->getRequest()->getSession()->read('packer_id')); ?>
 			<nav class="mt-2">
 				<ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
 					<!-- Add icons to the links using the .nav-icon class with font-awesome or any other icon font library -->
@@ -55,6 +57,20 @@
 					<li class="nav-item">
 						<?php echo $this->Html->link('<i class=" nav-icon far fa-dot-circle"></i></i><p class="nav-icon-p">Log History</p>', array('controller'=>'common', 'action'=>'currentUserLogs'), array('escape'=>false, 'class'=>'nav-link '.$menu_profile)); ?>
 					</li>
+
+					
+					<!-- The menu are added for BGR Module
+						Added by shankhpal shende on 21/06/2023 -->
+					<?php if(!empty($chemist_incharge)){ ?>
+
+						<li class="nav-item">
+								<!-- <a href="<?php //echo $this->request->getAttribute("webroot");?>application/application-type/11" class="nav-link">
+								<i class="nav-icon far fa-file-alt"></i><p class="nav-icon-p">Biannually Grading Report</p></a> -->
+							<?php echo $this->Html->link('<i class="nav-icon far fa-file-alt"></i><p class="nav-icon-p">Biannually Grading Report</p>', array('controller'=>'chemist', 'action'=>'display-mapped-c-a-dropdown'), array('escape'=>false, 'class'=>'nav-link ')); ?>
+						</li>
+
+						
+					<?php } ?>
 
 					<li class="nav-item">
 					<?php if (!empty($final_submit_status) && $final_submit_status == 'approved') { ?>

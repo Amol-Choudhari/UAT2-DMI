@@ -317,6 +317,13 @@
 												<p class="nav-icon-p"><b>Cancelled Applications</b></p>
 											</a>
 										</li>
+										<!-- For Biannually Grading Report added by shankhpal shende on 07/09/2023 -->
+										<li class="nav-item"> 
+											<a href="<?php echo $this->request->getAttribute('webroot');?>othermodules/list_of_bgr_report" class="bg-cyan nav-link">
+												<i class="far fa-dot-circle nav-icon"></i>
+												<p class="nav-icon-p"><b>Biannually Grading Report</b></p>
+											</a>
+										</li>
 									</li>
 								</ul>
 							</li>
@@ -335,8 +342,6 @@
 								</li>
 
 					<?php } if ($current_user_roles['ro_inspection'] == 'yes' || $current_user_roles['so_inspection'] == 'yes' && $current_user_roles['super_admin'] != 'yes') { ?>
-
-
 						<li class="nav-item">
 							<li class="nav-item has-treeview">
 								<a href="#" class="nav-link">
