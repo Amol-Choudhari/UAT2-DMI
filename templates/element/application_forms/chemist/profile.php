@@ -255,15 +255,18 @@
 						<label for="field3"><span>Upload View</span>	</label>
 					</div>
 					<div class="col-md-4 chemist_doc_div">
-						<img src="<?php echo $section_form_details[0]['profile_photo'] ?>" width="auto" height="80px" class="chemist_doc">
-						<!-- <img src="" id="profile_photo_prev" alt="your image" width="100px" height="50px" /> -->
+						<!-- added below line by laxmi to preview photo 08-09-2023 -->
+					<img src="" id="profile_photo_prev" alt="photo image" width="auto" height="80px" class=" " />
+					<img src="<?php echo $section_form_details[0]['profile_photo'] ?>" width="auto" height="80px" class="chemist_doc profileImg">
 					</div>
 
 					<div class="col-md-2">
 						<label for="field3"><span>Upload View</span>	</label>
 					</div>
 					<div class="col-md-4 chemist_doc_div">
-						<img src="<?php echo $section_form_details[0]['signature_photo'] ?>" width="auto" height="80px" class="chemist_doc">
+						<!-- added below line by laxmi to preview photo 08-09-2023 -->
+					 <img src="" id="profile_sign_prev" alt="sign image" width="auto" height="80px" class=" " />
+					<img src="<?php echo $section_form_details[0]['signature_photo'] ?>" width="auto" height="80px" class="chemist_doc profilesign">
 					</div>
 				</div>
 			</div>
@@ -273,4 +276,4 @@
 		<?php echo $this->Form->control('application_dashboard', array('type'=>'hidden', 'id'=>'application_dashboard', 'value'=>$_SESSION['application_dashboard'])); ?>
 
 </div>
-<?php //echo $this->Html->script('element/application_forms/chemist/chemist_profile'); ?>
+<?php echo $this->Html->script('element/application_forms/chemist/chemist_profile'); ?>

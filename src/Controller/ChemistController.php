@@ -1626,7 +1626,87 @@ class ChemistController extends AppController {
 		exit;
 	}	
 
+//created new function to save chemist photo in db as preview  added by laxmi[08-09-2023]
+public function chemistPhotoPreview(){
+	$this->autoRender = false;
+	if(NULL != $this->request->getData()){
+		if ($this->request->getData('file')->getClientFilename() != null) {
+			
+			$attachment = $this->request->getData('file');
+			$file_name = $attachment->getClientFilename();
+			$file_size = $attachment->getSize();
+			$file_type = $attachment->getClientMediaType();
+			$file_local_path = $attachment->getStream()->getMetadata('uri');
+			
+			$file = $this->Customfunctions->fileUploadLib($file_name,$file_size,$file_type,$file_local_path); // calling file uploading function
+			$this->loadModel('DmiChemistProfilePhoto');
+			$chemist_id = htmlentities($this->Session->read('username'), ENT_QUOTES);
+            $data =  $this->DmiChemistProfilePhoto->newEntity(array(
+				'chemist_id' => $chemist_id,
+				'profile_photo' => $file,
+				'sign' => NULL,
+				'created' => date('Y-m-d H:i:s'),
+			)); 
+            
+			if(!empty($data)){
+               $result = $this->DmiChemistProfilePhoto->save($data);
+			   if($result){
 
+				if(!empty($chemist_id)){
+                    $chemist_temp_photo = $this->DmiChemistProfilePhoto->find('all')->where(array('chemist_id IS'=>$chemist_id))->last();
+					if(!empty($chemist_temp_photo)){
+                      echo json_encode($chemist_temp_photo);exit;
+					}
+				}
+			   }
+			}
+		}
+
+	 
+	}
+
+}
+
+//created new function to save chemist signiture in db as preview  added by laxmi[08-09-2023]
+public function chemistSignPreview(){
+	$this->autoRender = false;
+	if(NULL != $this->request->getData()){
+		if ($this->request->getData('file')->getClientFilename() != null) {
+			
+			$attachment = $this->request->getData('file');
+			$file_name = $attachment->getClientFilename();
+			$file_size = $attachment->getSize();
+			$file_type = $attachment->getClientMediaType();
+			$file_local_path = $attachment->getStream()->getMetadata('uri');
+			
+			$file = $this->Customfunctions->fileUploadLib($file_name,$file_size,$file_type,$file_local_path); // calling file uploading function
+			$this->loadModel('DmiChemistProfilePhoto');
+			$chemist_id = htmlentities($this->Session->read('username'), ENT_QUOTES);
+            $data =  $this->DmiChemistProfilePhoto->newEntity(array(
+				'chemist_id' => $chemist_id,
+				'profile_photo' => NULL,
+				'sign' =>$file ,
+				'created' => date('Y-m-d H:i:s'),
+			)); 
+            
+			if(!empty($data)){
+               $result = $this->DmiChemistProfilePhoto->save($data);
+			   if($result){
+
+				if(!empty($chemist_id)){
+                    $chemist_temp_photo = $this->DmiChemistProfilePhoto->find('all')->where(array('chemist_id IS'=>$chemist_id))->last();
+					if(!empty($chemist_temp_photo)){
+                      echo json_encode($chemist_temp_photo);exit;
+					}
+				}
+			   }
+			}
+		}
+
+	 
+	}
+
+}
 
 	
 

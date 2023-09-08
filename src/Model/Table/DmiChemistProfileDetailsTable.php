@@ -264,11 +264,18 @@ class DmiChemistProfileDetailsTable extends Table{
 			//added not empty profile photo if else condtion by laxmi bcz it is mandetory[06-07-2023]
 			if(!empty($profile_photo)){
 			  if($this->save($DmiChemistProfileDetailsEntity)) {
+
+
+				// delete chemist profile temp photo and sign after insertion all data in db added by below two line [laxmi08-09-2023] 
+				$DmiChemistProfilePhoto = TableRegistry::get('DmiChemistProfilePhoto');
+				$DmiChemistProfilePhoto->deleteAll(array('chemist_id'=>$chemist_id));
 				return true;
 			  }
 		   }else{
 			return false;
 		   }  
+
+		   
 
 		} else {
 			return false;

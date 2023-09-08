@@ -388,8 +388,8 @@ $(function(){
              $.alert('This is not an allowed file type.');
              this.value = '';
       }
-      var path = URL.createObjectURL(event.target.files[0]);
-      $("<img src width=auto height=80px class= uploadpreview>").insertAfter( $("#profile_img") ).fadeIn("fast").attr('src',path);
+      // var path = URL.createObjectURL(event.target.files[0]);
+      // $("<img src width=auto height=80px class= uploadpreview>").insertAfter( $("#profile_img") ).fadeIn("fast").attr('src',path);
     });
     $('.file_sign').change(function(){
       $('.signpreview').remove();
@@ -403,8 +403,8 @@ $(function(){
              $.alert('This is not an allowed file type.');
              this.value = '';
       }
-      var path = URL.createObjectURL(event.target.files[0]);
-      $("<img src width=auto height=80px class=signpreview>").insertAfter( $("#sign_img") ).fadeIn("fast").attr('src',path);
+      // var path = URL.createObjectURL(event.target.files[0]);
+      // $("<img src width=auto height=80px class=signpreview>").insertAfter( $("#sign_img") ).fadeIn("fast").attr('src',path);
     });
 
     //End by Laxmi
